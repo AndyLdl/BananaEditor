@@ -5,12 +5,14 @@ import tailwind from "@astrojs/tailwind";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://bananaeditor.com",
   output: 'static', // 使用静态输出，API 路由在客户端调用云函数
   integrations: [
+    react(),
     tailwind({
       applyBaseStyles: false, // 使用自定义全局样式
     }),
