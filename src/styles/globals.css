@@ -1,0 +1,382 @@
+/**
+ * BananaEditor 全局样式
+ * 包含品牌主题、工具类和基础样式
+ */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* RTL语言支持 */
+@import './rtl-support.css';
+
+/* 自定义CSS变量 */
+:root {
+    /* BananaEditor品牌色彩 */
+    --banana-50: #FFFBEB;
+    --banana-100: #FEF3C7;
+    --banana-200: #FDE68A;
+    --banana-300: #FCD34D;
+    --banana-400: #FBBF24;
+    --banana-500: #F59E0B;
+    --banana-600: #D97706;
+    --banana-700: #B45309;
+    --banana-800: #92400E;
+    --banana-900: #78350F;
+
+    /* 渐变色 */
+    --banana-gradient: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+    --banana-light-gradient: linear-gradient(135deg, #FCD34D 0%, #FB923C 100%);
+    --banana-hero-gradient: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 50%, #FDE68A 100%);
+
+    /* 阴影 */
+    --banana-shadow: 0 8px 32px rgba(245, 158, 11, 0.2);
+    --banana-shadow-lg: 0 12px 40px rgba(245, 158, 11, 0.3);
+
+    /* 字体 */
+    --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+/* 基础样式重置 */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: #1C1917;
+    background-color: #FAFAF9;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 标题字体 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.2;
+    color: #292524;
+}
+
+/* 链接样式 */
+a {
+    color: #F59E0B;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #D97706;
+}
+
+/* 选择文本样式 */
+::selection {
+    background-color: #FDE68A;
+    color: #92400E;
+}
+
+::-moz-selection {
+    background-color: #FDE68A;
+    color: #92400E;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F5F5F4;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D6D3D1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #A8A29E;
+}
+
+/* 工具类 */
+.banana-gradient {
+    background: var(--banana-gradient);
+}
+
+.banana-light-gradient {
+    background: var(--banana-light-gradient);
+}
+
+.banana-hero-gradient {
+    background: var(--banana-hero-gradient);
+}
+
+.banana-shadow {
+    box-shadow: var(--banana-shadow);
+}
+
+.banana-shadow-lg {
+    box-shadow: var(--banana-shadow-lg);
+}
+
+/* 文本渐变 */
+.text-gradient {
+    background: var(--banana-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 动画工具类 */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+}
+
+.animate-bounce-slow {
+    animation: bounce 2s infinite;
+}
+
+.animate-pulse-slow {
+    animation: pulse 3s infinite;
+}
+
+/* 关键帧动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    53%,
+    80%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    40%,
+    43% {
+        transform: translate3d(0, -8px, 0);
+    }
+
+    70% {
+        transform: translate3d(0, -4px, 0);
+    }
+
+    90% {
+        transform: translate3d(0, -2px, 0);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* 响应式工具类 */
+.container-custom {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .container-custom {
+        padding: 0 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container-custom {
+        padding: 0 3rem;
+    }
+}
+
+/* 编辑器专用样式 */
+.editor-layout {
+    display: grid;
+    grid-template-areas:
+        "toolbar toolbar toolbar"
+        "sidebar canvas properties"
+        "sidebar canvas properties";
+    grid-template-columns: 280px 1fr 320px;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+    background: #FAFAF9;
+}
+
+.editor-toolbar {
+    grid-area: toolbar;
+    background: white;
+    border-bottom: 1px solid #E7E5E4;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.editor-sidebar {
+    grid-area: sidebar;
+    background: white;
+    border-right: 1px solid #E7E5E4;
+    overflow-y: auto;
+}
+
+.editor-canvas {
+    grid-area: canvas;
+    background: #F5F5F4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.editor-properties {
+    grid-area: properties;
+    background: white;
+    border-left: 1px solid #E7E5E4;
+    overflow-y: auto;
+}
+
+/* 移动端编辑器布局 */
+@media (max-width: 768px) {
+    .editor-layout {
+        grid-template-areas:
+            "toolbar"
+            "canvas"
+            "controls";
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px 1fr auto;
+    }
+
+    .editor-sidebar,
+    .editor-properties {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        z-index: 50;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        border-radius: 1rem 1rem 0 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .editor-sidebar.active,
+    .editor-properties.active {
+        transform: translateY(0);
+    }
+}
+
+/* 加载状态样式 */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #E7E5E4;
+    border-radius: 50%;
+    border-top-color: #F59E0B;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 错误和成功状态 */
+.error-message {
+    color: #EF4444;
+    background-color: #FEF2F2;
+    border: 1px solid #FECACA;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.success-message {
+    color: #10B981;
+    background-color: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* 可访问性增强 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 焦点样式 */
+.focus-visible:focus {
+    outline: 2px solid #F59E0B;
+    outline-offset: 2px;
+}
+
+/* 打印样式 */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}

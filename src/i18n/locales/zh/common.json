@@ -1,0 +1,55 @@
+{
+    "brand": {
+        "name": "BananaEditor",
+        "slogan": "基于Nano Banana技术的专业AI图片编辑器",
+        "description": "使用nano banana AI技术创建令人惊艳的图片"
+    },
+    "navigation": {
+        "home": "首页",
+        "editor": "编辑器",
+        "prompts": "提示词库",
+        "about": "关于",
+        "contact": "联系"
+    },
+    "common": {
+        "loading": "加载中...",
+        "error": "错误",
+        "success": "成功",
+        "cancel": "取消",
+        "confirm": "确认",
+        "save": "保存",
+        "delete": "删除",
+        "edit": "编辑",
+        "create": "创建",
+        "upload": "上传",
+        "download": "下载",
+        "share": "分享",
+        "copy": "复制",
+        "paste": "粘贴",
+        "undo": "撤销",
+        "redo": "重做",
+        "close": "关闭",
+        "open": "打开",
+        "search": "搜索",
+        "filter": "筛选",
+        "sort": "排序",
+        "language": "语言"
+    },
+    "buttons": {
+        "getStarted": "开始使用",
+        "tryNow": "立即试用",
+        "learnMore": "了解更多",
+        "startEditing": "开始编辑",
+        "viewPrompts": "查看提示词"
+    },
+    "messages": {
+        "welcome": "欢迎使用BananaEditor",
+        "fileUploaded": "文件上传成功",
+        "fileTooLarge": "文件大小超出限制",
+        "invalidFileType": "无效的文件类型",
+        "networkError": "网络错误，请重试",
+        "processingImage": "正在处理图片...",
+        "generationComplete": "图片生成完成",
+        "fusionComplete": "图片融合完成"
+    }
+}

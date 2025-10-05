@@ -1,0 +1,128 @@
+---
+/**
+ * SEO优化头部组件
+ * 专门为BananaEditor和"nano banana"关键词优化
+ */
+
+export interface SEOProps {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  language?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: string;
+  structuredData?: any;
+}
+
+const {
+  title = "Nano Banana - Professional AI Image Editor | BananaEditor",
+  description = "Create stunning images with nano banana AI technology. Professional image generation and fusion tools powered by advanced AI. Try BananaEditor now!",
+  keywords = [
+    "nano banana",
+    "nano banana ai",
+    "banana ai",
+    "ai image editor",
+    "image generator",
+    "ai photo editor",
+  ],
+  language = "en",
+  canonical,
+  ogImage = "/opengraph-banana.jpg",
+  ogType = "website",
+  twitterCard = "summary_large_image",
+  structuredData,
+} = Astro.props as SEOProps;
+
+// 构建完整的标题
+const fullTitle = title.includes("BananaEditor")
+  ? title
+  : `${title} | BananaEditor`;
+
+// 构建关键词字符串
+const keywordsString = keywords.join(", ");
+
+// 获取当前URL
+const currentUrl =
+  canonical || new URL(Astro.url.pathname, Astro.site).toString();
+
+// 构建完整的图片URL
+const fullOgImage = new URL(ogImage, Astro.site).toString();
+
+// 默认结构化数据
+const defaultStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "BananaEditor",
+  description: "Professional AI image editor powered by nano banana technology",
+  applicationCategory: "DesignApplication",
+  operatingSystem: "Web Browser",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  keywords: keywordsString,
+  url: currentUrl,
+  image: fullOgImage,
+  creator: {
+    "@type": "Organization",
+    name: "BananaEditor Team",
+  },
+};
+
+const finalStructuredData = structuredData || defaultStructuredData;
+---
+
+<!-- 基础SEO标签 -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="keywords" content={keywordsString} />
+<meta name="language" content={language} />
+<link rel="canonical" href={currentUrl} />
+
+<!-- Open Graph 标签 -->
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={currentUrl} />
+<meta property="og:image" content={fullOgImage} />
+<meta
+  property="og:image:alt"
+  content="BananaEditor - Nano Banana AI Image Editor"
+/>
+<meta property="og:site_name" content="BananaEditor" />
+<meta property="og:locale" content={language === "zh" ? "zh_CN" : "en_US"} />
+
+<!-- Twitter Card 标签 -->
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={fullOgImage} />
+<meta
+  name="twitter:image:alt"
+  content="BananaEditor - Nano Banana AI Image Editor"
+/>
+
+<!-- 额外的SEO标签 -->
+<meta name="robots" content="index, follow" />
+<meta name="author" content="BananaEditor Team" />
+<meta name="theme-color" content="#FFD700" />
+
+<!-- 结构化数据 -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify(finalStructuredData)}
+/>
+
+<!-- 预加载关键资源 -->
+<link
+  rel="preload"
+  href="/fonts/inter-var.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

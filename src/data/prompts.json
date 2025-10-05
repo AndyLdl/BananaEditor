@@ -1,0 +1,64 @@
+{
+    "categories": [
+        {
+            "id": "portrait",
+            "name": "人物肖像",
+            "description": "人物肖像相关的提示词",
+            "icon": "👤"
+        },
+        {
+            "id": "landscape",
+            "name": "风景自然",
+            "description": "风景和自然场景的提示词",
+            "icon": "🌄"
+        },
+        {
+            "id": "abstract",
+            "name": "抽象艺术",
+            "description": "抽象和艺术风格的提示词",
+            "icon": "🎨"
+        },
+        {
+            "id": "anime",
+            "name": "动漫风格",
+            "description": "动漫和卡通风格的提示词",
+            "icon": "🎭"
+        }
+    ],
+    "prompts": [
+        {
+            "id": "prompt_001",
+            "title": "专业肖像摄影",
+            "content": "professional portrait photography, studio lighting, high resolution, detailed facial features, natural expression",
+            "category": "portrait",
+            "tags": [
+                "专业",
+                "肖像",
+                "摄影",
+                "工作室"
+            ],
+            "description": "适合生成专业级别的人物肖像照片",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z",
+            "usageCount": 0,
+            "rating": 5
+        },
+        {
+            "id": "prompt_002",
+            "title": "梦幻风景",
+            "content": "dreamy landscape, soft pastel colors, ethereal atmosphere, golden hour lighting, peaceful scenery",
+            "category": "landscape",
+            "tags": [
+                "梦幻",
+                "风景",
+                "柔和",
+                "金色时光"
+            ],
+            "description": "创造梦幻般的自然风景画面",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z",
+            "usageCount": 0,
+            "rating": 4
+        }
+    ]
+}

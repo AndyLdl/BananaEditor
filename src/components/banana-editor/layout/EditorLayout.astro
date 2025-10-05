@@ -1,0 +1,675 @@
+---
+// EditorLayout.astro - BananaEditor主布局组件
+// 提供专业的编辑器界面布局，包含工具栏、侧边栏、画布和属性面板
+
+export interface Props {
+  title?: string;
+  language?: string;
+}
+
+const { title = "BananaEditor - Nano Banana AI图片编辑器", language = "zh" } =
+  Astro.props;
+---
+
+<div class="editor-layout">
+  <!-- 顶部工具栏区域 -->
+  <header class="editor-toolbar">
+    <slot name="toolbar" />
+  </header>
+
+  <!-- 主要内容区域 -->
+  <div class="editor-main">
+    <!-- 左侧边栏 -->
+    <aside class="editor-sidebar">
+      <slot name="sidebar" />
+    </aside>
+
+    <!-- 中央画布区域 -->
+    <main class="editor-canvas">
+      <slot name="canvas" />
+    </main>
+
+    <!-- 右侧属性面板 -->
+    <aside class="editor-properties">
+      <slot name="properties" />
+    </aside>
+  </div>
+
+  <!-- 移动端底部控制面板 -->
+  <div class="editor-mobile-controls">
+    <slot name="mobile-controls" />
+  </div>
+</div>
+
+<style>
+  /* BananaEditor主题色彩系统 */
+  :root {
+    --banana-primary: #ffd700; /* 香蕉黄主色 */
+    --banana-secondary: #ffa500; /* 橙黄辅助色 */
+    --banana-accent: #ff6b35; /* 橙红强调色 */
+    --banana-dark: #2d1810; /* 深棕色 */
+    --banana-light: #fff8dc; /* 浅黄背景 */
+    --banana-gradient: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    --banana-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+    --banana-border: #ffe55c;
+  }
+
+  /* 编辑器主布局 */
+  .editor-layout {
+    display: grid;
+    grid-template-areas:
+      "toolbar toolbar toolbar"
+      "sidebar canvas properties"
+      "sidebar canvas properties";
+    grid-template-columns: auto 1fr 320px;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+    background: linear-gradient(135deg, #fff8dc 0%, #fffacd 100%);
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+  }
+
+  /* 顶部工具栏 */
+  .editor-toolbar {
+    grid-area: toolbar;
+    background: var(--banana-gradient);
+    border-bottom: 2px solid var(--banana-border);
+    box-shadow: var(--banana-shadow);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 100;
+  }
+
+  /* 主要内容区域 */
+  .editor-main {
+    display: contents;
+  }
+
+  /* 左侧边栏 */
+  .editor-sidebar {
+    grid-area: sidebar;
+    /* 移除固定样式，让子组件自己控制 */
+  }
+
+  /* 中央画布区域 */
+  .editor-canvas {
+    grid-area: canvas;
+    background: #fafafa;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 右侧属性面板 */
+  .editor-properties {
+    grid-area: properties;
+    background: white;
+    border-left: 1px solid var(--banana-border);
+    box-shadow: -2px 0 8px rgba(255, 215, 0, 0.1);
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  /* 移动端控制面板（默认隐藏） */
+  .editor-mobile-controls {
+    display: none;
+  }
+
+  /* 触摸友好的交互样式 */
+  .touch-friendly {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* 触摸目标最小尺寸 */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 平板端适配 (768px - 1024px) */
+  @media (max-width: 1024px) {
+    .editor-layout {
+      grid-template-columns: 240px 1fr 280px;
+    }
+  }
+
+  /* 移动端适配 (< 768px) */
+  @media (max-width: 768px) {
+    .editor-layout {
+      grid-template-areas:
+        "toolbar"
+        "canvas"
+        "controls";
+      grid-template-columns: 1fr;
+      grid-template-rows: 60px 1fr auto;
+      touch-action: pan-x pan-y;
+    }
+
+    .editor-sidebar,
+    .editor-properties {
+      display: none; /* 在移动端隐藏，使用专用面板替代 */
+    }
+
+    .editor-canvas {
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    .editor-mobile-controls {
+      display: flex;
+      background: var(--banana-gradient);
+      padding: 12px 16px;
+      justify-content: space-around;
+      border-top: 1px solid var(--banana-border);
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 移动端触摸优化 */
+    .editor-layout * {
+      -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
+    }
+
+    /* 防止移动端缩放 */
+    .editor-layout {
+      -ms-touch-action: manipulation;
+      touch-action: manipulation;
+    }
+  }
+
+  /* 小屏幕移动端适配 (< 480px) */
+  @media (max-width: 480px) {
+    .editor-layout {
+      grid-template-rows: 50px 1fr auto;
+    }
+
+    .editor-toolbar {
+      padding: 0 12px;
+    }
+
+    .editor-sidebar,
+    .editor-properties {
+      padding: 12px;
+      height: 70vh;
+    }
+  }
+
+  /* 滚动条样式 */
+  .editor-sidebar::-webkit-scrollbar,
+  .editor-properties::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .editor-sidebar::-webkit-scrollbar-track,
+  .editor-properties::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  .editor-sidebar::-webkit-scrollbar-thumb,
+  .editor-properties::-webkit-scrollbar-thumb {
+    background: var(--banana-secondary);
+    border-radius: 3px;
+  }
+
+  .editor-sidebar::-webkit-scrollbar-thumb:hover,
+  .editor-properties::-webkit-scrollbar-thumb:hover {
+    background: var(--banana-primary);
+  }
+
+  /* 焦点和可访问性 */
+  .editor-layout *:focus {
+    outline: 2px solid var(--banana-accent);
+    outline-offset: 2px;
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .editor-layout {
+      background: white;
+    }
+
+    .editor-toolbar {
+      background: #000;
+      color: #fff;
+    }
+
+    .editor-sidebar,
+    .editor-properties {
+      border-color: #000;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .editor-sidebar,
+    .editor-properties {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import {
+    TouchGestureHandler,
+    isMobileDevice,
+    debounce,
+  } from "../../../utils/touch-gestures.ts";
+
+  // 编辑器布局交互逻辑
+  class EditorLayout {
+    private sidebarElement: HTMLElement | null = null;
+    private propertiesElement: HTMLElement | null = null;
+    private canvasElement: HTMLElement | null = null;
+    private isMobile: boolean = false;
+    private touchHandler: TouchGestureHandler | null = null;
+    private resizeObserver: ResizeObserver | null = null;
+
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      this.sidebarElement = document.querySelector(".editor-sidebar");
+      this.propertiesElement = document.querySelector(".editor-properties");
+      this.canvasElement = document.querySelector(".editor-canvas");
+
+      this.checkMobile();
+      this.setupEventListeners();
+      this.setupTouchGestures();
+      this.setupResizeObserver();
+
+      // 监听窗口大小变化
+      window.addEventListener(
+        "resize",
+        debounce(() => {
+          this.checkMobile();
+          this.handleResize();
+        }, 250),
+      );
+
+      // 监听设备方向变化
+      window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
+          this.checkMobile();
+          this.handleOrientationChange();
+        }, 100);
+      });
+    }
+
+    private checkMobile(): void {
+      const wasMobile = this.isMobile;
+      this.isMobile = isMobileDevice();
+
+      // 如果设备类型发生变化，重新初始化
+      if (wasMobile !== this.isMobile) {
+        this.handleDeviceTypeChange();
+      }
+    }
+
+    private setupEventListeners(): void {
+      // 移动端面板切换事件
+      document.addEventListener("editor:toggle-sidebar", () => {
+        this.toggleMobilePanel("sidebar");
+      });
+
+      document.addEventListener("editor:toggle-properties", () => {
+        this.toggleMobilePanel("properties");
+      });
+
+      document.addEventListener("editor:toggle-tools", () => {
+        this.toggleMobilePanel("tools");
+      });
+
+      // 移动端专用事件
+      document.addEventListener("show-mobile-sidebar", () => {
+        this.showMobilePanel("sidebar");
+      });
+
+      document.addEventListener("show-mobile-properties", () => {
+        this.showMobilePanel("properties");
+      });
+
+      document.addEventListener("show-mobile-tools", () => {
+        this.showMobilePanel("tools");
+      });
+
+      // 隐藏所有面板
+      document.addEventListener("hide-all-mobile-panels", () => {
+        this.hideAllMobilePanels();
+      });
+
+      // 键盘事件
+      document.addEventListener("keydown", (e) => {
+        this.handleKeyboard(e);
+      });
+
+      // 可见性变化事件
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          this.handlePageHidden();
+        } else {
+          this.handlePageVisible();
+        }
+      });
+    }
+
+    private setupTouchGestures(): void {
+      if (!this.canvasElement || !this.isMobile) return;
+
+      this.touchHandler = new TouchGestureHandler(this.canvasElement);
+
+      // 双击适应窗口
+      this.touchHandler.on("tap", (event: any) => {
+        if (event.touches.length === 1) {
+          // 检测双击
+          const now = Date.now();
+          const lastTap = (this.canvasElement as any).lastTapTime || 0;
+
+          if (now - lastTap < 300) {
+            document.dispatchEvent(new CustomEvent("editor:fit-window"));
+          }
+
+          (this.canvasElement as any).lastTapTime = now;
+        }
+      });
+
+      // 拖拽平移画布
+      this.touchHandler.on("pan", (event: any) => {
+        document.dispatchEvent(
+          new CustomEvent("editor:pan-canvas", {
+            detail: {
+              deltaX: event.deltaX,
+              deltaY: event.deltaY,
+            },
+          }),
+        );
+      });
+
+      // 双指缩放
+      this.touchHandler.on("pinch", (event: any) => {
+        document.dispatchEvent(
+          new CustomEvent("editor:zoom-canvas", {
+            detail: {
+              scale: event.scale,
+              center: {
+                x: (event.touches[0].x + event.touches[1].x) / 2,
+                y: (event.touches[0].y + event.touches[1].y) / 2,
+              },
+            },
+          }),
+        );
+      });
+
+      // 滑动手势
+      this.touchHandler.on("swipe", (event: any) => {
+        if (event.direction === "up" && event.velocity > 1) {
+          // 向上滑动显示工具面板
+          this.showMobilePanel("tools");
+        } else if (event.direction === "down" && event.velocity > 1) {
+          // 向下滑动隐藏面板
+          this.hideAllMobilePanels();
+        }
+      });
+    }
+
+    private setupResizeObserver(): void {
+      if (!window.ResizeObserver) return;
+
+      this.resizeObserver = new ResizeObserver(
+        debounce((entries) => {
+          for (const entry of entries) {
+            if (entry.target === document.body) {
+              this.handleResize();
+            }
+          }
+        }, 100),
+      );
+
+      this.resizeObserver.observe(document.body);
+    }
+
+    private toggleMobilePanel(
+      panelType: "sidebar" | "properties" | "tools",
+    ): void {
+      if (!this.isMobile) return;
+
+      document.dispatchEvent(new CustomEvent(`show-mobile-${panelType}`));
+    }
+
+    private showMobilePanel(
+      panelType: "sidebar" | "properties" | "tools",
+    ): void {
+      if (!this.isMobile) return;
+
+      const panels = (window as any).MobileControlPanels;
+      if (panels && panels[panelType]) {
+        panels[panelType].show();
+      }
+    }
+
+    private hideAllMobilePanels(): void {
+      if (!this.isMobile) return;
+
+      const panels = (window as any).MobileControlPanels;
+      if (panels) {
+        Object.values(panels).forEach((panel: any) => {
+          if (panel && typeof panel.hide === "function") {
+            panel.hide();
+          }
+        });
+      }
+    }
+
+    private handleResize(): void {
+      // 更新画布尺寸
+      document.dispatchEvent(
+        new CustomEvent("editor:resize", {
+          detail: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            isMobile: this.isMobile,
+          },
+        }),
+      );
+
+      // 移动端特殊处理
+      if (this.isMobile) {
+        this.adjustMobileLayout();
+      }
+    }
+
+    private handleOrientationChange(): void {
+      // 隐藏所有面板
+      this.hideAllMobilePanels();
+
+      // 重新计算布局
+      setTimeout(() => {
+        this.handleResize();
+      }, 300);
+    }
+
+    private handleDeviceTypeChange(): void {
+      if (this.isMobile) {
+        // 切换到移动端模式
+        this.enableMobileMode();
+      } else {
+        // 切换到桌面端模式
+        this.enableDesktopMode();
+      }
+    }
+
+    private enableMobileMode(): void {
+      // 添加移动端样式类
+      document.body.classList.add("mobile-mode");
+
+      // 设置触摸优化
+      if (this.canvasElement) {
+        this.canvasElement.style.touchAction = "manipulation";
+      }
+
+      // 隐藏桌面端面板
+      if (this.sidebarElement) {
+        this.sidebarElement.style.display = "none";
+      }
+      if (this.propertiesElement) {
+        this.propertiesElement.style.display = "none";
+      }
+
+      // 初始化触摸手势
+      this.setupTouchGestures();
+    }
+
+    private enableDesktopMode(): void {
+      // 移除移动端样式类
+      document.body.classList.remove("mobile-mode");
+
+      // 显示桌面端面板
+      if (this.sidebarElement) {
+        this.sidebarElement.style.display = "";
+      }
+      if (this.propertiesElement) {
+        this.propertiesElement.style.display = "";
+      }
+
+      // 清理触摸手势
+      if (this.touchHandler) {
+        this.touchHandler.destroy();
+        this.touchHandler = null;
+      }
+
+      // 隐藏移动端面板
+      this.hideAllMobilePanels();
+    }
+
+    private adjustMobileLayout(): void {
+      // 调整移动端布局
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+      // 处理软键盘
+      this.handleVirtualKeyboard();
+    }
+
+    private handleVirtualKeyboard(): void {
+      const initialViewportHeight = window.innerHeight;
+
+      const checkKeyboard = () => {
+        const currentHeight = window.innerHeight;
+        const heightDifference = initialViewportHeight - currentHeight;
+
+        if (heightDifference > 150) {
+          // 软键盘打开
+          document.body.classList.add("keyboard-open");
+          this.hideAllMobilePanels();
+        } else {
+          // 软键盘关闭
+          document.body.classList.remove("keyboard-open");
+        }
+      };
+
+      window.addEventListener("resize", debounce(checkKeyboard, 100));
+    }
+
+    private handleKeyboard(e: KeyboardEvent): void {
+      // 移动端键盘快捷键
+      if (this.isMobile) return;
+
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case "1":
+            e.preventDefault();
+            this.showMobilePanel("sidebar");
+            break;
+          case "2":
+            e.preventDefault();
+            this.showMobilePanel("properties");
+            break;
+          case "3":
+            e.preventDefault();
+            this.showMobilePanel("tools");
+            break;
+          case "Escape":
+            e.preventDefault();
+            this.hideAllMobilePanels();
+            break;
+        }
+      }
+    }
+
+    private handlePageHidden(): void {
+      // 页面隐藏时暂停动画和处理
+      this.hideAllMobilePanels();
+    }
+
+    private handlePageVisible(): void {
+      // 页面显示时恢复
+      this.checkMobile();
+    }
+
+    // 公共方法
+    public isMobileMode(): boolean {
+      return this.isMobile;
+    }
+
+    public showPanel(panelType: "sidebar" | "properties" | "tools"): void {
+      if (this.isMobile) {
+        this.showMobilePanel(panelType);
+      } else {
+        // 桌面端逻辑
+        if (panelType === "sidebar" && this.sidebarElement) {
+          this.sidebarElement.classList.add("active");
+        } else if (panelType === "properties" && this.propertiesElement) {
+          this.propertiesElement.classList.add("active");
+        }
+      }
+    }
+
+    public hidePanel(panelType: "sidebar" | "properties" | "tools"): void {
+      if (this.isMobile) {
+        const panels = (window as any).MobileControlPanels;
+        if (panels && panels[panelType]) {
+          panels[panelType].hide();
+        }
+      } else {
+        // 桌面端逻辑
+        if (panelType === "sidebar" && this.sidebarElement) {
+          this.sidebarElement.classList.remove("active");
+        } else if (panelType === "properties" && this.propertiesElement) {
+          this.propertiesElement.classList.remove("active");
+        }
+      }
+    }
+
+    public hideAllPanels(): void {
+      this.hideAllMobilePanels();
+    }
+
+    public destroy(): void {
+      if (this.touchHandler) {
+        this.touchHandler.destroy();
+      }
+
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+      }
+    }
+  }
+
+  // 初始化编辑器布局
+  document.addEventListener("DOMContentLoaded", () => {
+    const editorLayout = new EditorLayout();
+
+    // 导出到全局作用域供其他组件使用
+    (window as any).EditorLayout = editorLayout;
+  });
+</script>

@@ -1,0 +1,55 @@
+{
+    "brand": {
+        "name": "BananaEditor",
+        "slogan": "Éditeur d'Images IA Professionnel alimenté par la Technologie Nano Banana",
+        "description": "Créez des images époustouflantes avec la technologie IA nano banana"
+    },
+    "navigation": {
+        "home": "Accueil",
+        "editor": "Éditeur",
+        "prompts": "Bibliothèque de Prompts",
+        "about": "À propos",
+        "contact": "Contact"
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Erreur",
+        "success": "Succès",
+        "cancel": "Annuler",
+        "confirm": "Confirmer",
+        "save": "Enregistrer",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "create": "Créer",
+        "upload": "Télécharger",
+        "download": "Télécharger",
+        "share": "Partager",
+        "copy": "Copier",
+        "paste": "Coller",
+        "undo": "Annuler",
+        "redo": "Refaire",
+        "close": "Fermer",
+        "open": "Ouvrir",
+        "search": "Rechercher",
+        "filter": "Filtrer",
+        "sort": "Trier",
+        "language": "Langue"
+    },
+    "buttons": {
+        "getStarted": "Commencer",
+        "tryNow": "Essayer Maintenant",
+        "learnMore": "En Savoir Plus",
+        "startEditing": "Commencer l'Édition",
+        "viewPrompts": "Voir les Prompts"
+    },
+    "messages": {
+        "welcome": "Bienvenue sur BananaEditor",
+        "fileUploaded": "Fichier téléchargé avec succès",
+        "fileTooLarge": "Le fichier est trop volumineux",
+        "invalidFileType": "Type de fichier invalide",
+        "networkError": "Erreur réseau, veuillez réessayer",
+        "processingImage": "Traitement de l'image...",
+        "generationComplete": "Génération d'image terminée",
+        "fusionComplete": "Fusion d'image terminée"
+    }
+}

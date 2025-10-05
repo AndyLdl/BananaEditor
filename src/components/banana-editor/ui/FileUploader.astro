@@ -1,0 +1,669 @@
+---
+// BananaEditor文件上传组件
+// 专为BananaEditor设计的拖拽上传组件
+
+export interface Props {
+  id?: string;
+  accept?: string;
+  maxSize?: number;
+  multiple?: boolean;
+  className?: string;
+  placeholder?: string;
+}
+
+const {
+  id = "file-uploader",
+  accept = "image/*",
+  maxSize = 10485760, // 10MB
+  multiple = false,
+  className = "",
+  placeholder = "拖拽文件到此处或点击选择",
+} = Astro.props;
+---
+
+<div class={`banana-file-uploader ${className}`} id={id}>
+  <div class="uploader-area" id={`${id}-area`}>
+    <div class="uploader-content">
+      <div class="uploader-icon">📁</div>
+      <h4 class="uploader-title">{placeholder}</h4>
+      <p class="uploader-description">
+        支持 JPG、PNG、WebP 格式，最大 {Math.round(maxSize / (1024 * 1024))}MB
+      </p>
+      <button class="browse-button" type="button">
+        <span class="button-icon">📂</span>
+        浏览文件
+      </button>
+    </div>
+
+    <input
+      type="file"
+      id={`${id}-input`}
+      accept={accept}
+      multiple={multiple}
+      style="display: none;"
+    />
+  </div>
+
+  <!-- 上传进度 -->
+  <div class="upload-progress" id={`${id}-progress`} style="display: none;">
+    <div class="progress-info">
+      <span class="progress-filename" id={`${id}-filename`}>--</span>
+      <span class="progress-percentage" id={`${id}-percentage`}>0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id={`${id}-fill`}></div>
+    </div>
+  </div>
+
+  <!-- 错误提示 -->
+  <div class="upload-error" id={`${id}-error`} style="display: none;">
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <span class="error-message" id={`${id}-error-message`}>上传失败</span>
+      <button class="error-close" id={`${id}-error-close`}>×</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .banana-file-uploader {
+    width: 100%;
+  }
+
+  /* 上传区域 */
+  .uploader-area {
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    position: relative;
+  }
+
+  .uploader-area:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 248, 220, 0.5);
+  }
+
+  .uploader-area.drag-over {
+    border-color: var(--banana-accent, #ff6b35);
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.02);
+  }
+
+  .uploader-area.uploading {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .uploader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .uploader-icon {
+    font-size: 48px;
+    opacity: 0.6;
+    transition: transform 0.3s ease;
+  }
+
+  .uploader-area:hover .uploader-icon {
+    transform: scale(1.1);
+  }
+
+  .uploader-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .uploader-description {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .browse-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    color: var(--banana-dark, #2d1810);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .browse-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+  }
+
+  .button-icon {
+    font-size: 16px;
+  }
+
+  /* 上传进度 */
+  .upload-progress {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(255, 248, 220, 0.3);
+    border-radius: 8px;
+    border: 1px solid var(--banana-border, #ffe55c);
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-filename {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .progress-percentage {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    margin-left: 12px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* 错误提示 */
+  .upload-error {
+    margin-top: 16px;
+  }
+
+  .error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #dc2626;
+  }
+
+  .error-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .error-message {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .error-close {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: #dc2626;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+  }
+
+  .error-close:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .uploader-area {
+      padding: 24px 16px;
+    }
+
+    .uploader-icon {
+      font-size: 36px;
+    }
+
+    .uploader-title {
+      font-size: 16px;
+    }
+
+    .uploader-description {
+      font-size: 13px;
+    }
+
+    .browse-button {
+      padding: 10px 16px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .uploader-area {
+      padding: 20px 12px;
+    }
+
+    .progress-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .progress-percentage {
+      margin-left: 0;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .uploader-area {
+      border-color: #000;
+    }
+
+    .error-content {
+      border-color: #dc2626;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .uploader-area,
+    .uploader-icon,
+    .browse-button,
+    .progress-fill {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // BananaEditor文件上传器
+  class BananaFileUploader {
+    private uploaderId: string;
+    private uploaderArea: HTMLElement | null = null;
+    private fileInput: HTMLInputElement | null = null;
+    private browseButton: HTMLButtonElement | null = null;
+    private progressSection: HTMLElement | null = null;
+    private errorSection: HTMLElement | null = null;
+
+    private maxSize: number;
+    private accept: string;
+    private multiple: boolean;
+    private isUploading: boolean = false;
+
+    constructor(uploaderId: string, options: any = {}) {
+      this.uploaderId = uploaderId;
+      this.maxSize = options.maxSize || 10485760; // 10MB
+      this.accept = options.accept || "image/*";
+      this.multiple = options.multiple || false;
+
+      this.init();
+    }
+
+    private init(): void {
+      this.bindElements();
+      this.setupEventListeners();
+    }
+
+    private bindElements(): void {
+      this.uploaderArea = document.getElementById(`${this.uploaderId}-area`);
+      this.fileInput = document.getElementById(
+        `${this.uploaderId}-input`,
+      ) as HTMLInputElement;
+      this.browseButton = this.uploaderArea?.querySelector(
+        ".browse-button",
+      ) as HTMLButtonElement;
+      this.progressSection = document.getElementById(
+        `${this.uploaderId}-progress`,
+      );
+      this.errorSection = document.getElementById(`${this.uploaderId}-error`);
+    }
+
+    private setupEventListeners(): void {
+      // 点击上传区域
+      this.uploaderArea?.addEventListener("click", () => {
+        if (!this.isUploading) {
+          this.fileInput?.click();
+        }
+      });
+
+      // 浏览按钮点击
+      this.browseButton?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!this.isUploading) {
+          this.fileInput?.click();
+        }
+      });
+
+      // 文件选择
+      this.fileInput?.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        if (target.files && target.files.length > 0) {
+          this.handleFiles(Array.from(target.files));
+        }
+      });
+
+      // 拖拽事件
+      this.setupDragAndDrop();
+
+      // 错误关闭按钮
+      const errorClose = document.getElementById(
+        `${this.uploaderId}-error-close`,
+      );
+      errorClose?.addEventListener("click", () => {
+        this.hideError();
+      });
+    }
+
+    private setupDragAndDrop(): void {
+      if (!this.uploaderArea) return;
+
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        this.uploaderArea?.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
+
+      this.uploaderArea.addEventListener("dragenter", () => {
+        if (!this.isUploading) {
+          this.uploaderArea?.classList.add("drag-over");
+        }
+      });
+
+      this.uploaderArea.addEventListener("dragover", () => {
+        if (!this.isUploading) {
+          this.uploaderArea?.classList.add("drag-over");
+        }
+      });
+
+      this.uploaderArea.addEventListener("dragleave", (e) => {
+        if (!this.uploaderArea?.contains(e.relatedTarget as Node)) {
+          this.uploaderArea?.classList.remove("drag-over");
+        }
+      });
+
+      this.uploaderArea.addEventListener("drop", (e) => {
+        this.uploaderArea?.classList.remove("drag-over");
+
+        if (!this.isUploading) {
+          const files = e.dataTransfer?.files;
+          if (files && files.length > 0) {
+            this.handleFiles(Array.from(files));
+          }
+        }
+      });
+    }
+
+    private handleFiles(files: File[]): void {
+      // 验证文件
+      const validFiles = this.validateFiles(files);
+
+      if (validFiles.length === 0) {
+        return;
+      }
+
+      // 如果不支持多文件，只取第一个
+      const filesToUpload = this.multiple ? validFiles : [validFiles[0]];
+
+      // 开始上传
+      this.startUpload(filesToUpload);
+    }
+
+    private validateFiles(files: File[]): File[] {
+      const validFiles: File[] = [];
+
+      for (const file of files) {
+        // 检查文件类型
+        if (!this.isValidFileType(file)) {
+          this.showError(`文件 ${file.name} 格式不支持`);
+          continue;
+        }
+
+        // 检查文件大小
+        if (file.size > this.maxSize) {
+          const maxSizeMB = Math.round(this.maxSize / (1024 * 1024));
+          this.showError(`文件 ${file.name} 大小超过 ${maxSizeMB}MB 限制`);
+          continue;
+        }
+
+        validFiles.push(file);
+      }
+
+      return validFiles;
+    }
+
+    private isValidFileType(file: File): boolean {
+      if (this.accept === "*") return true;
+
+      const acceptTypes = this.accept.split(",").map((type) => type.trim());
+
+      return acceptTypes.some((acceptType) => {
+        if (acceptType.startsWith(".")) {
+          // 文件扩展名匹配
+          return file.name.toLowerCase().endsWith(acceptType.toLowerCase());
+        } else if (acceptType.includes("/*")) {
+          // MIME类型通配符匹配
+          const baseType = acceptType.split("/")[0];
+          return file.type.startsWith(baseType + "/");
+        } else {
+          // 精确MIME类型匹配
+          return file.type === acceptType;
+        }
+      });
+    }
+
+    private async startUpload(files: File[]): Promise<void> {
+      this.isUploading = true;
+      this.uploaderArea?.classList.add("uploading");
+      this.hideError();
+
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          await this.uploadFile(file, i, files.length);
+        }
+
+        // 所有文件上传完成
+        this.onUploadComplete(files);
+      } catch (error) {
+        console.error("Upload error:", error);
+        this.showError(error instanceof Error ? error.message : "上传失败");
+      } finally {
+        this.isUploading = false;
+        this.uploaderArea?.classList.remove("uploading");
+        this.hideProgress();
+      }
+    }
+
+    private async uploadFile(
+      file: File,
+      index: number,
+      total: number,
+    ): Promise<void> {
+      return new Promise((resolve, reject) => {
+        // 显示进度
+        this.showProgress(file.name);
+
+        // 模拟上传进度
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 15;
+          if (progress > 95) progress = 95;
+
+          this.updateProgress(progress);
+        }, 100);
+
+        // 模拟上传完成
+        setTimeout(
+          () => {
+            clearInterval(progressInterval);
+            this.updateProgress(100);
+
+            setTimeout(() => {
+              resolve();
+            }, 200);
+          },
+          1000 + Math.random() * 2000,
+        );
+      });
+    }
+
+    private showProgress(filename: string): void {
+      const filenameElement = document.getElementById(
+        `${this.uploaderId}-filename`,
+      );
+      if (filenameElement) {
+        filenameElement.textContent = filename;
+      }
+
+      if (this.progressSection) {
+        this.progressSection.style.display = "block";
+      }
+    }
+
+    private updateProgress(percentage: number): void {
+      const progressFill = document.getElementById(`${this.uploaderId}-fill`);
+      const progressPercentage = document.getElementById(
+        `${this.uploaderId}-percentage`,
+      );
+
+      if (progressFill) {
+        progressFill.style.width = `${percentage}%`;
+      }
+
+      if (progressPercentage) {
+        progressPercentage.textContent = `${Math.round(percentage)}%`;
+      }
+    }
+
+    private hideProgress(): void {
+      if (this.progressSection) {
+        this.progressSection.style.display = "none";
+      }
+    }
+
+    private showError(message: string): void {
+      const errorMessage = document.getElementById(
+        `${this.uploaderId}-error-message`,
+      );
+      if (errorMessage) {
+        errorMessage.textContent = message;
+      }
+
+      if (this.errorSection) {
+        this.errorSection.style.display = "block";
+      }
+    }
+
+    private hideError(): void {
+      if (this.errorSection) {
+        this.errorSection.style.display = "none";
+      }
+    }
+
+    private onUploadComplete(files: File[]): void {
+      // 发送自定义事件
+      const event = new CustomEvent("filechange", {
+        detail: {
+          files: files,
+          uploaderId: this.uploaderId,
+        },
+      });
+
+      document.getElementById(this.uploaderId)?.dispatchEvent(event);
+    }
+
+    // 公共方法
+    public reset(): void {
+      if (this.fileInput) {
+        this.fileInput.value = "";
+      }
+      this.hideProgress();
+      this.hideError();
+      this.isUploading = false;
+      this.uploaderArea?.classList.remove("uploading", "drag-over");
+    }
+
+    public setEnabled(enabled: boolean): void {
+      if (this.uploaderArea) {
+        if (enabled) {
+          this.uploaderArea.style.pointerEvents = "auto";
+          this.uploaderArea.style.opacity = "1";
+        } else {
+          this.uploaderArea.style.pointerEvents = "none";
+          this.uploaderArea.style.opacity = "0.5";
+        }
+      }
+    }
+  }
+
+  // 自动初始化所有上传器
+  document.addEventListener("DOMContentLoaded", () => {
+    const uploaders = document.querySelectorAll(".banana-file-uploader");
+
+    uploaders.forEach((uploader) => {
+      const uploaderId = uploader.id;
+      if (uploaderId) {
+        // 从DOM属性获取配置
+        const uploaderArea = uploader.querySelector(".uploader-area");
+        const fileInput = uploader.querySelector(
+          "input[type='file']",
+        ) as HTMLInputElement;
+
+        const options = {
+          accept: fileInput?.accept || "image/*",
+          multiple: fileInput?.multiple || false,
+          maxSize: 10485760, // 默认10MB
+        };
+
+        new BananaFileUploader(uploaderId, options);
+      }
+    });
+  });
+
+  // 导出到全局作用域
+  (window as any).BananaFileUploader = BananaFileUploader;
+</script>

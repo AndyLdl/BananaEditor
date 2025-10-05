@@ -1,0 +1,186 @@
+---
+/**
+ * BananaEditor FAQ组件
+ * 展示关于nano banana AI的常见问题
+ */
+
+import { Icon } from "astro-icon/components";
+import { loadTranslations, createTranslator } from "../../i18n/utils";
+
+// 获取当前语言
+import { detectLanguageFromRequest } from "../../utils/language-detector";
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载翻译
+const homeTranslations = await loadTranslations(currentLang, "home");
+const t = createTranslator(currentLang, homeTranslations);
+---
+
+<section class="py-20 sm:py-32 bg-white">
+  <div class="mx-auto max-w-4xl px-6 lg:px-8">
+    <!-- 标题区域 -->
+    <div class="text-center mb-16">
+      <div
+        class="inline-flex items-center gap-2 px-4 py-2 bg-banana-light/50 rounded-full text-banana-primary font-medium text-sm mb-6">
+        <Icon name="heroicons:question-mark-circle" class="w-4 h-4" />
+        <span>FAQ</span>
+      </div>
+
+      <h2
+        class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+        {t("faq.title")}
+      </h2>
+      <p
+        class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        {t("faq.subtitle")}
+      </p>
+    </div>
+
+    <!-- FAQ列表 -->
+    <div class="space-y-6">
+      {
+        (t("faq.items") || []).map((item: any, index: number) => (
+          <div class="faq-item group" data-index={index}>
+            <button
+              class="faq-question w-full text-left bg-white border-2 border-gray-200 rounded-2xl p-6 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-lg"
+              aria-expanded="false">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-4 flex-1">
+                  <div class="w-8 h-8 bg-banana-gradient rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                    <span class="text-white font-bold text-sm">Q</span>
+                  </div>
+                  <h3 class="text-lg font-semibold text-gray-900 group-hover:text-banana-primary transition-colors flex-1">
+                    {item.question}
+                  </h3>
+                </div>
+                <Icon
+                  name="heroicons:chevron-down"
+                  class="w-6 h-6 text-gray-400 transition-transform duration-300 faq-icon flex-shrink-0"
+                />
+              </div>
+            </button>
+
+            <div
+              class="faq-answer overflow-hidden transition-all duration-300"
+              style="max-height: 0;">
+              <div class="p-6 pl-20 pr-8 bg-banana-light/20 rounded-b-2xl border-x-2 border-b-2 border-gray-200 border-t-0">
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-banana-secondary/80 rounded flex items-center justify-center flex-shrink-0 mt-1">
+                    <span class="text-white font-bold text-xs">A</span>
+                  </div>
+                  <p class="text-gray-700 leading-relaxed flex-1">
+                    {item.answer}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- 底部帮助 -->
+    <div class="text-center mt-16 pt-12 border-t border-gray-200">
+      <p class="text-gray-600 mb-6">
+        Still have questions about nano banana AI?
+      </p>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-2 px-6 py-3 border-2 border-banana-primary text-banana-primary font-semibold rounded-xl hover:bg-banana-primary hover:text-white transition-all duration-300">
+        <Icon name="heroicons:chat-bubble-left-right" class="w-5 h-5" />
+        <span>Contact Support</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // FAQ折叠/展开功能
+  document.addEventListener("DOMContentLoaded", () => {
+    const faqItems = document.querySelectorAll(".faq-item");
+
+    faqItems.forEach((item) => {
+      const question = item.querySelector(".faq-question");
+      const answer = item.querySelector(".faq-answer") as HTMLElement;
+      const icon = item.querySelector(".faq-icon");
+
+      if (!question || !answer || !icon) return;
+
+      question.addEventListener("click", () => {
+        const isExpanded = question.getAttribute("aria-expanded") === "true";
+
+        // 关闭所有其他FAQ
+        faqItems.forEach((otherItem) => {
+          if (otherItem !== item) {
+            const otherQuestion = otherItem.querySelector(".faq-question");
+            const otherAnswer = otherItem.querySelector(
+              ".faq-answer"
+            ) as HTMLElement;
+            const otherIcon = otherItem.querySelector(".faq-icon");
+
+            if (otherQuestion && otherAnswer && otherIcon) {
+              otherQuestion.setAttribute("aria-expanded", "false");
+              otherAnswer.style.maxHeight = "0";
+              otherIcon.classList.remove("rotate-180");
+            }
+          }
+        });
+
+        // 切换当前FAQ
+        if (isExpanded) {
+          question.setAttribute("aria-expanded", "false");
+          answer.style.maxHeight = "0";
+          icon.classList.remove("rotate-180");
+        } else {
+          question.setAttribute("aria-expanded", "true");
+          answer.style.maxHeight = answer.scrollHeight + "px";
+          icon.classList.add("rotate-180");
+
+          // 滚动到视图
+          setTimeout(() => {
+            item.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }, 300);
+        }
+      });
+    });
+
+    // 默认展开第一个FAQ
+    const firstQuestion = faqItems[0]?.querySelector(".faq-question");
+    const firstAnswer = faqItems[0]?.querySelector(
+      ".faq-answer"
+    ) as HTMLElement;
+    const firstIcon = faqItems[0]?.querySelector(".faq-icon");
+
+    if (firstQuestion && firstAnswer && firstIcon) {
+      firstQuestion.setAttribute("aria-expanded", "true");
+      firstAnswer.style.maxHeight = firstAnswer.scrollHeight + "px";
+      firstIcon.classList.add("rotate-180");
+    }
+  });
+</script>
+
+<style>
+  .faq-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .faq-icon.rotate-180 {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    transition: max-height 0.3s ease;
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    .faq-question {
+      padding: 1rem;
+    }
+
+    .faq-answer {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+  }
+</style>

@@ -1,0 +1,240 @@
+---
+/**
+ * BananaEditor专用布局组件
+ * 全屏编辑器，不包含导航栏和页脚
+ */
+
+import "@fontsource-variable/inter/index.css";
+import "../styles/globals.css";
+
+export interface Props {
+  title: string;
+  description?: string;
+  noIndex?: boolean;
+}
+
+const { title, description, noIndex = false } = Astro.props;
+
+// 构建标题
+const makeTitle = title.includes("BananaEditor")
+  ? title
+  : title
+    ? `${title} | BananaEditor`
+    : "BananaEditor - Professional AI Image Editor";
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- 基础SEO标签 -->
+    <title>{makeTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalURL} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- 预加载关键资源 -->
+    <link
+      rel="preload"
+      href="/fonts/inter-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- 主题色彩 -->
+    <meta name="theme-color" content="#FFD700" />
+    <meta name="msapplication-TileColor" content="#FFD700" />
+
+    <!-- 性能优化 -->
+    <meta name="format-detection" content="telephone=no" />
+  </head>
+  <body class="bg-white text-gray-900 antialiased overflow-hidden">
+    <!-- 编辑器内容 - 全屏显示 -->
+    <slot />
+
+    <!-- 全局样式 -->
+    <style is:global>
+      /* 确保全屏显示 */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      /* 性能优化 */
+      img {
+        content-visibility: auto;
+      }
+
+      /* BananaEditor主题CSS变量 */
+      :root {
+        --banana-primary: #ffd700;
+        --banana-secondary: #ffa500;
+        --banana-accent: #ff6b35;
+        --banana-light: #fff8dc;
+        --banana-dark: #2d1810;
+        --banana-gradient: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+        --banana-border: #ffe55c;
+      }
+
+      /* 滚动条样式 */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
+      /* 选择文本样式 */
+      ::selection {
+        background-color: rgba(255, 215, 0, 0.3);
+        color: #2d1810;
+      }
+
+      /* 焦点样式 */
+      *:focus {
+        outline: 2px solid rgba(255, 215, 0, 0.5);
+        outline-offset: 2px;
+      }
+
+      /* 按钮和输入框的默认样式重置 */
+      button,
+      input,
+      textarea,
+      select {
+        font-family: inherit;
+      }
+
+      /* 禁用文本选择的元素 */
+      .no-select {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      /* 动画性能优化 */
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* 触摸设备优化 */
+      @media (hover: none) and (pointer: coarse) {
+        .touch-friendly {
+          min-height: 44px;
+          min-width: 44px;
+        }
+      }
+
+      /* 减少动画（用户偏好） */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* 高对比度模式支持 */
+      @media (prefers-contrast: high) {
+        :root {
+          --banana-primary: #000000;
+          --banana-secondary: #333333;
+          --banana-accent: #666666;
+        }
+      }
+
+      /* 暗色模式支持（如果需要） */
+      @media (prefers-color-scheme: dark) {
+        /* 暂时保持浅色主题，编辑器通常使用浅色背景 */
+      }
+    </style>
+
+    <!-- 编辑器专用脚本 -->
+    <script>
+      // 防止意外离开页面
+      window.addEventListener("beforeunload", function (e) {
+        // 检查是否有未保存的工作
+        if (window.editorController && window.editorController.hasUnsavedWork) {
+          e.preventDefault();
+          e.returnValue = "您有未保存的工作，确定要离开吗？";
+          return e.returnValue;
+        }
+      });
+
+      // 键盘快捷键
+      document.addEventListener("keydown", function (e) {
+        // Ctrl/Cmd + S 保存
+        if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+          e.preventDefault();
+          if (window.editorController) {
+            window.editorController.saveCurrentWork();
+          }
+        }
+
+        // Ctrl/Cmd + Z 撤销
+        if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+          e.preventDefault();
+          if (window.editorController) {
+            window.editorController.undo();
+          }
+        }
+
+        // Ctrl/Cmd + Shift + Z 重做
+        if ((e.ctrlKey || e.metaKey) && e.key === "z" && e.shiftKey) {
+          e.preventDefault();
+          if (window.editorController) {
+            window.editorController.redo();
+          }
+        }
+
+        // Escape 取消当前操作
+        if (e.key === "Escape") {
+          if (window.editorController) {
+            window.editorController.cancelCurrentOperation();
+          }
+        }
+      });
+
+      // 全屏API支持
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch((err) => {
+            console.log(
+              `Error attempting to enable fullscreen: ${err.message}`,
+            );
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      // 导出到全局作用域
+      window.toggleFullscreen = toggleFullscreen;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+{
+    "library": {
+        "title": "Bibliothèque de Prompts",
+        "description": "Explorez et utilisez des prompts optimisés pour nano banana IA",
+        "searchPlaceholder": "Rechercher des prompts...",
+        "noResults": "Aucun prompt trouvé",
+        "loadMore": "Charger Plus"
+    },
+    "categories": {
+        "all": "Tous",
+        "art": "Art",
+        "photography": "Photographie",
+        "design": "Design",
+        "nature": "Nature",
+        "portrait": "Portrait",
+        "landscape": "Paysage",
+        "abstract": "Abstrait",
+        "fantasy": "Fantaisie",
+        "realistic": "Réaliste"
+    },
+    "filters": {
+        "category": "Catégorie",
+        "rating": "Évaluation",
+        "usage": "Utilisation",
+        "recent": "Récent",
+        "popular": "Populaire",
+        "trending": "Tendance"
+    },
+    "actions": {
+        "use": "Utiliser",
+        "copy": "Copier",
+        "favorite": "Favori",
+        "share": "Partager",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "useInEditor": "Utiliser dans l'Éditeur",
+        "copyPrompt": "Copier Prompt",
+        "addToFavorites": "Ajouter aux Favoris",
+        "removeFromFavorites": "Retirer des Favoris"
+    },
+    "details": {
+        "author": "Auteur",
+        "created": "Créé",
+        "updated": "Mis à jour",
+        "usage": "Fois Utilisé",
+        "rating": "Évaluation",
+        "tags": "Étiquettes",
+        "description": "Description",
+        "examples": "Exemples"
+    },
+    "create": {
+        "title": "Créer Nouveau Prompt",
+        "name": "Nom du Prompt",
+        "description": "Description",
+        "content": "Contenu du Prompt",
+        "category": "Catégorie",
+        "tags": "Étiquettes",
+        "save": "Enregistrer Prompt",
+        "cancel": "Annuler"
+    },
+    "messages": {
+        "copied": "Prompt copié dans le presse-papiers",
+        "saved": "Prompt enregistré avec succès",
+        "deleted": "Prompt supprimé",
+        "favoriteAdded": "Ajouté aux favoris",
+        "favoriteRemoved": "Retiré des favoris",
+        "usedInEditor": "Prompt appliqué dans l'éditeur"
+    }
+}

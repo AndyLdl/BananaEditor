@@ -1,0 +1,55 @@
+{
+    "brand": {
+        "name": "BananaEditor",
+        "slogan": "Editor de Imágenes AI Profesional impulsado por Tecnología Nano Banana",
+        "description": "Crea imágenes impresionantes con la tecnología AI nano banana"
+    },
+    "navigation": {
+        "home": "Inicio",
+        "editor": "Editor",
+        "prompts": "Biblioteca de Prompts",
+        "about": "Acerca de",
+        "contact": "Contacto"
+    },
+    "common": {
+        "loading": "Cargando...",
+        "error": "Error",
+        "success": "Éxito",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "save": "Guardar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "create": "Crear",
+        "upload": "Subir",
+        "download": "Descargar",
+        "share": "Compartir",
+        "copy": "Copiar",
+        "paste": "Pegar",
+        "undo": "Deshacer",
+        "redo": "Rehacer",
+        "close": "Cerrar",
+        "open": "Abrir",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "sort": "Ordenar",
+        "language": "Idioma"
+    },
+    "buttons": {
+        "getStarted": "Comenzar",
+        "tryNow": "Probar Ahora",
+        "learnMore": "Saber Más",
+        "startEditing": "Comenzar a Editar",
+        "viewPrompts": "Ver Prompts"
+    },
+    "messages": {
+        "welcome": "Bienvenido a BananaEditor",
+        "fileUploaded": "Archivo subido exitosamente",
+        "fileTooLarge": "El archivo es demasiado grande",
+        "invalidFileType": "Tipo de archivo inválido",
+        "networkError": "Error de red, por favor intenta de nuevo",
+        "processingImage": "Procesando imagen...",
+        "generationComplete": "Generación de imagen completa",
+        "fusionComplete": "Fusión de imagen completa"
+    }
+}

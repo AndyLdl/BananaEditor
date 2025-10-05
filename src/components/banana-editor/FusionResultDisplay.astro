@@ -1,0 +1,1235 @@
+---
+// BananaEditor融合结果显示组件
+// 专门用于在编辑器画布中显示融合结果
+
+export interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<div
+  class={`fusion-result-display ${className}`}
+  id="fusion-result-display"
+  style="display: none;">
+  <!-- 结果头部信息 -->
+  <div class="result-header">
+    <div class="result-info">
+      <div class="result-icon">🔀</div>
+      <div class="result-text">
+        <h3 class="result-title">融合完成</h3>
+        <p class="result-subtitle" id="result-subtitle">图片已成功融合</p>
+      </div>
+    </div>
+    <div class="result-actions">
+      <button class="result-action-btn" id="download-result" title="下载结果">
+        <span class="icon">💾</span>
+      </button>
+      <button class="result-action-btn" id="share-result" title="分享结果">
+        <span class="icon">🔗</span>
+      </button>
+      <button class="result-action-btn" id="close-result" title="关闭">
+        <span class="icon">✕</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 融合结果图片 -->
+  <div class="result-image-container">
+    <div class="result-image-wrapper">
+      <img id="result-image" class="result-image" alt="融合结果" />
+      <div class="image-overlay">
+        <div class="overlay-controls">
+          <button class="overlay-btn" id="zoom-in-result" title="放大">
+            <span class="icon">🔍</span>
+          </button>
+          <button class="overlay-btn" id="zoom-out-result" title="缩小">
+            <span class="icon">🔍</span>
+          </button>
+          <button class="overlay-btn" id="fit-result" title="适应窗口">
+            <span class="icon">📐</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 融合参数信息 -->
+  <div class="result-params">
+    <div class="params-header">
+      <h4 class="params-title">融合参数</h4>
+      <button class="params-toggle" id="params-toggle">
+        <span class="icon">📊</span>
+      </button>
+    </div>
+    <div class="params-content" id="params-content">
+      <div class="param-item">
+        <span class="param-label">融合比例：</span>
+        <span class="param-value" id="param-ratio">--</span>
+      </div>
+      <div class="param-item">
+        <span class="param-label">融合模式：</span>
+        <span class="param-value" id="param-blend-mode">--</span>
+      </div>
+      <div class="param-item">
+        <span class="param-label">融合强度：</span>
+        <span class="param-value" id="param-intensity">--</span>
+      </div>
+      <div class="param-item">
+        <span class="param-label">边缘处理：</span>
+        <span class="param-value" id="param-edge">--</span>
+      </div>
+      <div class="param-item">
+        <span class="param-label">色彩调和：</span>
+        <span class="param-value" id="param-harmony">--</span>
+      </div>
+      <div class="param-item">
+        <span class="param-label">处理时间：</span>
+        <span class="param-value" id="param-time">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 融合历史和对比 -->
+  <div class="result-comparison" id="result-comparison" style="display: none;">
+    <div class="comparison-header">
+      <h4 class="comparison-title">对比视图</h4>
+      <button class="comparison-toggle" id="comparison-toggle">
+        <span class="icon">👁️</span>
+      </button>
+    </div>
+    <div class="comparison-content">
+      <div class="comparison-images">
+        <div class="comparison-item">
+          <img id="original-image-1" class="comparison-image" alt="原图1" />
+          <span class="comparison-label">原图1</span>
+        </div>
+        <div class="comparison-item">
+          <img id="original-image-2" class="comparison-image" alt="原图2" />
+          <span class="comparison-label">原图2</span>
+        </div>
+        <div class="comparison-item">
+          <img id="fused-image" class="comparison-image" alt="融合结果" />
+          <span class="comparison-label">融合结果</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 调整参数面板 -->
+  <div class="adjustment-panel" id="adjustment-panel" style="display: none;">
+    <div class="adjustment-header">
+      <h4 class="adjustment-title">实时调整</h4>
+      <button class="adjustment-close" id="adjustment-close">✕</button>
+    </div>
+    <div class="adjustment-content">
+      <div class="adjustment-group">
+        <label class="adjustment-label">
+          融合比例
+          <span class="adjustment-value" id="adj-ratio-value">50%</span>
+        </label>
+        <input
+          type="range"
+          id="adj-ratio"
+          class="adjustment-range"
+          min="0"
+          max="100"
+          value="50"
+        />
+      </div>
+
+      <div class="adjustment-group">
+        <label class="adjustment-label">
+          融合强度
+          <span class="adjustment-value" id="adj-intensity-value">70%</span>
+        </label>
+        <input
+          type="range"
+          id="adj-intensity"
+          class="adjustment-range"
+          min="0"
+          max="100"
+          value="70"
+        />
+      </div>
+
+      <div class="adjustment-group">
+        <label class="adjustment-label">
+          色彩调和
+          <span class="adjustment-value" id="adj-harmony-value">50%</span>
+        </label>
+        <input
+          type="range"
+          id="adj-harmony"
+          class="adjustment-range"
+          min="0"
+          max="100"
+          value="50"
+        />
+      </div>
+
+      <div class="adjustment-actions">
+        <button class="apply-adjustment-btn" id="apply-adjustment">
+          <span class="icon">✅</span>
+          应用调整
+        </button>
+        <button class="reset-adjustment-btn" id="reset-adjustment">
+          <span class="icon">🔄</span>
+          重置
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 建议面板 -->
+  <div class="suggestions-panel" id="suggestions-panel">
+    <div class="suggestions-header">
+      <h4 class="suggestions-title">优化建议</h4>
+      <button class="suggestions-toggle" id="suggestions-toggle">
+        <span class="icon">💡</span>
+      </button>
+    </div>
+    <div class="suggestions-content" id="suggestions-content">
+      <div class="suggestion-list" id="suggestion-list">
+        <!-- 建议项将通过JavaScript动态添加 -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fusion-result-display {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  /* 结果头部 */
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    border-bottom: 1px solid var(--banana-border, #ffe55c);
+  }
+
+  .result-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .result-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .result-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .result-subtitle {
+    margin: 2px 0 0 0;
+    font-size: 14px;
+    color: var(--banana-dark, #2d1810);
+    opacity: 0.8;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .result-action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--banana-dark, #2d1810);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .result-action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+  }
+
+  /* 结果图片容器 */
+  .result-image-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .result-image-wrapper {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .result-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .image-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .result-image-wrapper:hover .image-overlay {
+    opacity: 1;
+  }
+
+  .overlay-controls {
+    display: flex;
+    gap: 4px;
+  }
+
+  .overlay-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .overlay-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+
+  /* 融合参数信息 */
+  .result-params {
+    border-top: 1px solid #e5e7eb;
+    background: white;
+  }
+
+  .params-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    cursor: pointer;
+  }
+
+  .params-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .params-toggle {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .params-toggle:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .params-content {
+    padding: 0 20px 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 8px;
+  }
+
+  .param-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .param-label {
+    color: #666;
+    font-weight: 500;
+  }
+
+  .param-value {
+    color: var(--banana-dark, #2d1810);
+    font-weight: 600;
+  }
+
+  /* 对比视图 */
+  .result-comparison {
+    border-top: 1px solid #e5e7eb;
+    background: white;
+  }
+
+  .comparison-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    cursor: pointer;
+  }
+
+  .comparison-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .comparison-toggle {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .comparison-toggle:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .comparison-content {
+    padding: 0 20px 16px 20px;
+  }
+
+  .comparison-images {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .comparison-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .comparison-image {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .comparison-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  /* 调整面板 */
+  .adjustment-panel {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 280px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+  }
+
+  .adjustment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .adjustment-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .adjustment-close {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .adjustment-close:hover {
+    background: #f3f4f6;
+  }
+
+  .adjustment-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .adjustment-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .adjustment-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .adjustment-value {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .adjustment-range {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+
+  .adjustment-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .adjustment-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .adjustment-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .apply-adjustment-btn,
+  .reset-adjustment-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .apply-adjustment-btn {
+    background: var(--banana-primary, #ffd700);
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .apply-adjustment-btn:hover {
+    background: var(--banana-secondary, #ffa500);
+  }
+
+  .reset-adjustment-btn {
+    background: #f3f4f6;
+    color: #666;
+  }
+
+  .reset-adjustment-btn:hover {
+    background: #e5e7eb;
+  }
+
+  /* 建议面板 */
+  .suggestions-panel {
+    border-top: 1px solid #e5e7eb;
+    background: white;
+  }
+
+  .suggestions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    cursor: pointer;
+  }
+
+  .suggestions-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .suggestions-toggle {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .suggestions-toggle:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .suggestions-content {
+    padding: 0 20px 16px 20px;
+  }
+
+  .suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .suggestion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .suggestion-icon {
+    font-size: 14px;
+    margin-top: 1px;
+  }
+
+  .suggestion-text {
+    flex: 1;
+    color: #374151;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .result-header {
+      padding: 12px 16px;
+    }
+
+    .result-title {
+      font-size: 16px;
+    }
+
+    .params-content {
+      grid-template-columns: 1fr;
+      padding: 0 16px 12px 16px;
+    }
+
+    .comparison-images {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .comparison-image {
+      height: 120px;
+    }
+
+    .adjustment-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 320px;
+    }
+  }
+
+  /* 动画 */
+  .fusion-result-display.show {
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  @keyframes slideInUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .result-params,
+    .result-comparison,
+    .suggestions-panel {
+      border-color: #000;
+    }
+
+    .adjustment-panel {
+      border-color: #000;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+<script>
+  // BananaEditor融合结果显示交互逻辑
+  class FusionResultDisplay {
+    private container: HTMLElement | null = null;
+    private resultImage: HTMLImageElement | null = null;
+    private adjustmentPanel: HTMLElement | null = null;
+    private comparisonSection: HTMLElement | null = null;
+    private suggestionsContent: HTMLElement | null = null;
+
+    private currentResult: any = null;
+    private currentZoom: number = 100;
+    private adjustmentParams = {
+      ratio: 50,
+      intensity: 70,
+      harmony: 50,
+    };
+
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      this.bindElements();
+      this.setupEventListeners();
+      this.setupCustomEvents();
+    }
+
+    private bindElements(): void {
+      this.container = document.getElementById("fusion-result-display");
+      this.resultImage = document.getElementById(
+        "result-image",
+      ) as HTMLImageElement;
+      this.adjustmentPanel = document.getElementById("adjustment-panel");
+      this.comparisonSection = document.getElementById("result-comparison");
+      this.suggestionsContent = document.getElementById("suggestions-content");
+    }
+
+    private setupEventListeners(): void {
+      // 关闭按钮
+      const closeBtn = document.getElementById("close-result");
+      closeBtn?.addEventListener("click", () => {
+        this.hide();
+      });
+
+      // 下载按钮
+      const downloadBtn = document.getElementById("download-result");
+      downloadBtn?.addEventListener("click", () => {
+        this.downloadResult();
+      });
+
+      // 分享按钮
+      const shareBtn = document.getElementById("share-result");
+      shareBtn?.addEventListener("click", () => {
+        this.shareResult();
+      });
+
+      // 图片缩放控制
+      const zoomInBtn = document.getElementById("zoom-in-result");
+      const zoomOutBtn = document.getElementById("zoom-out-result");
+      const fitBtn = document.getElementById("fit-result");
+
+      zoomInBtn?.addEventListener("click", () => {
+        this.zoomImage(1.25);
+      });
+
+      zoomOutBtn?.addEventListener("click", () => {
+        this.zoomImage(0.8);
+      });
+
+      fitBtn?.addEventListener("click", () => {
+        this.fitImage();
+      });
+
+      // 参数面板切换
+      const paramsToggle = document.getElementById("params-toggle");
+      const paramsContent = document.getElementById("params-content");
+
+      paramsToggle?.addEventListener("click", () => {
+        if (paramsContent) {
+          const isVisible = paramsContent.style.display !== "none";
+          paramsContent.style.display = isVisible ? "none" : "grid";
+        }
+      });
+
+      // 对比视图切换
+      const comparisonToggle = document.getElementById("comparison-toggle");
+      comparisonToggle?.addEventListener("click", () => {
+        this.toggleComparison();
+      });
+
+      // 建议面板切换
+      const suggestionsToggle = document.getElementById("suggestions-toggle");
+      suggestionsToggle?.addEventListener("click", () => {
+        if (this.suggestionsContent) {
+          const isVisible = this.suggestionsContent.style.display !== "none";
+          this.suggestionsContent.style.display = isVisible ? "none" : "block";
+        }
+      });
+
+      // 调整面板控制
+      this.setupAdjustmentPanel();
+    }
+
+    private setupAdjustmentPanel(): void {
+      // 调整面板关闭
+      const adjustmentClose = document.getElementById("adjustment-close");
+      adjustmentClose?.addEventListener("click", () => {
+        if (this.adjustmentPanel) {
+          this.adjustmentPanel.style.display = "none";
+        }
+      });
+
+      // 调整滑块
+      const ratioRange = document.getElementById(
+        "adj-ratio",
+      ) as HTMLInputElement;
+      const intensityRange = document.getElementById(
+        "adj-intensity",
+      ) as HTMLInputElement;
+      const harmonyRange = document.getElementById(
+        "adj-harmony",
+      ) as HTMLInputElement;
+
+      ratioRange?.addEventListener("input", (e) => {
+        const value = (e.target as HTMLInputElement).value;
+        this.adjustmentParams.ratio = parseInt(value);
+        this.updateAdjustmentDisplay("ratio", value);
+      });
+
+      intensityRange?.addEventListener("input", (e) => {
+        const value = (e.target as HTMLInputElement).value;
+        this.adjustmentParams.intensity = parseInt(value);
+        this.updateAdjustmentDisplay("intensity", value);
+      });
+
+      harmonyRange?.addEventListener("input", (e) => {
+        const value = (e.target as HTMLInputElement).value;
+        this.adjustmentParams.harmony = parseInt(value);
+        this.updateAdjustmentDisplay("harmony", value);
+      });
+
+      // 应用调整
+      const applyBtn = document.getElementById("apply-adjustment");
+      applyBtn?.addEventListener("click", () => {
+        this.applyAdjustments();
+      });
+
+      // 重置调整
+      const resetBtn = document.getElementById("reset-adjustment");
+      resetBtn?.addEventListener("click", () => {
+        this.resetAdjustments();
+      });
+    }
+
+    private setupCustomEvents(): void {
+      // 监听融合完成事件
+      document.addEventListener("fusionComplete", (e: any) => {
+        this.showResult(e.detail);
+      });
+
+      // 监听键盘事件
+      document.addEventListener("keydown", (e) => {
+        if (this.container && this.container.style.display !== "none") {
+          if (e.key === "Escape") {
+            this.hide();
+          } else if (e.key === "+" || e.key === "=") {
+            this.zoomImage(1.25);
+          } else if (e.key === "-") {
+            this.zoomImage(0.8);
+          } else if (e.key === "0") {
+            this.fitImage();
+          }
+        }
+      });
+    }
+
+    public showResult(result: any): void {
+      this.currentResult = result;
+
+      if (!this.container || !this.resultImage) return;
+
+      // 显示容器
+      this.container.style.display = "flex";
+      this.container.classList.add("show");
+
+      // 设置结果图片
+      this.resultImage.src = result.result.fusedImageUrl;
+      this.resultImage.onload = () => {
+        this.fitImage();
+      };
+
+      // 更新结果信息
+      this.updateResultInfo(result);
+
+      // 显示参数信息
+      this.updateParamsDisplay(result.params);
+
+      // 显示建议
+      this.updateSuggestions(result.result.suggestions || []);
+
+      // 设置对比图片
+      this.setupComparisonImages(result);
+
+      console.log("融合结果显示:", result);
+    }
+
+    public hide(): void {
+      if (this.container) {
+        this.container.style.display = "none";
+        this.container.classList.remove("show");
+      }
+
+      // 隐藏调整面板
+      if (this.adjustmentPanel) {
+        this.adjustmentPanel.style.display = "none";
+      }
+
+      // 重置缩放
+      this.currentZoom = 100;
+
+      // 触发隐藏事件
+      document.dispatchEvent(new CustomEvent("fusionResultHidden"));
+    }
+
+    private updateResultInfo(result: any): void {
+      const subtitle = document.getElementById("result-subtitle");
+      if (subtitle && result.result.metadata) {
+        const { processingTime, outputImage } = result.result.metadata;
+        subtitle.textContent = `处理时间: ${(processingTime / 1000).toFixed(1)}s | 尺寸: ${outputImage.width}×${outputImage.height}`;
+      }
+    }
+
+    private updateParamsDisplay(params: any): void {
+      const paramElements = {
+        "param-ratio": `${params.ratio}% : ${100 - params.ratio}%`,
+        "param-blend-mode": this.getBlendModeText(params.blendMode),
+        "param-intensity": `${params.intensity}%`,
+        "param-edge": this.getEdgeProcessingText(params.edgeProcessing),
+        "param-harmony": `${params.colorHarmony}%`,
+        "param-time": `${(this.currentResult?.result?.metadata?.processingTime / 1000 || 0).toFixed(1)}s`,
+      };
+
+      Object.entries(paramElements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.textContent = value;
+        }
+      });
+    }
+
+    private getBlendModeText(mode: string): string {
+      const modeTexts: Record<string, string> = {
+        normal: "自然融合",
+        overlay: "叠加融合",
+        multiply: "正片叠底",
+        screen: "滤色融合",
+        "soft-light": "柔光融合",
+        "hard-light": "强光融合",
+        "color-dodge": "颜色减淡",
+        "color-burn": "颜色加深",
+      };
+      return modeTexts[mode] || mode;
+    }
+
+    private getEdgeProcessingText(edge: string): string {
+      const edgeTexts: Record<string, string> = {
+        smooth: "平滑过渡",
+        sharp: "锐利边缘",
+        feather: "羽化边缘",
+        gradient: "渐变过渡",
+      };
+      return edgeTexts[edge] || edge;
+    }
+
+    private updateSuggestions(suggestions: string[]): void {
+      const suggestionList = document.getElementById("suggestion-list");
+      if (!suggestionList) return;
+
+      suggestionList.innerHTML = "";
+
+      suggestions.forEach((suggestion) => {
+        const suggestionItem = document.createElement("div");
+        suggestionItem.className = "suggestion-item";
+        suggestionItem.innerHTML = `
+          <span class="suggestion-icon">💡</span>
+          <span class="suggestion-text">${suggestion}</span>
+        `;
+        suggestionList.appendChild(suggestionItem);
+      });
+    }
+
+    private setupComparisonImages(result: any): void {
+      // 这里需要从融合请求中获取原始图片
+      // 实际实现中需要保存原始图片的引用
+      const originalImage1 = document.getElementById(
+        "original-image-1",
+      ) as HTMLImageElement;
+      const originalImage2 = document.getElementById(
+        "original-image-2",
+      ) as HTMLImageElement;
+      const fusedImage = document.getElementById(
+        "fused-image",
+      ) as HTMLImageElement;
+
+      if (fusedImage) {
+        fusedImage.src = result.result.fusedImageUrl;
+      }
+
+      // 原始图片需要从融合组件传递过来
+      // 这里暂时使用占位符
+    }
+
+    private toggleComparison(): void {
+      if (this.comparisonSection) {
+        const isVisible = this.comparisonSection.style.display !== "none";
+        this.comparisonSection.style.display = isVisible ? "none" : "block";
+      }
+    }
+
+    private zoomImage(factor: number): void {
+      this.currentZoom *= factor;
+      this.currentZoom = Math.max(25, Math.min(500, this.currentZoom));
+
+      if (this.resultImage) {
+        this.resultImage.style.transform = `scale(${this.currentZoom / 100})`;
+      }
+    }
+
+    private fitImage(): void {
+      this.currentZoom = 100;
+      if (this.resultImage) {
+        this.resultImage.style.transform = "scale(1)";
+      }
+    }
+
+    private updateAdjustmentDisplay(param: string, value: string): void {
+      const valueElement = document.getElementById(`adj-${param}-value`);
+      if (valueElement) {
+        valueElement.textContent = `${value}%`;
+      }
+    }
+
+    private async applyAdjustments(): void {
+      if (!this.currentResult) return;
+
+      try {
+        // 显示加载状态
+        const applyBtn = document.getElementById("apply-adjustment");
+        if (applyBtn) {
+          applyBtn.textContent = "应用中...";
+          (applyBtn as HTMLButtonElement).disabled = true;
+        }
+
+        // 构建新的融合参数
+        const newParams = {
+          ...this.currentResult.params,
+          ratio: this.adjustmentParams.ratio,
+          intensity: this.adjustmentParams.intensity,
+          colorHarmony: this.adjustmentParams.harmony,
+        };
+
+        // 触发重新融合事件
+        document.dispatchEvent(
+          new CustomEvent("reapplyFusion", {
+            detail: { params: newParams },
+          }),
+        );
+      } catch (error) {
+        console.error("应用调整失败:", error);
+      } finally {
+        // 恢复按钮状态
+        const applyBtn = document.getElementById("apply-adjustment");
+        if (applyBtn) {
+          applyBtn.textContent = "✅ 应用调整";
+          (applyBtn as HTMLButtonElement).disabled = false;
+        }
+      }
+    }
+
+    private resetAdjustments(): void {
+      if (!this.currentResult) return;
+
+      // 重置为原始参数
+      const originalParams = this.currentResult.params;
+      this.adjustmentParams = {
+        ratio: originalParams.ratio,
+        intensity: originalParams.intensity,
+        harmony: originalParams.colorHarmony,
+      };
+
+      // 更新UI
+      const ratioRange = document.getElementById(
+        "adj-ratio",
+      ) as HTMLInputElement;
+      const intensityRange = document.getElementById(
+        "adj-intensity",
+      ) as HTMLInputElement;
+      const harmonyRange = document.getElementById(
+        "adj-harmony",
+      ) as HTMLInputElement;
+
+      if (ratioRange) {
+        ratioRange.value = this.adjustmentParams.ratio.toString();
+        this.updateAdjustmentDisplay(
+          "ratio",
+          this.adjustmentParams.ratio.toString(),
+        );
+      }
+
+      if (intensityRange) {
+        intensityRange.value = this.adjustmentParams.intensity.toString();
+        this.updateAdjustmentDisplay(
+          "intensity",
+          this.adjustmentParams.intensity.toString(),
+        );
+      }
+
+      if (harmonyRange) {
+        harmonyRange.value = this.adjustmentParams.harmony.toString();
+        this.updateAdjustmentDisplay(
+          "harmony",
+          this.adjustmentParams.harmony.toString(),
+        );
+      }
+    }
+
+    private async downloadResult(): void {
+      if (!this.currentResult || !this.resultImage) return;
+
+      try {
+        const response = await fetch(this.currentResult.result.fusedImageUrl);
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `banana-fusion-${Date.now()}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        console.log("融合结果已下载");
+      } catch (error) {
+        console.error("下载失败:", error);
+      }
+    }
+
+    private async shareResult(): void {
+      if (!this.currentResult) return;
+
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "BananaEditor融合结果",
+            text: "使用nano banana AI技术创建的图片融合作品",
+            url: window.location.href,
+          });
+        } else {
+          // 复制链接到剪贴板
+          await navigator.clipboard.writeText(window.location.href);
+          console.log("链接已复制到剪贴板");
+        }
+      } catch (error) {
+        console.error("分享失败:", error);
+      }
+    }
+
+    public showAdjustmentPanel(): void {
+      if (this.adjustmentPanel) {
+        this.adjustmentPanel.style.display = "block";
+      }
+    }
+  }
+
+  // 初始化融合结果显示
+  document.addEventListener("DOMContentLoaded", () => {
+    new FusionResultDisplay();
+  });
+</script>

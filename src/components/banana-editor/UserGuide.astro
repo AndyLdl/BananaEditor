@@ -1,0 +1,415 @@
+---
+/**
+ * 用户引导组件
+ * 提供交互式的使用指南和CTA
+ */
+
+import { Icon } from "astro-icon/components";
+import BananaButton from "@components/ui/BananaButton.astro";
+import { loadTranslations, createTranslator } from "../../i18n/utils";
+import { detectLanguageFromRequest } from "../../utils/language-detector";
+
+// 获取当前语言
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载翻译
+const homeTranslations = await loadTranslations(currentLang, "home");
+const t = createTranslator(currentLang, homeTranslations);
+---
+
+<section class="py-20 sm:py-32 bg-white relative overflow-hidden">
+  <!-- 背景装饰 -->
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-banana-light/10 via-transparent to-banana-secondary/5">
+  </div>
+
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+    <!-- 标题区域 -->
+    <div class="text-center mb-16">
+      <h2
+        class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+        Get Started in 3 Simple Steps
+      </h2>
+      <p
+        class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        Experience the power of nano banana AI technology in minutes, not hours
+      </p>
+    </div>
+
+    <!-- 步骤指南 -->
+    <div class="grid md:grid-cols-3 gap-8 mb-16">
+      <!-- 步骤1 -->
+      <div class="step-card group relative" data-step="1">
+        <div
+          class="bg-white rounded-2xl p-8 border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 relative overflow-hidden">
+          <!-- 步骤编号 -->
+          <div
+            class="absolute top-4 right-4 w-8 h-8 bg-banana-gradient rounded-full flex items-center justify-center text-white font-bold text-sm">
+            1
+          </div>
+
+          <!-- 图标 -->
+          <div
+            class="w-16 h-16 bg-banana-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <Icon
+              name="heroicons:cursor-arrow-rays"
+              class="w-8 h-8 text-banana-primary"
+            />
+          </div>
+
+          <!-- 内容 -->
+          <h3 class="text-xl font-bold text-gray-900 mb-4">Choose Your Tool</h3>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Select from AI generation, image fusion, or prompt optimization.
+            Each tool is powered by advanced nano banana AI technology.
+          </p>
+
+          <!-- 动画演示 -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <div class="flex gap-2">
+              <div
+                class="tool-option w-8 h-8 bg-banana-primary/20 rounded-lg flex items-center justify-center animate-pulse">
+                <Icon
+                  name="heroicons:sparkles"
+                  class="w-4 h-4 text-banana-primary"
+                />
+              </div>
+              <div
+                class="tool-option w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                <Icon
+                  name="heroicons:squares-2x2"
+                  class="w-4 h-4 text-gray-400"
+                />
+              </div>
+              <div
+                class="tool-option w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                <Icon
+                  name="heroicons:light-bulb"
+                  class="w-4 h-4 text-gray-400"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- 背景装饰 -->
+          <div
+            class="absolute -bottom-4 -right-4 w-24 h-24 bg-banana-gradient opacity-5 rounded-full group-hover:opacity-10 transition-opacity">
+          </div>
+        </div>
+      </div>
+
+      <!-- 步骤2 -->
+      <div class="step-card group relative" data-step="2">
+        <div
+          class="bg-white rounded-2xl p-8 border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 relative overflow-hidden">
+          <!-- 步骤编号 -->
+          <div
+            class="absolute top-4 right-4 w-8 h-8 bg-banana-gradient rounded-full flex items-center justify-center text-white font-bold text-sm">
+            2
+          </div>
+
+          <!-- 图标 -->
+          <div
+            class="w-16 h-16 bg-banana-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <Icon name="heroicons:photo" class="w-8 h-8 text-banana-primary" />
+          </div>
+
+          <!-- 内容 -->
+          <h3 class="text-xl font-bold text-gray-900 mb-4">
+            Upload & Describe
+          </h3>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Upload your images or enter creative prompts. Our nano banana AI
+            understands your vision and enhances it automatically.
+          </p>
+
+          <!-- 动画演示 -->
+          <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <div class="space-y-2">
+              <div class="h-2 bg-banana-primary/30 rounded animate-pulse"></div>
+              <div
+                class="h-2 bg-banana-primary/20 rounded animate-pulse delay-200">
+              </div>
+              <div
+                class="h-2 bg-banana-primary/10 rounded animate-pulse delay-400">
+              </div>
+            </div>
+          </div>
+
+          <!-- 背景装饰 -->
+          <div
+            class="absolute -bottom-4 -right-4 w-24 h-24 bg-banana-gradient opacity-5 rounded-full group-hover:opacity-10 transition-opacity">
+          </div>
+        </div>
+      </div>
+
+      <!-- 步骤3 -->
+      <div class="step-card group relative" data-step="3">
+        <div
+          class="bg-white rounded-2xl p-8 border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 relative overflow-hidden">
+          <!-- 步骤编号 -->
+          <div
+            class="absolute top-4 right-4 w-8 h-8 bg-banana-gradient rounded-full flex items-center justify-center text-white font-bold text-sm">
+            3
+          </div>
+
+          <!-- 图标 -->
+          <div
+            class="w-16 h-16 bg-banana-light rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <Icon name="heroicons:star" class="w-8 h-8 text-banana-primary" />
+          </div>
+
+          <!-- 内容 -->
+          <h3 class="text-xl font-bold text-gray-900 mb-4">
+            Get Amazing Results
+          </h3>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Watch as nano banana AI creates stunning visuals in seconds.
+            Download, share, or continue editing with professional tools.
+          </p>
+
+          <!-- 动画演示 -->
+          <div
+            class="bg-gradient-to-br from-banana-light/30 to-banana-secondary/20 rounded-xl p-4 border border-banana-primary/20">
+            <div class="flex items-center justify-center">
+              <div
+                class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center animate-bounce">
+                <Icon name="heroicons:check" class="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 背景装饰 -->
+          <div
+            class="absolute -bottom-4 -right-4 w-24 h-24 bg-banana-gradient opacity-5 rounded-full group-hover:opacity-10 transition-opacity">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 连接线动画 -->
+    <div
+      class="hidden md:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl">
+      <svg class="w-full h-4" viewBox="0 0 800 20" fill="none">
+        <path
+          class="connection-line"
+          d="M100 10 Q400 10 700 10"
+          stroke="url(#gradient)"
+          stroke-width="2"
+          stroke-dasharray="5,5"
+          fill="none"></path>
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.3"
+            ></stop>
+            <stop offset="50%" style="stop-color:#FFA500;stop-opacity:0.6"
+            ></stop>
+            <stop offset="100%" style="stop-color:#FF6B35;stop-opacity:0.3"
+            ></stop>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- CTA区域 -->
+    <div class="text-center">
+      <div
+        class="bg-gradient-to-br from-banana-light/20 to-white rounded-3xl p-12 border border-banana-primary/10 relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div
+          class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-banana-primary/5 to-transparent">
+        </div>
+
+        <div class="relative">
+          <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+            Ready to Experience Nano Banana AI Magic?
+          </h3>
+          <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Join thousands of creators who are already using BananaEditor to
+            bring their ideas to life with cutting-edge AI technology.
+          </p>
+
+          <!-- CTA按钮组 -->
+          <div
+            class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <BananaButton
+              href="/editor"
+              variant="gradient"
+              size="xl"
+              class="group cta-primary">
+              <Icon
+                name="heroicons:rocket-launch"
+                class="w-6 h-6 mr-3 group-hover:animate-bounce"
+              />
+              Start Creating Now
+              <Icon
+                name="heroicons:arrow-right"
+                class="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform"
+              />
+            </BananaButton>
+
+            <BananaButton
+              href="/prompts"
+              variant="outline"
+              size="xl"
+              class="group">
+              <Icon name="heroicons:book-open" class="w-5 h-5 mr-2" />
+              Browse Prompts
+            </BananaButton>
+          </div>
+
+          <!-- 信任指标 -->
+          <div
+            class="mt-8 flex flex-wrap gap-6 justify-center items-center text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <Icon
+                name="heroicons:shield-check"
+                class="w-4 h-4 text-green-500"
+              />
+              <span>100% Free to Start</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <Icon name="heroicons:bolt" class="w-4 h-4 text-yellow-500" />
+              <span>Instant Results</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <Icon name="heroicons:users" class="w-4 h-4 text-blue-500" />
+              <span>10,000+ Happy Users</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 步骤卡片动画 */
+  .step-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .step-card[data-step="1"] {
+    animation-delay: 0.1s;
+  }
+
+  .step-card[data-step="2"] {
+    animation-delay: 0.2s;
+  }
+
+  .step-card[data-step="3"] {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 连接线动画 */
+  .connection-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 2s ease-in-out forwards;
+    animation-delay: 0.5s;
+  }
+
+  @keyframes drawLine {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* 工具选项动画 */
+  .tool-option {
+    transition: all 0.3s ease;
+  }
+
+  .step-card:hover .tool-option:first-child {
+    background-color: rgba(255, 215, 0, 0.3);
+  }
+
+  /* CTA按钮悬浮效果 */
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .step-card {
+      animation-delay: 0s;
+    }
+  }
+</style>
+
+<script>
+  // 交互式引导功能
+  document.addEventListener("DOMContentLoaded", function () {
+    // 步骤卡片悬浮效果
+    const stepCards = document.querySelectorAll(".step-card");
+
+    stepCards.forEach((card, index) => {
+      card.addEventListener("mouseenter", function () {
+        // 高亮当前步骤
+        stepCards.forEach((c) => c.classList.remove("highlighted"));
+        this.classList.add("highlighted");
+
+        // 触发相关动画
+        const toolOptions = this.querySelectorAll(".tool-option");
+        toolOptions.forEach((option, i) => {
+          setTimeout(() => {
+            option.style.backgroundColor =
+              i === 0 ? "rgba(255, 215, 0, 0.3)" : "rgba(229, 231, 235, 1)";
+          }, i * 100);
+        });
+      });
+
+      card.addEventListener("mouseleave", function () {
+        this.classList.remove("highlighted");
+
+        // 重置动画
+        const toolOptions = this.querySelectorAll(".tool-option");
+        toolOptions.forEach((option) => {
+          option.style.backgroundColor = "";
+        });
+      });
+    });
+
+    // 滚动触发动画
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-in");
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      },
+    );
+
+    stepCards.forEach((card) => {
+      observer.observe(card);
+    });
+
+    // CTA按钮点击跟踪
+    const ctaButtons = document.querySelectorAll(".cta-primary");
+    ctaButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        // 添加点击动画
+        this.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          this.style.transform = "";
+        }, 150);
+      });
+    });
+  });
+</script>

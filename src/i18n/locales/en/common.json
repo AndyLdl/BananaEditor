@@ -1,0 +1,55 @@
+{
+    "brand": {
+        "name": "BananaEditor",
+        "slogan": "Professional AI Image Editor powered by Nano Banana Technology",
+        "description": "Create stunning images with nano banana AI technology"
+    },
+    "navigation": {
+        "home": "Home",
+        "editor": "Editor",
+        "prompts": "Prompt Library",
+        "about": "About",
+        "contact": "Contact"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "upload": "Upload",
+        "download": "Download",
+        "share": "Share",
+        "copy": "Copy",
+        "paste": "Paste",
+        "undo": "Undo",
+        "redo": "Redo",
+        "close": "Close",
+        "open": "Open",
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "language": "Language"
+    },
+    "buttons": {
+        "getStarted": "Get Started",
+        "tryNow": "Try Now",
+        "learnMore": "Learn More",
+        "startEditing": "Start Editing",
+        "viewPrompts": "View Prompts"
+    },
+    "messages": {
+        "welcome": "Welcome to BananaEditor",
+        "fileUploaded": "File uploaded successfully",
+        "fileTooLarge": "File size is too large",
+        "invalidFileType": "Invalid file type",
+        "networkError": "Network error, please try again",
+        "processingImage": "Processing image...",
+        "generationComplete": "Image generation complete",
+        "fusionComplete": "Image fusion complete"
+    }
+}

@@ -1,0 +1,250 @@
+---
+/**
+ * BananaEditor功能演示组件
+ * 展示AI生成、融合和优化功能的交互演示
+ */
+
+import { Icon } from "astro-icon/components";
+import { loadTranslations, createTranslator } from "../../i18n/utils";
+
+// 获取当前语言
+import { detectLanguageFromRequest } from "../../utils/language-detector";
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载翻译
+const homeTranslations = await loadTranslations(currentLang, "home");
+const t = createTranslator(currentLang, homeTranslations);
+---
+
+<section
+  class="py-20 sm:py-32 bg-gradient-to-br from-gray-50 to-banana-light/30">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <!-- 标题区域 -->
+    <div class="text-center mb-16">
+      <h2
+        class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+        {t("demo.title")}
+      </h2>
+      <p
+        class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        {t("demo.subtitle")}
+      </p>
+    </div>
+
+    <!-- 演示区域 -->
+    <div
+      class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-banana-primary/10">
+      <!-- 标签导航 -->
+      <div class="border-b border-gray-200 bg-gray-50/50">
+        <div class="flex overflow-x-auto">
+          {
+            (t("demo.tabs") || []).map((tab: any, index: number) => (
+              <button
+                class={`demo-tab flex-1 min-w-0 px-6 py-4 text-sm font-medium transition-colors ${
+                  index === 0
+                    ? "text-banana-primary border-b-2 border-banana-primary bg-white"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                data-tab={tab.id}>
+                <div class="text-center">
+                  <div class="font-semibold">{tab.title}</div>
+                  <div class="text-xs mt-1 opacity-75">{tab.description}</div>
+                </div>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- 演示内容 -->
+      <div class="p-8 lg:p-12">
+        <!-- AI生成演示 -->
+        <div class="demo-content" data-content="generate">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-6">
+                AI Image Generation
+              </h3>
+              <div class="space-y-4">
+                <div class="bg-gray-50 rounded-xl p-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Enter your prompt:</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-banana-primary focus:border-transparent"
+                      placeholder="A beautiful sunset over nano banana fields..."
+                      readonly
+                    />
+                    <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                      <Icon
+                        name="heroicons:sparkles"
+                        class="w-5 h-5 text-banana-primary animate-pulse"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <button
+                    class="flex-1 bg-banana-gradient text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-shadow">
+                    Generate Image
+                  </button>
+                  <button
+                    class="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                    <Icon name="heroicons:arrow-path" class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="relative">
+              <div
+                class="aspect-square bg-gradient-to-br from-banana-light to-banana-secondary/20 rounded-2xl flex items-center justify-center border-2 border-dashed border-banana-primary/30">
+                <div class="text-center">
+                  <div
+                    class="w-16 h-16 bg-banana-gradient rounded-full flex items-center justify-center text-white text-2xl mb-4 mx-auto animate-pulse">
+                    🎨
+                  </div>
+                  <p class="text-gray-600 font-medium">
+                    Generated image appears here
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 图片融合演示 -->
+        <div class="demo-content hidden" data-content="fusion">
+          <div class="grid lg:grid-cols-3 gap-8 items-center">
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-900 mb-4">Image 1</h4>
+              <div
+                class="aspect-square bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center border-2 border-dashed border-blue-300">
+                <Icon name="heroicons:photo" class="w-12 h-12 text-blue-500" />
+              </div>
+            </div>
+            <div class="text-center">
+              <div
+                class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center text-white mx-auto mb-4">
+                <Icon name="heroicons:plus" class="w-6 h-6" />
+              </div>
+              <h4 class="font-semibold text-gray-900 mb-4">
+                Nano Banana AI Fusion
+              </h4>
+              <div
+                class="aspect-square bg-gradient-to-br from-banana-light to-banana-secondary/20 rounded-xl flex items-center justify-center border-2 border-dashed border-banana-primary/30">
+                <div class="text-center">
+                  <div
+                    class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center text-white text-xl mb-2 mx-auto animate-spin">
+                    🍌
+                  </div>
+                  <p class="text-sm text-gray-600">Fusing...</p>
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <h4 class="font-semibold text-gray-900 mb-4">Image 2</h4>
+              <div
+                class="aspect-square bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center border-2 border-dashed border-green-300">
+                <Icon name="heroicons:photo" class="w-12 h-12 text-green-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 提示词优化演示 -->
+        <div class="demo-content hidden" data-content="optimize">
+          <div class="max-w-4xl mx-auto">
+            <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center">
+              Prompt Optimization
+            </h3>
+            <div class="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4
+                  class="font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                  <Icon name="heroicons:pencil" class="w-5 h-5" />
+                  Original Prompt
+                </h4>
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                  <p class="text-gray-700 leading-relaxed">
+                    "A nice picture of a banana"
+                  </p>
+                </div>
+              </div>
+              <div>
+                <h4
+                  class="font-semibold text-banana-primary mb-4 flex items-center gap-2">
+                  <Icon name="heroicons:sparkles" class="w-5 h-5" />
+                  Nano Banana AI Optimized
+                </h4>
+                <div
+                  class="bg-banana-light/30 rounded-xl p-6 border border-banana-primary/20">
+                  <p class="text-gray-700 leading-relaxed">
+                    "A photorealistic, perfectly ripe nano banana with golden
+                    yellow skin and subtle brown spots, sitting on a clean white
+                    marble surface with soft natural lighting, professional food
+                    photography style, high resolution, detailed texture"
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="text-center mt-8">
+              <div
+                class="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                <Icon name="heroicons:check-circle" class="w-4 h-4" />
+                <span>400% better results with nano banana AI optimization</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // 标签切换功能
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(".demo-tab");
+    const contents = document.querySelectorAll(".demo-content");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-tab");
+
+        // 更新标签状态
+        tabs.forEach((t) => {
+          t.classList.remove(
+            "text-banana-primary",
+            "border-b-2",
+            "border-banana-primary",
+            "bg-white",
+          );
+          t.classList.add("text-gray-500");
+        });
+
+        this.classList.remove("text-gray-500");
+        this.classList.add(
+          "text-banana-primary",
+          "border-b-2",
+          "border-banana-primary",
+          "bg-white",
+        );
+
+        // 更新内容显示
+        contents.forEach((content) => {
+          content.classList.add("hidden");
+        });
+
+        const targetContent = document.querySelector(
+          `[data-content="${targetId}"]`,
+        );
+        if (targetContent) {
+          targetContent.classList.remove("hidden");
+        }
+      });
+    });
+  });
+</script>

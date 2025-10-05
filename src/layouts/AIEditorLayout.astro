@@ -1,0 +1,73 @@
+---
+// AI编辑器专用布局
+import Layout from "./Layout.astro";
+import Container from "@components/container.astro";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "AI图片编辑工具 - 智能图片生成、优化和融合" } =
+  Astro.props;
+---
+
+<Layout title={title}>
+  <Container>
+    <!-- AI编辑器导航栏 -->
+    <nav class="ai-editor-nav mb-8">
+      <div class="flex flex-wrap gap-4 justify-center">
+        <a
+          href="/ai-editor"
+          class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+          首页
+        </a>
+        <a
+          href="/ai-editor/generate"
+          class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+          图片生成
+        </a>
+        <a
+          href="/ai-editor/optimize"
+          class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
+          提示词优化
+        </a>
+        <a
+          href="/ai-editor/fusion"
+          class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+          图片融合
+        </a>
+        <a
+          href="/ai-editor/prompts"
+          class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors">
+          提示词库
+        </a>
+      </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main class="ai-editor-main">
+      <slot />
+    </main>
+
+    <!-- 页脚信息 -->
+    <footer class="ai-editor-footer mt-12 pt-8 border-t border-gray-200">
+      <div class="text-center text-gray-600">
+        <p>AI图片编辑工具 - 由 Google Gemini 提供技术支持</p>
+      </div>
+    </footer>
+  </Container>
+</Layout>
+
+<style>
+  .ai-editor-nav {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .ai-editor-main {
+    min-height: 60vh;
+  }
+</style>

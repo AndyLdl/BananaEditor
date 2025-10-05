@@ -1,0 +1,63 @@
+---
+// React 聊天组件集成
+---
+
+<div id="react-chat-root" class="react-chat-container"></div>
+
+<style>
+  #react-chat-root {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .react-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  // 动态导入 React 和组件
+  import React from "react";
+  import { createRoot } from "react-dom/client";
+
+  // 立即执行或等待 DOM 加载完成
+  function mountReactChat() {
+    const container = document.getElementById("react-chat-root");
+
+    if (container) {
+      console.log("🚀 Mounting React Chat Component...");
+
+      // 动态导入 ChatContainer 组件
+      import("./react/ChatContainer")
+        .then((module) => {
+          const ChatContainer = module.default;
+          const root = createRoot(container);
+          root.render(React.createElement(ChatContainer));
+
+          console.log("✅ React Chat Component Mounted Successfully");
+        })
+        .catch((error) => {
+          console.error("❌ Failed to load React Chat Component:", error);
+        });
+    } else {
+      console.warn("⚠️ react-chat-root container not found, retrying...");
+      // 如果容器还没准备好，稍后重试
+      setTimeout(mountReactChat, 100);
+    }
+  }
+
+  // 检查 DOM 是否已经加载完成
+  if (document.readyState === "loading") {
+    // DOM 还在加载中，等待 DOMContentLoaded 事件
+    document.addEventListener("DOMContentLoaded", mountReactChat);
+  } else {
+    // DOM 已经加载完成，直接执行
+    mountReactChat();
+  }
+</script>

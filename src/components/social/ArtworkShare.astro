@@ -1,0 +1,962 @@
+---
+/**
+ * 作品分享组件
+ * 专门用于分享AI生成的图片作品
+ */
+
+export interface Props {
+  imageUrl?: string;
+  imageTitle?: string;
+  prompt?: string;
+  style?: string;
+  className?: string;
+  showPreview?: boolean;
+}
+
+const {
+  imageUrl = "",
+  imageTitle = "",
+  prompt = "",
+  style = "",
+  className = "",
+  showPreview = true,
+} = Astro.props;
+---
+
+<div class={`artwork-share ${className}`} data-image-url={imageUrl}>
+  {
+    showPreview && imageUrl && (
+      <div class="artwork-preview">
+        <img
+          src={imageUrl}
+          alt={imageTitle || "AI Generated Artwork"}
+          class="preview-image"
+          loading="lazy"
+        />
+        <div class="preview-overlay">
+          <div class="artwork-info">
+            {imageTitle && <h3 class="artwork-title">{imageTitle}</h3>}
+            {prompt && <p class="artwork-prompt">"{prompt}"</p>}
+            {style && <span class="artwork-style">Style: {style}</span>}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="share-actions">
+    <div class="action-group">
+      <h4 class="group-title">Share Your Creation</h4>
+      <div class="action-buttons">
+        <!-- 生成分享链接 -->
+        <button
+          type="button"
+          class="action-btn generate-link"
+          id="generate-link-btn"
+          data-tooltip="Generate shareable link">
+          <span class="btn-icon">🔗</span>
+          <span class="btn-text">Generate Link</span>
+        </button>
+
+        <!-- 下载图片 -->
+        <button
+          type="button"
+          class="action-btn download-image"
+          id="download-btn"
+          data-tooltip="Download image">
+          <span class="btn-icon">💾</span>
+          <span class="btn-text">Download</span>
+        </button>
+
+        <!-- 复制到剪贴板 -->
+        <button
+          type="button"
+          class="action-btn copy-image"
+          id="copy-image-btn"
+          data-tooltip="Copy image to clipboard">
+          <span class="btn-icon">📋</span>
+          <span class="btn-text">Copy Image</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="action-group">
+      <h4 class="group-title">Social Media</h4>
+      <div class="social-buttons">
+        <!-- Twitter分享 -->
+        <button
+          type="button"
+          class="social-btn twitter"
+          id="share-twitter"
+          data-tooltip="Share on Twitter">
+          <span class="social-icon">𝕏</span>
+          <span class="social-text">Twitter</span>
+        </button>
+
+        <!-- Instagram分享 -->
+        <button
+          type="button"
+          class="social-btn instagram"
+          id="share-instagram"
+          data-tooltip="Share on Instagram">
+          <span class="social-icon">📷</span>
+          <span class="social-text">Instagram</span>
+        </button>
+
+        <!-- Pinterest分享 -->
+        <button
+          type="button"
+          class="social-btn pinterest"
+          id="share-pinterest"
+          data-tooltip="Share on Pinterest">
+          <span class="social-icon">📌</span>
+          <span class="social-text">Pinterest</span>
+        </button>
+
+        <!-- Discord分享 -->
+        <button
+          type="button"
+          class="social-btn discord"
+          id="share-discord"
+          data-tooltip="Share on Discord">
+          <span class="social-icon">🎮</span>
+          <span class="social-text">Discord</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="action-group">
+      <h4 class="group-title">Community</h4>
+      <div class="community-buttons">
+        <!-- 添加到画廊 -->
+        <button
+          type="button"
+          class="community-btn gallery"
+          id="add-to-gallery"
+          data-tooltip="Add to public gallery">
+          <span class="btn-icon">🖼️</span>
+          <span class="btn-text">Add to Gallery</span>
+        </button>
+
+        <!-- 分享到社区 -->
+        <button
+          type="button"
+          class="community-btn community"
+          id="share-community"
+          data-tooltip="Share with community">
+          <span class="btn-icon">👥</span>
+          <span class="btn-text">Share with Community</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分享链接模态框 -->
+  <div class="share-modal" id="share-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Share Your Artwork</h3>
+        <button type="button" class="modal-close" id="modal-close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="share-link-section">
+          <label for="share-url" class="link-label">Shareable Link:</label>
+          <div class="link-input-group">
+            <input
+              type="text"
+              id="share-url"
+              class="link-input"
+              readonly
+              placeholder="Generating link..."
+            />
+            <button type="button" class="copy-btn" id="copy-url-btn">
+              <span class="copy-icon">📋</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="embed-section">
+          <label for="embed-code" class="embed-label">Embed Code:</label>
+          <textarea
+            id="embed-code"
+            class="embed-textarea"
+            readonly
+            placeholder="Generating embed code..."></textarea>
+          <button type="button" class="copy-btn" id="copy-embed-btn">
+            Copy Embed Code
+          </button>
+        </div>
+
+        <div class="qr-section">
+          <h4 class="qr-title">QR Code</h4>
+          <div class="qr-container" id="qr-container">
+            <div class="qr-placeholder">Generating QR code...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功通知 -->
+  <div class="success-notification" id="success-notification">
+    <div class="notification-content">
+      <span class="notification-icon">✅</span>
+      <span class="notification-text">Success!</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .artwork-share {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+  }
+
+  /* 作品预览 */
+  .artwork-preview {
+    position: relative;
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #f8fafc;
+  }
+
+  .preview-image {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .preview-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    padding: 1rem;
+    color: white;
+  }
+
+  .artwork-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .artwork-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .artwork-prompt {
+    font-size: 0.875rem;
+    font-style: italic;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .artwork-style {
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    align-self: flex-start;
+  }
+
+  /* 分享操作 */
+  .share-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .action-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .group-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+  }
+
+  .action-buttons,
+  .social-buttons,
+  .community-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+
+  /* 按钮样式 */
+  .action-btn,
+  .social-btn,
+  .community-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: white;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .action-btn:hover,
+  .social-btn:hover,
+  .community-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* 特定按钮颜色 */
+  .generate-link:hover {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+
+  .download-image:hover {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+  }
+
+  .copy-image:hover {
+    background: #8b5cf6;
+    color: white;
+    border-color: #8b5cf6;
+  }
+
+  .twitter:hover {
+    background: #1da1f2;
+    color: white;
+    border-color: #1da1f2;
+  }
+
+  .instagram:hover {
+    background: linear-gradient(
+      45deg,
+      #f09433 0%,
+      #e6683c 25%,
+      #dc2743 50%,
+      #cc2366 75%,
+      #bc1888 100%
+    );
+    color: white;
+    border-color: #bc1888;
+  }
+
+  .pinterest:hover {
+    background: #e60023;
+    color: white;
+    border-color: #e60023;
+  }
+
+  .discord:hover {
+    background: #5865f2;
+    color: white;
+    border-color: #5865f2;
+  }
+
+  .gallery:hover {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+  }
+
+  .community:hover {
+    background: #06b6d4;
+    color: white;
+    border-color: #06b6d4;
+  }
+
+  /* 模态框样式 */
+  .share-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .share-modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 1rem;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+  }
+
+  .share-modal.show .modal-content {
+    transform: scale(1);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+  }
+
+  .modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* 链接输入组 */
+  .link-input-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .link-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background: #f8fafc;
+  }
+
+  .copy-btn {
+    padding: 0.75rem;
+    background: #f3f4f6;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .copy-btn:hover {
+    background: #e5e7eb;
+  }
+
+  /* 嵌入代码 */
+  .embed-textarea {
+    width: 100%;
+    height: 100px;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    font-size: 0.75rem;
+    background: #f8fafc;
+    resize: vertical;
+  }
+
+  /* QR码 */
+  .qr-container {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .qr-placeholder {
+    color: #6b7280;
+    font-style: italic;
+  }
+
+  /* 成功通知 */
+  .success-notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: #10b981;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    z-index: 1001;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .success-notification.show {
+    transform: translateX(0);
+  }
+
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* 工具提示 */
+  [data-tooltip] {
+    position: relative;
+  }
+
+  [data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 0.25rem;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 640px) {
+    .action-buttons,
+    .social-buttons,
+    .community-buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+      width: 95%;
+      margin: 1rem;
+    }
+
+    .link-input-group {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  class ArtworkShareComponent {
+    constructor() {
+      this.imageUrl =
+        document.querySelector(".artwork-share")?.dataset.imageUrl || "";
+      this.shareModal = document.getElementById("share-modal");
+      this.successNotification = document.getElementById(
+        "success-notification",
+      );
+
+      this.init();
+    }
+
+    init() {
+      // 绑定按钮事件
+      this.bindEvents();
+    }
+
+    bindEvents() {
+      // 生成链接
+      document
+        .getElementById("generate-link-btn")
+        ?.addEventListener("click", () => {
+          this.generateShareLink();
+        });
+
+      // 下载图片
+      document.getElementById("download-btn")?.addEventListener("click", () => {
+        this.downloadImage();
+      });
+
+      // 复制图片
+      document
+        .getElementById("copy-image-btn")
+        ?.addEventListener("click", () => {
+          this.copyImageToClipboard();
+        });
+
+      // 社交媒体分享
+      document
+        .getElementById("share-twitter")
+        ?.addEventListener("click", () => {
+          this.shareToTwitter();
+        });
+
+      document
+        .getElementById("share-instagram")
+        ?.addEventListener("click", () => {
+          this.shareToInstagram();
+        });
+
+      document
+        .getElementById("share-pinterest")
+        ?.addEventListener("click", () => {
+          this.shareToPinterest();
+        });
+
+      document
+        .getElementById("share-discord")
+        ?.addEventListener("click", () => {
+          this.shareToDiscord();
+        });
+
+      // 社区功能
+      document
+        .getElementById("add-to-gallery")
+        ?.addEventListener("click", () => {
+          this.addToGallery();
+        });
+
+      document
+        .getElementById("share-community")
+        ?.addEventListener("click", () => {
+          this.shareToCommunity();
+        });
+
+      // 模态框控制
+      document.getElementById("modal-close")?.addEventListener("click", () => {
+        this.closeModal();
+      });
+
+      // 复制按钮
+      document.getElementById("copy-url-btn")?.addEventListener("click", () => {
+        this.copyShareUrl();
+      });
+
+      document
+        .getElementById("copy-embed-btn")
+        ?.addEventListener("click", () => {
+          this.copyEmbedCode();
+        });
+
+      // 点击外部关闭模态框
+      this.shareModal?.addEventListener("click", (e) => {
+        if (e.target === this.shareModal) {
+          this.closeModal();
+        }
+      });
+    }
+
+    async generateShareLink() {
+      try {
+        this.showModal();
+
+        // 生成唯一的分享ID
+        const shareId = this.generateShareId();
+
+        // 创建分享数据
+        const shareData = {
+          id: shareId,
+          imageUrl: this.imageUrl,
+          title:
+            document.querySelector(".artwork-title")?.textContent ||
+            "AI Generated Artwork",
+          prompt: document.querySelector(".artwork-prompt")?.textContent || "",
+          style: document.querySelector(".artwork-style")?.textContent || "",
+          timestamp: Date.now(),
+          creator: "Anonymous", // 可以从用户系统获取
+        };
+
+        // 保存到本地存储（实际应用中应该保存到服务器）
+        localStorage.setItem(`artwork-${shareId}`, JSON.stringify(shareData));
+
+        // 生成分享URL
+        const shareUrl = `${window.location.origin}/artwork/${shareId}`;
+
+        // 更新模态框内容
+        document.getElementById("share-url").value = shareUrl;
+
+        // 生成嵌入代码
+        const embedCode = this.generateEmbedCode(shareUrl, shareData);
+        document.getElementById("embed-code").value = embedCode;
+
+        // 生成QR码
+        await this.generateQRCode(shareUrl);
+
+        this.showSuccess("Share link generated successfully!");
+      } catch (error) {
+        console.error("Failed to generate share link:", error);
+        this.showError("Failed to generate share link");
+      }
+    }
+
+    generateShareId() {
+      return (
+        "artwork-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9)
+      );
+    }
+
+    generateEmbedCode(url, data) {
+      return `<div class="banana-artwork-embed">
+    <a href="${url}" target="_blank">
+        <img src="${data.imageUrl}" alt="${data.title}" style="max-width: 100%; height: auto; border-radius: 8px;" />
+        <p style="margin: 8px 0 0 0; font-size: 14px; color: #666;">
+            Created with <strong>BananaEditor</strong> - Nano Banana AI
+        </p>
+    </a>
+</div>`;
+    }
+
+    async generateQRCode(url) {
+      const qrContainer = document.getElementById("qr-container");
+      if (!qrContainer) return;
+
+      try {
+        // 使用QR码生成API（这里使用免费的API）
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`;
+
+        qrContainer.innerHTML = `
+                    <img src="${qrUrl}" alt="QR Code" style="width: 150px; height: 150px;" />
+                `;
+      } catch (error) {
+        qrContainer.innerHTML =
+          '<div class="qr-placeholder">Failed to generate QR code</div>';
+      }
+    }
+
+    async downloadImage() {
+      if (!this.imageUrl) return;
+
+      try {
+        const response = await fetch(this.imageUrl);
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `nano-banana-artwork-${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        this.showSuccess("Image downloaded successfully!");
+        this.trackAction("download");
+      } catch (error) {
+        console.error("Failed to download image:", error);
+        this.showError("Failed to download image");
+      }
+    }
+
+    async copyImageToClipboard() {
+      if (!this.imageUrl) return;
+
+      try {
+        const response = await fetch(this.imageUrl);
+        const blob = await response.blob();
+
+        await navigator.clipboard.write([
+          new ClipboardItem({ [blob.type]: blob }),
+        ]);
+
+        this.showSuccess("Image copied to clipboard!");
+        this.trackAction("copy-image");
+      } catch (error) {
+        console.error("Failed to copy image:", error);
+        this.showError("Failed to copy image to clipboard");
+      }
+    }
+
+    shareToTwitter() {
+      const text = `Check out this amazing artwork I created with nano banana AI! 🎨✨ #nanobananai #bananaai #aiart`;
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.href)}`;
+
+      this.openShareWindow(url);
+      this.trackAction("share-twitter");
+    }
+
+    shareToInstagram() {
+      // Instagram不支持直接分享链接，提供指导
+      this.showInstagramInstructions();
+      this.trackAction("share-instagram");
+    }
+
+    shareToPinterest() {
+      const description = `Amazing AI artwork created with nano banana technology! #nanobananai #aiart`;
+      const url = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(this.imageUrl)}&description=${encodeURIComponent(description)}`;
+
+      this.openShareWindow(url);
+      this.trackAction("share-pinterest");
+    }
+
+    shareToDiscord() {
+      // Discord需要用户手动分享，提供指导
+      this.showDiscordInstructions();
+      this.trackAction("share-discord");
+    }
+
+    async addToGallery() {
+      try {
+        // 这里应该调用API将作品添加到公共画廊
+        // 目前只是模拟
+        await this.simulateApiCall();
+
+        this.showSuccess("Artwork added to gallery!");
+        this.trackAction("add-to-gallery");
+      } catch (error) {
+        this.showError("Failed to add to gallery");
+      }
+    }
+
+    async shareToCommunity() {
+      try {
+        // 这里应该调用API分享到社区
+        await this.simulateApiCall();
+
+        this.showSuccess("Shared with community!");
+        this.trackAction("share-community");
+      } catch (error) {
+        this.showError("Failed to share with community");
+      }
+    }
+
+    async copyShareUrl() {
+      const shareUrl = document.getElementById("share-url").value;
+
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        this.showSuccess("Share URL copied!");
+      } catch (error) {
+        this.showError("Failed to copy URL");
+      }
+    }
+
+    async copyEmbedCode() {
+      const embedCode = document.getElementById("embed-code").value;
+
+      try {
+        await navigator.clipboard.writeText(embedCode);
+        this.showSuccess("Embed code copied!");
+      } catch (error) {
+        this.showError("Failed to copy embed code");
+      }
+    }
+
+    showModal() {
+      this.shareModal?.classList.add("show");
+    }
+
+    closeModal() {
+      this.shareModal?.classList.remove("show");
+    }
+
+    openShareWindow(url) {
+      window.open(
+        url,
+        "share",
+        "width=600,height=400,scrollbars=yes,resizable=yes",
+      );
+    }
+
+    showInstagramInstructions() {
+      alert(
+        "To share on Instagram:\n1. Download the image\n2. Open Instagram app\n3. Create a new post\n4. Upload the downloaded image\n5. Add hashtags: #nanobananai #bananaai #aiart",
+      );
+    }
+
+    showDiscordInstructions() {
+      alert(
+        "To share on Discord:\n1. Copy the share link\n2. Open Discord\n3. Paste the link in your desired channel\n4. Add a message about your nano banana AI creation!",
+      );
+    }
+
+    showSuccess(message) {
+      if (this.successNotification) {
+        this.successNotification.querySelector(
+          ".notification-text",
+        ).textContent = message;
+        this.successNotification.classList.add("show");
+
+        setTimeout(() => {
+          this.successNotification.classList.remove("show");
+        }, 3000);
+      }
+    }
+
+    showError(message) {
+      alert(message); // 简单的错误显示，实际应用中应该使用更好的UI
+    }
+
+    trackAction(action) {
+      // 发送分析事件
+      if (typeof gtag !== "undefined") {
+        gtag("event", "artwork_share", {
+          method: action,
+          content_type: "artwork",
+          item_id: this.imageUrl,
+        });
+      }
+
+      // 自定义事件
+      const event = new CustomEvent("artworkShare", {
+        detail: {
+          action,
+          imageUrl: this.imageUrl,
+          timestamp: Date.now(),
+        },
+      });
+
+      window.dispatchEvent(event);
+    }
+
+    async simulateApiCall() {
+      // 模拟API调用延迟
+      return new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+
+  // 初始化组件
+  document.addEventListener("DOMContentLoaded", () => {
+    new ArtworkShareComponent();
+  });
+</script>

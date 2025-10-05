@@ -1,0 +1,71 @@
+{
+    "toolbar": {
+        "generate": "Generate",
+        "fusion": "Fusion",
+        "optimize": "Optimize",
+        "export": "Export",
+        "settings": "Settings",
+        "help": "Help"
+    },
+    "modes": {
+        "generation": "AI Generation",
+        "fusion": "Image Fusion",
+        "optimization": "Prompt Optimization"
+    },
+    "panels": {
+        "upload": "Upload Image",
+        "prompt": "Enter Prompt",
+        "parameters": "Parameters",
+        "history": "History",
+        "properties": "Properties"
+    },
+    "generation": {
+        "title": "AI Image Generation",
+        "uploadReference": "Upload Reference Image",
+        "enterPrompt": "Enter your prompt",
+        "style": "Style",
+        "quality": "Quality",
+        "generate": "Generate Image",
+        "regenerate": "Regenerate",
+        "downloading": "Downloading...",
+        "processing": "Processing..."
+    },
+    "fusion": {
+        "title": "Image Fusion",
+        "uploadFirst": "Upload First Image",
+        "uploadSecond": "Upload Second Image",
+        "ratio": "Fusion Ratio",
+        "blendMode": "Blend Mode",
+        "startFusion": "Start Fusion",
+        "adjustParameters": "Adjust Parameters"
+    },
+    "optimization": {
+        "title": "Prompt Optimization",
+        "original": "Original Prompt",
+        "optimized": "Optimized Prompt",
+        "optimize": "Optimize",
+        "apply": "Apply",
+        "suggestions": "Suggestions",
+        "retryOptimization": "Retry Optimization",
+        "editManually": "Edit Manually",
+        "applyOptimization": "Apply Optimization",
+        "copyOptimized": "Copy Optimized Prompt",
+        "optimizing": "AI is optimizing...",
+        "optimizationComplete": "Optimization Complete",
+        "optimizationFailed": "Optimization Failed, Please Retry",
+        "improvements": "Optimization Suggestions",
+        "comparison": "Comparison Analysis",
+        "characterCount": "Character Count",
+        "keywordDensity": "Keyword Density",
+        "detailLevel": "Detail Level",
+        "close": "Close"
+    },
+    "export": {
+        "title": "Export Image",
+        "format": "Format",
+        "quality": "Quality",
+        "size": "Size",
+        "download": "Download",
+        "share": "Share"
+    }
+}

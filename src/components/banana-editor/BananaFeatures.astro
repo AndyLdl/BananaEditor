@@ -1,0 +1,110 @@
+---
+/**
+ * BananaEditor功能展示组件
+ * 展示核心AI功能和优势
+ */
+
+import { Icon } from "astro-icon/components";
+import { loadTranslations, createTranslator } from "../../i18n/utils";
+
+// 获取当前语言
+import { detectLanguageFromRequest } from "../../utils/language-detector";
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载翻译
+const homeTranslations = await loadTranslations(currentLang, 'home');
+const t = createTranslator(currentLang, homeTranslations);
+
+// 图标映射
+const iconMap = {
+  magic: "heroicons:sparkles",
+  layers: "heroicons:squares-2x2", 
+  sparkles: "heroicons:light-bulb",
+  tools: "heroicons:wrench-screwdriver"
+};
+---
+
+<section class="py-20 sm:py-32 bg-white">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    
+    <!-- 标题区域 -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+        {t('features.title')}
+      </h2>
+      <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        {t('features.subtitle')}
+      </p>
+    </div>
+
+    <!-- 功能网格 -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {(t('features.items') || []).map((feature: any, index: number) => (
+        <div class="group relative">
+          <!-- 卡片 -->
+          <div class="relative bg-white rounded-2xl p-8 border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            
+            <!-- 图标 -->
+            <div class="mb-6">
+              <div class="w-12 h-12 bg-banana-gradient rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <Icon 
+                  name={iconMap[feature.icon as keyof typeof iconMap]} 
+                  class="w-6 h-6 text-white" 
+                />
+              </div>
+            </div>
+
+            <!-- 内容 -->
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-banana-primary transition-colors">
+              {feature.title}
+            </h3>
+            
+            <p class="text-gray-600 leading-relaxed mb-4">
+              {feature.description}
+            </p>
+
+            <!-- 技术规格 -->
+            {feature.specs && (
+              <div class="mt-4 pt-4 border-t border-gray-100">
+                <p class="text-xs text-banana-primary font-medium flex items-center gap-1">
+                  <Icon name="heroicons:check-badge" class="w-3.5 h-3.5" />
+                  {feature.specs}
+                </p>
+              </div>
+            )}
+
+            <!-- 装饰元素 -->
+            <div class="absolute top-4 right-4 w-8 h-8 bg-banana-primary/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Icon name="heroicons:arrow-top-right-on-square" class="w-4 h-4 text-banana-primary" />
+            </div>
+          </div>
+
+          <!-- 背景装饰 -->
+          <div class="absolute inset-0 bg-banana-gradient opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300 -z-10"></div>
+        </div>
+      ))}
+    </div>
+
+    <!-- 底部CTA -->
+    <div class="text-center mt-16">
+      <div class="inline-flex items-center gap-2 px-6 py-3 bg-banana-light/50 rounded-full text-banana-primary font-medium">
+        <Icon name="heroicons:information-circle" class="w-5 h-5" />
+        <span>All features powered by nano banana AI technology</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 分隔线装饰 -->
+<div class="relative">
+  <div class="absolute inset-0 flex items-center">
+    <div class="w-full border-t border-gray-200"></div>
+  </div>
+  <div class="relative flex justify-center">
+    <div class="bg-white px-6">
+      <div class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center">
+        <span class="text-white text-xl">🍌</span>
+      </div>
+    </div>
+  </div>
+</div>

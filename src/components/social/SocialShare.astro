@@ -1,0 +1,719 @@
+---
+/**
+ * 社交媒体分享组件
+ * 提供多平台分享功能，优化Open Graph和Twitter Card
+ */
+
+export interface Props {
+  url?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  hashtags?: string[];
+  via?: string;
+  className?: string;
+  showLabels?: boolean;
+  size?: "small" | "medium" | "large";
+  variant?: "buttons" | "icons" | "floating";
+}
+
+const {
+  url = "",
+  title = "",
+  description = "",
+  image = "",
+  hashtags = ["nanobananai", "bananaai", "aiimages"],
+  via = "bananaeditor",
+  className = "",
+  showLabels = true,
+  size = "medium",
+  variant = "buttons",
+} = Astro.props;
+
+// 获取当前页面URL和信息
+const currentUrl = url || Astro.url.href;
+const encodedUrl = encodeURIComponent(currentUrl);
+const encodedTitle = encodeURIComponent(title);
+const encodedDescription = encodeURIComponent(description);
+const encodedImage = encodeURIComponent(image);
+const hashtagString = hashtags.join(",");
+
+// 社交媒体平台配置
+const socialPlatforms = [
+  {
+    name: "Twitter",
+    icon: "𝕏",
+    color: "#1DA1F2",
+    url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}&hashtags=${hashtagString}&via=${via}`,
+    label: "Share on Twitter",
+  },
+  {
+    name: "Facebook",
+    icon: "📘",
+    color: "#1877F2",
+    url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`,
+    label: "Share on Facebook",
+  },
+  {
+    name: "LinkedIn",
+    icon: "💼",
+    color: "#0A66C2",
+    url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&title=${encodedTitle}&summary=${encodedDescription}`,
+    label: "Share on LinkedIn",
+  },
+  {
+    name: "Pinterest",
+    icon: "📌",
+    color: "#E60023",
+    url: `https://pinterest.com/pin/create/button/?url=${encodedUrl}&description=${encodedTitle}&media=${encodedImage}`,
+    label: "Share on Pinterest",
+  },
+  {
+    name: "Reddit",
+    icon: "🤖",
+    color: "#FF4500",
+    url: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+    label: "Share on Reddit",
+  },
+  {
+    name: "WhatsApp",
+    icon: "💬",
+    color: "#25D366",
+    url: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+    label: "Share on WhatsApp",
+  },
+  {
+    name: "Telegram",
+    icon: "✈️",
+    color: "#0088CC",
+    url: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`,
+    label: "Share on Telegram",
+  },
+  {
+    name: "Email",
+    icon: "📧",
+    color: "#EA4335",
+    url: `mailto:?subject=${encodedTitle}&body=${encodedDescription}%0A%0A${encodedUrl}`,
+    label: "Share via Email",
+  },
+];
+
+// 尺寸样式映射
+const sizeClasses = {
+  small: "w-8 h-8 text-sm",
+  medium: "w-10 h-10 text-base",
+  large: "w-12 h-12 text-lg",
+};
+
+const buttonSizeClasses = {
+  small: "px-3 py-1.5 text-sm",
+  medium: "px-4 py-2 text-base",
+  large: "px-6 py-3 text-lg",
+};
+---
+
+<div
+  class={`social-share ${variant} ${className}`}
+  data-url={currentUrl}
+  data-title={title}>
+  {
+    variant === "floating" && (
+      <button
+        type="button"
+        class="share-toggle"
+        aria-label="Toggle share menu"
+        id="share-toggle">
+        <span class="share-icon">📤</span>
+      </button>
+    )
+  }
+
+  <div
+    class={`share-container ${variant === "floating" ? "floating-menu" : ""}`}
+    id="share-container">
+    {
+      variant !== "floating" && (
+        <div class="share-header">
+          <h3 class="share-title">Share this page</h3>
+          <p class="share-description">Spread the word about nano banana AI!</p>
+        </div>
+      )
+    }
+
+    <div class="share-buttons">
+      {
+        socialPlatforms.map((platform) => (
+          <a
+            href={platform.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={`share-button ${platform.name.toLowerCase()}`}
+            data-platform={platform.name.toLowerCase()}
+            aria-label={platform.label}
+            style={`--platform-color: ${platform.color}`}>
+            {variant === "icons" ? (
+              <span class={`platform-icon ${sizeClasses[size]}`}>
+                {platform.icon}
+              </span>
+            ) : (
+              <div class={`button-content ${buttonSizeClasses[size]}`}>
+                <span class="platform-icon">{platform.icon}</span>
+                {showLabels && (
+                  <span class="platform-label">{platform.name}</span>
+                )}
+              </div>
+            )}
+          </a>
+        ))
+      }
+
+      <!-- 复制链接按钮 -->
+      <button
+        type="button"
+        class={`share-button copy-link ${variant === "icons" ? sizeClasses[size] : buttonSizeClasses[size]}`}
+        data-url={currentUrl}
+        aria-label="Copy link to clipboard"
+        id="copy-link-btn">
+        {
+          variant === "icons" ? (
+            <span class="platform-icon">🔗</span>
+          ) : (
+            <div class="button-content">
+              <span class="platform-icon">🔗</span>
+              {showLabels && <span class="platform-label">Copy Link</span>}
+            </div>
+          )
+        }
+      </button>
+    </div>
+
+    <!-- 分享统计 -->
+    <div class="share-stats" id="share-stats">
+      <span class="stats-text">Shares: <span id="share-count">0</span></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .social-share {
+    position: relative;
+    font-family: var(--font-body, system-ui);
+  }
+
+  /* 按钮样式变体 */
+  .social-share.buttons .share-container {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+  }
+
+  .social-share.icons .share-container {
+    background: transparent;
+    padding: 0;
+  }
+
+  .social-share.floating .share-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .social-share.floating .share-container.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* 分享切换按钮 */
+  .share-toggle {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1001;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #f59e0b, #f97316)
+    );
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .share-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5);
+  }
+
+  /* 头部样式 */
+  .share-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .share-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .share-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  /* 按钮容器 */
+  .share-buttons {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .social-share.buttons .share-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .social-share.icons .share-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(3rem, 1fr));
+    justify-items: center;
+  }
+
+  .social-share.floating .share-buttons {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+
+  /* 分享按钮 */
+  .share-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: inherit;
+  }
+
+  .share-button:hover {
+    background: var(--platform-color, #f3f4f6);
+    color: white;
+    border-color: var(--platform-color, #d1d5db);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .social-share.icons .share-button {
+    border-radius: 50%;
+    aspect-ratio: 1;
+  }
+
+  .social-share.floating .share-button {
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+  }
+
+  /* 按钮内容 */
+  .button-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .platform-icon {
+    font-size: 1.25em;
+    line-height: 1;
+  }
+
+  .platform-label {
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .social-share.icons .platform-label {
+    display: none;
+  }
+
+  /* 复制链接按钮 */
+  .copy-link {
+    --platform-color: #6b7280;
+  }
+
+  .copy-link.copied {
+    --platform-color: #10b981;
+    background: #10b981 !important;
+    color: white !important;
+  }
+
+  /* 分享统计 */
+  .share-stats {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .social-share.floating .share-stats {
+    display: none;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 640px) {
+    .social-share.buttons .share-buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .social-share.floating .share-container {
+      bottom: 1rem;
+      right: 1rem;
+      left: 1rem;
+      width: auto;
+    }
+
+    .share-toggle {
+      bottom: 1rem;
+      right: 1rem;
+    }
+
+    .social-share.floating .share-buttons {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* 动画效果 */
+  @keyframes shareSuccess {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .share-button.success {
+    animation: shareSuccess 0.3s ease;
+  }
+
+  /* 无障碍支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .share-button,
+    .share-toggle,
+    .share-container {
+      transition: none;
+    }
+  }
+
+  /* 高对比度模式 */
+  @media (prefers-contrast: high) {
+    .share-button {
+      border-width: 2px;
+    }
+  }
+</style>
+
+<script>
+  class SocialShareComponent {
+    constructor() {
+      this.shareContainer = document.getElementById("share-container");
+      this.shareToggle = document.getElementById("share-toggle");
+      this.copyLinkBtn = document.getElementById("copy-link-btn");
+      this.shareCountEl = document.getElementById("share-count");
+
+      this.isFloatingMenuOpen = false;
+      this.shareCount = this.getStoredShareCount();
+
+      this.init();
+    }
+
+    init() {
+      // 绑定事件
+      if (this.shareToggle) {
+        this.shareToggle.addEventListener("click", () =>
+          this.toggleFloatingMenu(),
+        );
+      }
+
+      if (this.copyLinkBtn) {
+        this.copyLinkBtn.addEventListener("click", () =>
+          this.copyToClipboard(),
+        );
+      }
+
+      // 绑定所有分享按钮
+      document
+        .querySelectorAll(".share-button[data-platform]")
+        .forEach((button) => {
+          button.addEventListener("click", (e) => this.handleShare(e));
+        });
+
+      // 点击外部关闭浮动菜单
+      document.addEventListener("click", (e) => this.handleOutsideClick(e));
+
+      // 键盘导航
+      document.addEventListener("keydown", (e) => this.handleKeyDown(e));
+
+      // 更新分享计数显示
+      this.updateShareCount();
+
+      // 检查Web Share API支持
+      this.checkWebShareSupport();
+    }
+
+    toggleFloatingMenu() {
+      this.isFloatingMenuOpen = !this.isFloatingMenuOpen;
+
+      if (this.shareContainer) {
+        this.shareContainer.classList.toggle("show", this.isFloatingMenuOpen);
+      }
+
+      // 更新按钮状态
+      if (this.shareToggle) {
+        this.shareToggle.setAttribute(
+          "aria-expanded",
+          this.isFloatingMenuOpen.toString(),
+        );
+      }
+    }
+
+    handleOutsideClick(event) {
+      if (!this.shareContainer || !this.shareToggle) return;
+
+      const isClickInside =
+        this.shareContainer.contains(event.target) ||
+        this.shareToggle.contains(event.target);
+
+      if (!isClickInside && this.isFloatingMenuOpen) {
+        this.toggleFloatingMenu();
+      }
+    }
+
+    handleKeyDown(event) {
+      if (event.key === "Escape" && this.isFloatingMenuOpen) {
+        this.toggleFloatingMenu();
+        if (this.shareToggle) {
+          this.shareToggle.focus();
+        }
+      }
+    }
+
+    async handleShare(event) {
+      const button = event.currentTarget;
+      const platform = button.dataset.platform;
+
+      // 记录分享事件
+      this.trackShare(platform);
+
+      // 添加成功动画
+      button.classList.add("success");
+      setTimeout(() => {
+        button.classList.remove("success");
+      }, 300);
+
+      // 增加分享计数
+      this.incrementShareCount();
+
+      // 如果支持Web Share API且是移动设备，使用原生分享
+      if (this.isWebShareSupported() && this.isMobileDevice()) {
+        event.preventDefault();
+        await this.nativeShare();
+      }
+    }
+
+    async copyToClipboard() {
+      const url = this.copyLinkBtn?.dataset.url || window.location.href;
+
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          // 备用方法
+          const textArea = document.createElement("textarea");
+          textArea.value = url;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        }
+
+        // 显示成功状态
+        if (this.copyLinkBtn) {
+          this.copyLinkBtn.classList.add("copied");
+          const label = this.copyLinkBtn.querySelector(".platform-label");
+          const originalText = label?.textContent;
+
+          if (label) {
+            label.textContent = "Copied!";
+          }
+
+          setTimeout(() => {
+            this.copyLinkBtn.classList.remove("copied");
+            if (label && originalText) {
+              label.textContent = originalText;
+            }
+          }, 2000);
+        }
+
+        this.trackShare("copy-link");
+        this.incrementShareCount();
+      } catch (error) {
+        console.error("Failed to copy to clipboard:", error);
+        this.showNotification("Failed to copy link", "error");
+      }
+    }
+
+    async nativeShare() {
+      if (!this.isWebShareSupported()) return;
+
+      const shareData = {
+        title: document.title,
+        text: document.querySelector('meta[name="description"]')?.content || "",
+        url: window.location.href,
+      };
+
+      try {
+        await navigator.share(shareData);
+        this.trackShare("native-share");
+        this.incrementShareCount();
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Native share failed:", error);
+        }
+      }
+    }
+
+    trackShare(platform) {
+      // 发送分享事件到分析服务
+      if (typeof gtag !== "undefined") {
+        gtag("event", "share", {
+          method: platform,
+          content_type: "page",
+          item_id: window.location.pathname,
+        });
+      }
+
+      // 自定义事件
+      const event = new CustomEvent("socialShare", {
+        detail: {
+          platform,
+          url: window.location.href,
+          title: document.title,
+          timestamp: Date.now(),
+        },
+      });
+
+      window.dispatchEvent(event);
+    }
+
+    incrementShareCount() {
+      this.shareCount++;
+      this.updateShareCount();
+      this.storeShareCount();
+    }
+
+    updateShareCount() {
+      if (this.shareCountEl) {
+        this.shareCountEl.textContent = this.shareCount.toString();
+      }
+    }
+
+    getStoredShareCount() {
+      const stored = localStorage.getItem(
+        `share-count-${window.location.pathname}`,
+      );
+      return stored ? parseInt(stored, 10) : 0;
+    }
+
+    storeShareCount() {
+      localStorage.setItem(
+        `share-count-${window.location.pathname}`,
+        this.shareCount.toString(),
+      );
+    }
+
+    isWebShareSupported() {
+      return "share" in navigator;
+    }
+
+    isMobileDevice() {
+      return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      );
+    }
+
+    checkWebShareSupport() {
+      if (this.isWebShareSupported() && this.isMobileDevice()) {
+        // 添加原生分享按钮
+        this.addNativeShareButton();
+      }
+    }
+
+    addNativeShareButton() {
+      const nativeShareBtn = document.createElement("button");
+      nativeShareBtn.className = "share-button native-share";
+      nativeShareBtn.innerHTML = `
+                <div class="button-content">
+                    <span class="platform-icon">📱</span>
+                    <span class="platform-label">Share</span>
+                </div>
+            `;
+      nativeShareBtn.addEventListener("click", () => this.nativeShare());
+
+      const shareButtons = document.querySelector(".share-buttons");
+      if (shareButtons) {
+        shareButtons.appendChild(nativeShareBtn);
+      }
+    }
+
+    showNotification(message, type = "info") {
+      // 简单的通知实现
+      const notification = document.createElement("div");
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      notification.style.cssText = `
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                background: ${type === "error" ? "#ef4444" : "#10b981"};
+                color: white;
+                padding: 0.75rem 1rem;
+                border-radius: 0.5rem;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+            `;
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+  }
+
+  // 初始化组件
+  document.addEventListener("DOMContentLoaded", () => {
+    new SocialShareComponent();
+  });
+</script>

@@ -1,0 +1,805 @@
+---
+/**
+ * 交互式演示组件
+ * 展示AI图片生成和融合的动画演示
+ */
+
+import { Icon } from "astro-icon/components";
+import BananaButton from "@components/ui/BananaButton.astro";
+import { loadTranslations, createTranslator } from "../../i18n/utils";
+import { detectLanguageFromRequest } from "../../utils/language-detector";
+
+// 获取当前语言
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载翻译
+const homeTranslations = await loadTranslations(currentLang, "home");
+const t = createTranslator(currentLang, homeTranslations);
+---
+
+<section
+  class="py-20 sm:py-32 bg-gradient-to-br from-banana-light/20 via-white to-banana-secondary/10 relative overflow-hidden">
+  <!-- 背景动画元素 -->
+  <div class="absolute inset-0 overflow-hidden">
+    <div
+      class="absolute top-1/4 left-1/4 w-64 h-64 bg-banana-primary/5 rounded-full">
+    </div>
+    <div
+      class="absolute bottom-1/4 right-1/4 w-48 h-48 bg-banana-secondary/5 rounded-full">
+    </div>
+    <div
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-banana-accent/3 rounded-full">
+    </div>
+  </div>
+
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+    <!-- 标题区域 -->
+    <div class="text-center mb-16">
+      <h2
+        class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+        Experience Nano Banana AI in Action
+      </h2>
+      <p
+        class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        Watch how our advanced nano banana AI technology transforms your
+        creative ideas into stunning visual reality
+      </p>
+    </div>
+
+    <!-- 交互式演示区域 -->
+    <div
+      class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-banana-primary/10 relative">
+      <!-- 演示控制面板 -->
+      <div class="bg-gradient-to-r from-banana-primary to-banana-secondary p-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">🍌</span>
+            </div>
+            <div>
+              <h3 class="text-white font-bold text-xl">
+                BananaEditor Live Demo
+              </h3>
+              <p class="text-white/80 text-sm">
+                Powered by Nano Banana AI Technology
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="demo-tab-btn active" data-demo="generate">
+              <Icon name="heroicons:sparkles" class="w-5 h-5" />
+              <span>Generate</span>
+            </button>
+            <button class="demo-tab-btn disabled" data-demo="fusion" disabled>
+              <Icon name="heroicons:squares-2x2" class="w-5 h-5" />
+              <span>Fusion</span>
+              <span class="coming-soon">Coming Soon</span>
+            </button>
+            <button class="demo-tab-btn disabled" data-demo="optimize" disabled>
+              <Icon name="heroicons:light-bulb" class="w-5 h-5" />
+              <span>Optimize</span>
+              <span class="coming-soon">Coming Soon</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 演示内容区域 -->
+      <div class="p-8 lg:p-12">
+        <!-- AI生成演示 -->
+        <div class="demo-content active" data-content="generate">
+          <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <!-- 输入区域 -->
+            <div class="space-y-6">
+              <div>
+                <h4 class="text-2xl font-bold text-gray-900 mb-4">
+                  AI Image Generation
+                </h4>
+                <p class="text-gray-600 mb-6">
+                  Transform your ideas into stunning visuals with nano banana AI
+                </p>
+              </div>
+
+              <!-- 提示词输入 -->
+              <div
+                class="bg-gray-50 rounded-xl p-6 border-2 border-dashed border-gray-200 hover:border-banana-primary/50 transition-colors">
+                <label class="block text-sm font-medium text-gray-700 mb-3"
+                  >Enter your creative prompt:</label
+                >
+                <div class="relative">
+                  <textarea
+                    class="prompt-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-banana-primary focus:border-transparent resize-none"
+                    rows="3"
+                    placeholder="A serene mountain landscape at sunset with a crystal-clear lake reflecting the golden sky, photorealistic, 8K resolution, cinematic lighting..."
+                    readonly></textarea>
+                  <div class="absolute bottom-3 right-3">
+                    <Icon
+                      name="heroicons:sparkles"
+                      class="w-5 h-5 text-banana-primary animate-pulse"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 参数控制 -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Style</label
+                  >
+                  <select
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-banana-primary">
+                    <option>Photorealistic</option>
+                    <option>Artistic</option>
+                    <option>Cartoon</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Quality</label
+                  >
+                  <select
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-banana-primary">
+                    <option>High</option>
+                    <option>Ultra</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 生成按钮 -->
+              <BananaButton
+                class="w-full generate-btn group"
+                variant="gradient"
+                size="lg"
+                onclick="handleGenerateClick(event)">
+                <Icon
+                  name="heroicons:sparkles"
+                  class="w-5 h-5 mr-2 group-hover:animate-spin"
+                />
+                Generate with Nano Banana AI
+                <div class="ml-auto">
+                  <div
+                    class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin hidden loading-spinner">
+                  </div>
+                </div>
+              </BananaButton>
+            </div>
+
+            <!-- 结果展示区域 -->
+            <div class="relative">
+              <div
+                class="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden relative border-2 border-gray-200">
+                <!-- 初始状态 -->
+                <div
+                  class="result-placeholder absolute inset-0 flex items-center justify-center">
+                  <div class="text-center">
+                    <div
+                      class="w-20 h-20 bg-banana-gradient rounded-full flex items-center justify-center text-white mb-4 mx-auto">
+                      <Icon name="heroicons:sparkles" class="w-10 h-10" />
+                    </div>
+                    <p class="text-gray-600 font-medium">
+                      Click generate to see nano banana AI magic
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 生成中状态 -->
+                <div
+                  class="result-generating absolute inset-0 flex items-center justify-center hidden">
+                  <div class="text-center">
+                    <div
+                      class="w-20 h-20 bg-banana-gradient rounded-full flex items-center justify-center text-white mb-4 mx-auto">
+                      <Icon
+                        name="heroicons:cog-6-tooth"
+                        class="w-10 h-10 animate-spin"
+                      />
+                    </div>
+                    <p class="text-gray-600 font-medium mb-2">
+                      Nano banana AI is creating...
+                    </p>
+                    <div class="w-48 bg-gray-200 rounded-full h-2 mx-auto">
+                      <div
+                        class="bg-banana-gradient h-2 rounded-full progress-bar"
+                        style="width: 0%">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 结果状态 -->
+                <div class="result-complete absolute inset-0 hidden">
+                  <div
+                    class="w-full h-full rounded-2xl overflow-hidden relative">
+                    <!-- 生成的图片 -->
+                    <img
+                      src="/images/demo-generated-landscape.png"
+                      alt="AI Generated Mountain Landscape"
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <!-- 图片覆盖层 -->
+                    <div
+                      class="absolute inset-0 bg-black/10 flex items-center justify-center">
+                      <div class="text-center text-white">
+                        <div class="mb-2">
+                          <Icon
+                            name="heroicons:sparkles"
+                            class="w-8 h-8 mx-auto"
+                          />
+                        </div>
+                        <p class="font-bold text-lg">Amazing Result!</p>
+                        <p class="text-sm opacity-90">
+                          Generated by BananaEditor AI
+                        </p>
+                      </div>
+                    </div>
+                    <!-- 图片质量标签 -->
+                    <div
+                      class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-gray-700">
+                      8K Ultra HD
+                    </div>
+                    <!-- 图片信息标签 -->
+                    <div
+                      class="absolute bottom-3 left-3 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-2 text-white text-xs">
+                      <div class="flex items-center gap-2">
+                        <Icon name="heroicons:photo" class="w-4 h-4" />
+                        <span>Mountain Landscape</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 浮动操作按钮 -->
+              <div
+                class="absolute -bottom-4 -right-4 flex gap-2 result-actions hidden">
+                <button
+                  class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+                  <Icon
+                    name="heroicons:arrow-down-tray"
+                    class="w-5 h-5 text-gray-600"
+                  />
+                </button>
+                <button
+                  class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors">
+                  <Icon name="heroicons:share" class="w-5 h-5 text-gray-600" />
+                </button>
+                <button
+                  class="w-12 h-12 bg-banana-primary rounded-full shadow-lg flex items-center justify-center hover:bg-banana-secondary transition-colors">
+                  <Icon
+                    name="heroicons:arrow-path"
+                    class="w-5 h-5 text-white"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 图片融合演示 -->
+        <div class="demo-content" data-content="fusion">
+          <div class="text-center">
+            <h4 class="text-2xl font-bold text-gray-900 mb-8">
+              Smart Image Fusion
+            </h4>
+
+            <div
+              class="grid grid-cols-1 md:grid-cols-5 gap-6 items-center max-w-4xl mx-auto">
+              <!-- 第一张图片 -->
+              <div class="fusion-image-1">
+                <div
+                  class="aspect-square bg-gradient-to-br from-blue-100 to-blue-300 rounded-xl flex items-center justify-center border-2 border-blue-200 relative overflow-hidden">
+                  <div class="text-center">
+                    <Icon
+                      name="heroicons:photo"
+                      class="w-8 h-8 mb-2 text-blue-600"
+                    />
+                    <p class="text-sm font-medium text-blue-800">Image 1</p>
+                  </div>
+                  <div class="absolute inset-0 bg-blue-500/20"></div>
+                </div>
+              </div>
+
+              <!-- 加号 -->
+              <div class="flex justify-center">
+                <div
+                  class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  +
+                </div>
+              </div>
+
+              <!-- 第二张图片 -->
+              <div class="fusion-image-2">
+                <div
+                  class="aspect-square bg-gradient-to-br from-green-100 to-green-300 rounded-xl flex items-center justify-center border-2 border-green-200 relative overflow-hidden">
+                  <div class="text-center">
+                    <Icon
+                      name="heroicons:photo"
+                      class="w-8 h-8 mb-2 text-green-600"
+                    />
+                    <p class="text-sm font-medium text-green-800">Image 2</p>
+                  </div>
+                  <div class="absolute inset-0 bg-green-500/20"></div>
+                </div>
+              </div>
+
+              <!-- 等号 -->
+              <div class="flex justify-center">
+                <div
+                  class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold text-xl">
+                  =
+                </div>
+              </div>
+
+              <!-- 融合结果 -->
+              <div class="fusion-result">
+                <div
+                  class="aspect-square bg-gradient-to-br from-banana-light to-banana-secondary rounded-xl flex items-center justify-center border-2 border-banana-primary relative overflow-hidden">
+                  <div class="text-center fusion-content">
+                    <div
+                      class="w-16 h-16 bg-banana-gradient rounded-full flex items-center justify-center text-white text-2xl mb-2 mx-auto animate-spin">
+                      🍌
+                    </div>
+                    <p class="text-sm font-medium text-banana-dark">
+                      Fusing...
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 融合控制 -->
+            <div class="mt-8 max-w-md mx-auto">
+              <BananaButton
+                class="w-full fusion-btn"
+                variant="gradient"
+                size="lg">
+                <Icon name="heroicons:squares-2x2" class="w-5 h-5 mr-2" />
+                Start Nano Banana Fusion
+              </BananaButton>
+            </div>
+          </div>
+        </div>
+
+        <!-- 提示词优化演示 -->
+        <div class="demo-content" data-content="optimize">
+          <div class="max-w-4xl mx-auto">
+            <h4 class="text-2xl font-bold text-gray-900 mb-8 text-center">
+              Prompt Optimization Magic
+            </h4>
+
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+              <!-- 原始提示词 -->
+              <div class="optimize-before">
+                <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                  <div class="flex items-center gap-3 mb-4">
+                    <Icon
+                      name="heroicons:pencil"
+                      class="w-6 h-6 text-gray-500"
+                    />
+                    <h5 class="font-semibold text-gray-700">
+                      Your Original Prompt
+                    </h5>
+                  </div>
+                  <div class="bg-white rounded-lg p-4 border border-gray-200">
+                    <p
+                      class="text-gray-700 leading-relaxed typing-text"
+                      data-text="sunset landscape">
+                      <span class="cursor">|</span>
+                    </p>
+                  </div>
+                  <div
+                    class="mt-4 flex items-center gap-2 text-sm text-gray-500">
+                    <Icon
+                      name="heroicons:exclamation-triangle"
+                      class="w-4 h-4"
+                    />
+                    <span>Basic prompt - limited results</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 优化后提示词 -->
+              <div class="optimize-after">
+                <div
+                  class="bg-banana-light/30 rounded-xl p-6 border-2 border-banana-primary/20">
+                  <div class="flex items-center gap-3 mb-4">
+                    <Icon
+                      name="heroicons:sparkles"
+                      class="w-6 h-6 text-banana-primary"
+                    />
+                    <h5 class="font-semibold text-banana-primary">
+                      Nano Banana AI Optimized
+                    </h5>
+                  </div>
+                  <div
+                    class="bg-white rounded-lg p-4 border border-banana-primary/20">
+                    <p
+                      class="text-gray-700 leading-relaxed optimized-text opacity-0">
+                      A breathtaking mountain landscape at golden hour, with
+                      snow-capped peaks reflecting warm sunlight, a pristine
+                      lake mirroring the dramatic sky, misty valleys below,
+                      captured with professional landscape photography
+                      techniques, 8K ultra-high resolution, cinematic
+                      composition, dramatic lighting, commercial quality,
+                      award-winning photography
+                    </p>
+                  </div>
+                  <div
+                    class="mt-4 flex items-center gap-2 text-sm text-banana-primary">
+                    <Icon name="heroicons:check-circle" class="w-4 h-4" />
+                    <span>400% better results guaranteed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 优化按钮 -->
+            <div class="text-center mt-8">
+              <BananaButton class="optimize-btn" variant="gradient" size="lg">
+                <Icon name="heroicons:sparkles" class="w-5 h-5 mr-2" />
+                Optimize with Nano Banana AI
+                <Icon name="heroicons:arrow-right" class="w-5 h-5 ml-2" />
+              </BananaButton>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部CTA -->
+    <div class="text-center mt-16">
+      <BananaButton href="/editor" variant="gradient" size="xl" class="group">
+        <Icon
+          name="heroicons:rocket-launch"
+          class="w-6 h-6 mr-3 group-hover:animate-bounce"
+        />
+        Try BananaEditor Now - It's Free!
+        <Icon
+          name="heroicons:arrow-right"
+          class="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform"
+        />
+      </BananaButton>
+      <p class="text-gray-500 text-sm mt-4">
+        No registration required • Instant access to nano banana AI
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 演示标签按钮样式 */
+  .demo-tab-btn {
+    @apply flex items-center gap-2 px-4 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200;
+  }
+
+  .demo-tab-btn.active {
+    @apply text-white bg-white/20 font-medium;
+  }
+
+  .demo-tab-btn.disabled {
+    @apply opacity-60 cursor-not-allowed bg-white/5 relative;
+  }
+
+  .demo-tab-btn.disabled:hover {
+    @apply bg-white/5;
+    transform: none;
+  }
+
+  .coming-soon {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff6b35;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  /* 演示内容切换 */
+  .demo-content {
+    @apply hidden;
+  }
+
+  .demo-content.active {
+    @apply block;
+  }
+
+  /* 打字机效果 */
+  .typing-text .cursor {
+    @apply animate-pulse;
+  }
+
+  /* 进度条动画 */
+  .progress-bar {
+    transition: width 3s ease-in-out;
+  }
+
+  /* 融合动画 */
+  .fusion-image-1,
+  .fusion-image-2 {
+    animation: fusionPulse 2s ease-in-out infinite alternate;
+  }
+
+  .fusion-image-2 {
+    animation-delay: 0.5s;
+  }
+
+  @keyframes fusionPulse {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.05);
+    }
+  }
+
+  /* 优化文本动画 */
+  .optimized-text {
+    animation: fadeInUp 1s ease-out forwards;
+    animation-delay: 1s;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 悬浮动画 */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* 确保loading spinner在隐藏时不显示 */
+  .loading-spinner.hidden {
+    display: none !important;
+  }
+</style>
+
+<script>
+  // 全局生成点击处理函数
+  function handleGenerateClick(event) {
+    console.log("InteractiveDemo: Generate button clicked via onclick!");
+    event.preventDefault();
+    event.stopPropagation();
+    if (window.simulateGeneration) {
+      window.simulateGeneration();
+    } else {
+      console.error("InteractiveDemo: simulateGeneration function not found!");
+    }
+  }
+
+  // 演示交互功能
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("InteractiveDemo: DOM loaded, initializing...");
+
+    // 添加错误处理
+    window.addEventListener("error", function (e) {
+      console.error("InteractiveDemo: JavaScript error:", e.error);
+    });
+
+    // 初始化状态
+    resetDemoState();
+    console.log("InteractiveDemo: State reset completed");
+    // 标签切换
+    const tabBtns = document.querySelectorAll(".demo-tab-btn");
+    const contents = document.querySelectorAll(".demo-content");
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", function () {
+        // 如果按钮被禁用，不执行任何操作
+        if (this.disabled || this.classList.contains("disabled")) {
+          return;
+        }
+
+        const target = this.dataset.demo;
+
+        // 更新标签状态
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        this.classList.add("active");
+
+        // 更新内容显示
+        contents.forEach((c) => c.classList.remove("active"));
+        document
+          .querySelector(`[data-content="${target}"]`)
+          ?.classList.add("active");
+      });
+    });
+
+    // AI生成演示
+    const generateBtn = document.querySelector(".generate-btn");
+    console.log("InteractiveDemo: Generate button found:", generateBtn);
+    if (generateBtn) {
+      console.log("InteractiveDemo: Button disabled:", generateBtn.disabled);
+      console.log("InteractiveDemo: Button classes:", generateBtn.className);
+      generateBtn.addEventListener("click", function (e) {
+        console.log("InteractiveDemo: Generate button clicked!");
+        e.preventDefault();
+        e.stopPropagation();
+        simulateGeneration();
+      });
+    } else {
+      console.log("InteractiveDemo: Generate button not found!");
+    }
+
+    // 融合演示
+    const fusionBtn = document.querySelector(".fusion-btn");
+    if (fusionBtn) {
+      fusionBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        simulateFusion();
+      });
+    }
+
+    // 优化演示
+    const optimizeBtn = document.querySelector(".optimize-btn");
+    if (optimizeBtn) {
+      optimizeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        simulateOptimization();
+      });
+    }
+
+    // 打字机效果
+    function typeWriter(element, text, speed = 100) {
+      let i = 0;
+      element.innerHTML = '<span class="cursor">|</span>';
+
+      function type() {
+        if (i < text.length) {
+          element.innerHTML =
+            text.slice(0, i + 1) + '<span class="cursor">|</span>';
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+
+      type();
+    }
+
+    // 模拟生成过程 - 全局函数
+    window.simulateGeneration = function () {
+      console.log("InteractiveDemo: simulateGeneration called");
+      // 如果正在生成中，直接返回
+      if (window.isGenerating) {
+        console.log("InteractiveDemo: Already generating, skipping");
+        return;
+      }
+
+      console.log("InteractiveDemo: Starting generation");
+      window.isGenerating = true; // 设置生成状态
+
+      const placeholder = document.querySelector(".result-placeholder");
+      const generating = document.querySelector(".result-generating");
+      const complete = document.querySelector(".result-complete");
+      const actions = document.querySelector(".result-actions");
+      const progressBar = document.querySelector(".progress-bar");
+      const spinner = document.querySelector(".loading-spinner");
+
+      // 显示生成中状态
+      placeholder?.classList.add("hidden");
+      generating?.classList.remove("hidden");
+      spinner?.classList.remove("hidden");
+
+      // 进度条动画
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 20;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+
+          // 显示完成状态
+          setTimeout(() => {
+            generating?.classList.add("hidden");
+            complete?.classList.remove("hidden");
+            actions?.classList.remove("hidden");
+            spinner?.classList.add("hidden");
+            window.isGenerating = false; // 重置生成状态
+          }, 500);
+        }
+
+        if (progressBar) {
+          progressBar.style.width = progress + "%";
+        }
+      }, 200);
+    };
+
+    // 模拟融合过程
+    function simulateFusion() {
+      const fusionContent = document.querySelector(".fusion-content");
+
+      if (fusionContent) {
+        fusionContent.innerHTML = `
+          <div class="text-center">
+            <div class="text-4xl mb-2">🌄🍌</div>
+            <p class="text-sm font-medium text-banana-dark">Fusion Complete!</p>
+          </div>
+        `;
+      }
+    }
+
+    // 模拟优化过程
+    function simulateOptimization() {
+      const typingText = document.querySelector(".typing-text");
+      const optimizedText = document.querySelector(".optimized-text");
+
+      if (typingText) {
+        typeWriter(typingText, "sunset landscape", 150);
+      }
+
+      setTimeout(() => {
+        optimizedText?.classList.remove("opacity-0");
+      }, 2000);
+    }
+
+    // 重置演示状态
+    function resetDemoState() {
+      window.isGenerating = false;
+      const spinner = document.querySelector(".loading-spinner");
+      const generating = document.querySelector(".result-generating");
+      const complete = document.querySelector(".result-complete");
+      const actions = document.querySelector(".result-actions");
+      const placeholder = document.querySelector(".result-placeholder");
+
+      // 重置所有状态
+      spinner?.classList.add("hidden");
+      generating?.classList.add("hidden");
+      complete?.classList.add("hidden");
+      actions?.classList.add("hidden");
+      placeholder?.classList.remove("hidden");
+    }
+
+    // 自动演示循环 - 只循环可用的演示
+    let currentDemo = 0;
+    const demos = ["generate"]; // 只包含可用的演示
+    window.isGenerating = false; // 防止重复生成 - 全局变量
+
+    // 暂时禁用自动演示循环，避免页面加载时就开始loading
+    // setTimeout(() => {
+    //   setInterval(() => {
+    //     // 如果正在生成中，跳过这次自动演示
+    //     if (isGenerating) return;
+
+    //     currentDemo = (currentDemo + 1) % demos.length;
+    //     const targetBtn = document.querySelector(
+    //       `[data-demo="${demos[currentDemo]}"]`
+    //     );
+    //     targetBtn?.click();
+    //   }, 15000); // 每15秒切换一次演示，给更多时间展示结果
+    // }, 5000); // 5秒后开始自动演示
+  });
+</script>

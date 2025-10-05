@@ -1,0 +1,2706 @@
+---
+// BananaEditor AI图片融合模块
+// 专为BananaEditor设计的图片融合界面组件
+
+import PromptOptimizer from "./PromptOptimizer.astro";
+
+export interface Props {
+  className?: string;
+  mode?: "standalone" | "integrated";
+}
+
+const { className = "", mode = "integrated" } = Astro.props;
+---
+
+<div class={`banana-image-fusion ${className}`} id="banana-image-fusion">
+  <!-- 融合器头部 -->
+  <div class="fusion-header">
+    <div class="header-content">
+      <div class="header-icon">🔀</div>
+      <div class="header-text">
+        <h2 class="fusion-title">AI图片融合</h2>
+        <p class="fusion-subtitle">使用nano banana AI技术融合两张图片</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 融合器主体 -->
+  <div class="fusion-body">
+    <!-- 双图片上传区域 -->
+    <div class="upload-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <span class="title-icon">📷</span>
+          上传图片进行融合
+        </h3>
+        <span class="section-badge">必需</span>
+      </div>
+
+      <div class="dual-upload-container">
+        <!-- 第一张图片上传 -->
+        <div class="upload-group">
+          <div class="upload-label">
+            <span class="label-icon">🖼️</span>
+            <span class="label-text">主图片</span>
+          </div>
+          <div class="upload-area" id="upload-area-1" data-target="image1">
+            <div class="upload-content">
+              <div class="upload-icon">📁</div>
+              <h4>拖拽第一张图片</h4>
+              <p>或点击选择文件</p>
+              <div class="upload-formats">
+                <span class="format-tag">JPG</span>
+                <span class="format-tag">PNG</span>
+                <span class="format-tag">WebP</span>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="image-upload-1"
+              accept="image/*"
+              style="display: none;"
+            />
+          </div>
+
+          <!-- 第一张图片预览 -->
+          <div
+            class="uploaded-preview"
+            id="uploaded-preview-1"
+            style="display: none;">
+            <div class="preview-container">
+              <img id="preview-image-1" alt="主图片预览" />
+              <div class="preview-overlay">
+                <button
+                  class="preview-action"
+                  id="remove-image-1"
+                  title="移除图片">
+                  <span class="icon">🗑️</span>
+                </button>
+                <button
+                  class="preview-action"
+                  id="replace-image-1"
+                  title="替换图片">
+                  <span class="icon">🔄</span>
+                </button>
+              </div>
+            </div>
+            <div class="preview-info">
+              <span class="info-item" id="image-name-1">--</span>
+              <span class="info-item" id="image-size-1">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 融合指示器 -->
+        <div class="fusion-indicator">
+          <div class="fusion-arrow">
+            <span class="arrow-icon">➕</span>
+            <span class="arrow-text">融合</span>
+          </div>
+        </div>
+
+        <!-- 第二张图片上传 -->
+        <div class="upload-group">
+          <div class="upload-label">
+            <span class="label-icon">🎨</span>
+            <span class="label-text">辅助图片</span>
+          </div>
+          <div class="upload-area" id="upload-area-2" data-target="image2">
+            <div class="upload-content">
+              <div class="upload-icon">📁</div>
+              <h4>拖拽第二张图片</h4>
+              <p>或点击选择文件</p>
+              <div class="upload-formats">
+                <span class="format-tag">JPG</span>
+                <span class="format-tag">PNG</span>
+                <span class="format-tag">WebP</span>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="image-upload-2"
+              accept="image/*"
+              style="display: none;"
+            />
+          </div>
+
+          <!-- 第二张图片预览 -->
+          <div
+            class="uploaded-preview"
+            id="uploaded-preview-2"
+            style="display: none;">
+            <div class="preview-container">
+              <img id="preview-image-2" alt="辅助图片预览" />
+              <div class="preview-overlay">
+                <button
+                  class="preview-action"
+                  id="remove-image-2"
+                  title="移除图片">
+                  <span class="icon">🗑️</span>
+                </button>
+                <button
+                  class="preview-action"
+                  id="replace-image-2"
+                  title="替换图片">
+                  <span class="icon">🔄</span>
+                </button>
+              </div>
+            </div>
+            <div class="preview-info">
+              <span class="info-item" id="image-name-2">--</span>
+              <span class="info-item" id="image-size-2">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 尺寸匹配建议 -->
+      <div class="size-suggestion" id="size-suggestion" style="display: none;">
+        <div class="suggestion-content">
+          <div class="suggestion-icon">💡</div>
+          <div class="suggestion-text">
+            <strong>尺寸建议：</strong>
+            <span id="suggestion-message"
+              >为获得最佳融合效果，建议两张图片尺寸相近</span
+            >
+          </div>
+          <button class="auto-resize-btn" id="auto-resize-btn">
+            <span class="icon">📐</span>
+            自动调整
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 融合参数控制面板 -->
+    <div class="params-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <span class="title-icon">⚙️</span>
+          融合参数
+        </h3>
+        <button class="preset-btn" id="preset-btn" title="预设参数">
+          <span class="icon">🎯</span>
+          预设
+        </button>
+      </div>
+
+      <div class="params-grid">
+        <!-- 融合比例控制 -->
+        <div class="param-group fusion-ratio-group">
+          <label for="fusion-ratio" class="param-label">
+            融合比例
+            <span class="param-value" id="fusion-ratio-value">50% : 50%</span>
+          </label>
+          <div class="ratio-container">
+            <div class="ratio-labels">
+              <span class="ratio-label">主图片</span>
+              <span class="ratio-label">辅助图片</span>
+            </div>
+            <input
+              type="range"
+              id="fusion-ratio"
+              class="param-range ratio-range"
+              min="0"
+              max="100"
+              value="50"
+            />
+            <div class="ratio-indicators">
+              <div class="ratio-indicator" id="ratio-indicator-1">50%</div>
+              <div class="ratio-indicator" id="ratio-indicator-2">50%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 融合模式 -->
+        <div class="param-group">
+          <label for="blend-mode" class="param-label">融合模式</label>
+          <select id="blend-mode" class="param-select">
+            <option value="normal">自然融合</option>
+            <option value="overlay">叠加融合</option>
+            <option value="multiply">正片叠底</option>
+            <option value="screen">滤色融合</option>
+            <option value="soft-light">柔光融合</option>
+            <option value="hard-light">强光融合</option>
+            <option value="color-dodge">颜色减淡</option>
+            <option value="color-burn">颜色加深</option>
+          </select>
+        </div>
+
+        <!-- 融合强度 -->
+        <div class="param-group">
+          <label for="fusion-intensity" class="param-label">
+            融合强度
+            <span class="param-value" id="fusion-intensity-value">70%</span>
+          </label>
+          <div class="range-container">
+            <input
+              type="range"
+              id="fusion-intensity"
+              class="param-range"
+              min="0"
+              max="100"
+              value="70"
+            />
+            <div class="range-labels">
+              <span>轻微</span>
+              <span>适中</span>
+              <span>强烈</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 边缘处理 -->
+        <div class="param-group">
+          <label for="edge-processing" class="param-label">边缘处理</label>
+          <select id="edge-processing" class="param-select">
+            <option value="smooth">平滑过渡</option>
+            <option value="sharp">锐利边缘</option>
+            <option value="feather">羽化边缘</option>
+            <option value="gradient">渐变过渡</option>
+          </select>
+        </div>
+
+        <!-- 色彩调和 -->
+        <div class="param-group">
+          <label for="color-harmony" class="param-label">
+            色彩调和
+            <span class="param-value" id="color-harmony-value">50%</span>
+          </label>
+          <div class="range-container">
+            <input
+              type="range"
+              id="color-harmony"
+              class="param-range"
+              min="0"
+              max="100"
+              value="50"
+            />
+            <div class="range-labels">
+              <span>保持原色</span>
+              <span>自然调和</span>
+              <span>完全融合</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 输出质量 -->
+        <div class="param-group">
+          <label for="output-quality" class="param-label">输出质量</label>
+          <select id="output-quality" class="param-select">
+            <option value="standard">标准质量</option>
+            <option value="high">高质量</option>
+            <option value="ultra">超高质量</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 预设参数面板 -->
+      <div class="preset-panel" id="preset-panel" style="display: none;">
+        <div class="preset-header">
+          <h4 class="preset-title">融合预设</h4>
+          <button class="close-preset-btn" id="close-preset-btn">✕</button>
+        </div>
+        <div class="preset-grid">
+          <button class="preset-item" data-preset="artistic">
+            <div class="preset-icon">🎨</div>
+            <div class="preset-name">艺术融合</div>
+            <div class="preset-desc">适合创意艺术作品</div>
+          </button>
+          <button class="preset-item" data-preset="portrait">
+            <div class="preset-icon">👤</div>
+            <div class="preset-name">人像融合</div>
+            <div class="preset-desc">专为人像照片优化</div>
+          </button>
+          <button class="preset-item" data-preset="landscape">
+            <div class="preset-icon">🏞️</div>
+            <div class="preset-name">风景融合</div>
+            <div class="preset-desc">适合风景照片</div>
+          </button>
+          <button class="preset-item" data-preset="abstract">
+            <div class="preset-icon">🌀</div>
+            <div class="preset-name">抽象融合</div>
+            <div class="preset-desc">创造抽象艺术效果</div>
+          </button>
+          <button class="preset-item" data-preset="vintage">
+            <div class="preset-icon">📷</div>
+            <div class="preset-name">复古融合</div>
+            <div class="preset-desc">营造怀旧复古感</div>
+          </button>
+          <button class="preset-item" data-preset="modern">
+            <div class="preset-icon">✨</div>
+            <div class="preset-name">现代融合</div>
+            <div class="preset-desc">时尚现代风格</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 融合提示词区域 -->
+    <div class="fusion-prompt-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <span class="title-icon">✨</span>
+          融合提示词
+        </h3>
+        <PromptOptimizer className="fusion-optimizer" />
+      </div>
+
+      <div class="prompt-input-container">
+        <textarea
+          id="fusion-prompt-textarea"
+          class="prompt-textarea"
+          placeholder="描述您希望的融合效果，例如：将两张图片自然融合，保持主图的构图，融入辅助图的色彩和纹理，营造梦幻的艺术效果..."
+          rows="3"></textarea>
+        <div class="prompt-counter">
+          <span id="fusion-char-count">0</span> / 1000
+        </div>
+      </div>
+
+      <!-- 融合提示词建议 -->
+      <div class="fusion-suggestions">
+        <div class="suggestions-header">
+          <span class="suggestions-title">融合建议：</span>
+        </div>
+        <div class="suggestions-grid">
+          <button class="suggestion-tag" data-prompt="自然过渡，无缝融合">
+            <span class="tag-icon">🌊</span>
+            自然过渡
+          </button>
+          <button
+            class="suggestion-tag"
+            data-prompt="保持主图构图，融入辅助图色彩">
+            <span class="tag-icon">🎨</span>
+            色彩融合
+          </button>
+          <button class="suggestion-tag" data-prompt="纹理叠加，增强细节">
+            <span class="tag-icon">🔍</span>
+            纹理融合
+          </button>
+          <button class="suggestion-tag" data-prompt="梦幻效果，艺术风格">
+            <span class="tag-icon">✨</span>
+            艺术效果
+          </button>
+          <button class="suggestion-tag" data-prompt="保持真实感，自然融合">
+            <span class="tag-icon">📷</span>
+            真实感
+          </button>
+          <button class="suggestion-tag" data-prompt="创意混合，独特视觉">
+            <span class="tag-icon">🎭</span>
+            创意混合
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 实时预览区域 -->
+    <div class="preview-section" id="preview-section" style="display: none;">
+      <div class="section-header">
+        <h3 class="section-title">
+          <span class="title-icon">👁️</span>
+          实时预览
+        </h3>
+        <div class="preview-controls">
+          <button
+            class="preview-control-btn"
+            id="toggle-preview"
+            title="开启/关闭预览">
+            <span class="icon">👁️</span>
+          </button>
+          <button
+            class="preview-control-btn"
+            id="fullscreen-preview"
+            title="全屏预览">
+            <span class="icon">🔍</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-container">
+        <div class="preview-canvas-container">
+          <canvas id="preview-canvas" class="preview-canvas"></canvas>
+          <div
+            class="preview-loading"
+            id="preview-loading"
+            style="display: none;">
+            <div class="loading-spinner"></div>
+            <span class="loading-text">生成预览中...</span>
+          </div>
+        </div>
+
+        <div class="preview-info-panel">
+          <div class="info-item">
+            <span class="info-label">预览尺寸：</span>
+            <span class="info-value" id="preview-dimensions">--</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">融合模式：</span>
+            <span class="info-value" id="preview-mode">--</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">处理时间：</span>
+            <span class="info-value" id="preview-time">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 融合按钮区域 -->
+    <div class="fusion-section">
+      <div class="fusion-actions">
+        <button class="preview-fusion-btn" id="preview-fusion-btn" disabled>
+          <span class="btn-icon">👁️</span>
+          <span class="btn-text">预览融合</span>
+        </button>
+        <button class="start-fusion-btn" id="start-fusion-btn" disabled>
+          <span class="btn-icon">🔀</span>
+          <span class="btn-text">开始融合</span>
+          <div class="btn-loading" style="display: none;">
+            <div class="loading-spinner"></div>
+          </div>
+        </button>
+      </div>
+      <p class="fusion-tip" id="fusion-tip">请上传两张图片开始融合</p>
+    </div>
+  </div>
+
+  <!-- 融合进度显示 -->
+  <div class="progress-section" id="progress-section" style="display: none;">
+    <div class="progress-header">
+      <h4 class="progress-title">AI正在融合图片...</h4>
+      <button class="cancel-btn" id="cancel-fusion">取消</button>
+    </div>
+
+    <div class="progress-steps">
+      <div class="step" data-step="prepare">
+        <div class="step-icon">📋</div>
+        <div class="step-content">
+          <div class="step-title">准备图片</div>
+          <div class="step-description">正在处理和对齐图片</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="analyze">
+        <div class="step-icon">🔍</div>
+        <div class="step-content">
+          <div class="step-title">分析特征</div>
+          <div class="step-description">AI正在分析图片特征</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="blend">
+        <div class="step-icon">🔀</div>
+        <div class="step-content">
+          <div class="step-title">执行融合</div>
+          <div class="step-description">AI正在融合两张图片</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="optimize">
+        <div class="step-icon">✨</div>
+        <div class="step-content">
+          <div class="step-title">优化结果</div>
+          <div class="step-description">正在优化融合效果</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span class="progress-percentage" id="progress-percentage">0%</span>
+    </div>
+
+    <div class="progress-details">
+      <div class="detail-item">
+        <span class="detail-label">当前步骤：</span>
+        <span class="detail-value" id="current-step">准备中...</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">预计时间：</span>
+        <span class="detail-value" id="estimated-time">计算中...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 错误提示 -->
+  <div class="error-section" id="error-section" style="display: none;">
+    <div class="error-content">
+      <div class="error-icon">⚠️</div>
+      <h4 class="error-title">融合失败</h4>
+      <p class="error-message" id="error-message">
+        请检查图片格式和网络连接后重试
+      </p>
+      <div class="error-actions">
+        <button class="retry-btn" id="retry-fusion">重试</button>
+        <button class="close-error-btn" id="close-error">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* BananaEditor图片融合器样式 */
+  .banana-image-fusion {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.1);
+  }
+
+  /* 融合器头部 */
+  .fusion-header {
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    padding: 20px;
+    border-bottom: 2px solid var(--banana-border, #ffe55c);
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-icon {
+    font-size: 32px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .fusion-title {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .fusion-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--banana-dark, #2d1810);
+    opacity: 0.8;
+  }
+
+  /* 融合器主体 */
+  .fusion-body {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* 通用区域样式 */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .title-icon {
+    font-size: 20px;
+  }
+
+  .section-badge {
+    padding: 4px 8px;
+    background: rgba(255, 107, 53, 0.2);
+    color: var(--banana-dark, #2d1810);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* 双图片上传区域 */
+  .dual-upload-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .upload-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .upload-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .label-icon {
+    font-size: 16px;
+  }
+
+  .upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .upload-area:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 248, 220, 0.5);
+  }
+
+  .upload-area.drag-over {
+    border-color: var(--banana-accent, #ff6b35);
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.02);
+  }
+
+  .upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .upload-icon {
+    font-size: 36px;
+    opacity: 0.6;
+  }
+
+  .upload-content h4 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .upload-content p {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+  }
+
+  .upload-formats {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .format-tag {
+    padding: 3px 6px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  /* 融合指示器 */
+  .fusion-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+
+  .fusion-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 50%;
+    border: 2px solid var(--banana-primary, #ffd700);
+  }
+
+  .arrow-icon {
+    font-size: 24px;
+    color: var(--banana-accent, #ff6b35);
+  }
+
+  .arrow-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  /* 上传预览 */
+  .uploaded-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .preview-container {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 200px;
+  }
+
+  .preview-container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .preview-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .preview-container:hover .preview-overlay {
+    opacity: 1;
+  }
+
+  .preview-action {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 12px;
+  }
+
+  .preview-action:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+
+  .preview-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #666;
+  }
+
+  /* 尺寸匹配建议 */
+  .size-suggestion {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+  }
+
+  .suggestion-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .suggestion-icon {
+    font-size: 20px;
+  }
+
+  .suggestion-text {
+    flex: 1;
+    font-size: 13px;
+    color: #374151;
+  }
+
+  .auto-resize-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #3b82f6;
+    background: white;
+    color: #3b82f6;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .auto-resize-btn:hover {
+    background: #3b82f6;
+    color: white;
+  }
+
+  /* 参数控制区域 */
+  .preset-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid var(--banana-primary, #ffd700);
+    background: transparent;
+    color: var(--banana-dark, #2d1810);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .preset-btn:hover {
+    background: var(--banana-primary, #ffd700);
+  }
+
+  .params-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .param-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .param-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .param-value {
+    font-size: 12px;
+    color: #666;
+    font-weight: 400;
+  }
+
+  .param-select {
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .param-select:focus {
+    outline: none;
+    border-color: var(--banana-primary, #ffd700);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  }
+
+  /* 融合比例控制 */
+  .fusion-ratio-group {
+    grid-column: 1 / -1;
+  }
+
+  .ratio-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ratio-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .ratio-range {
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to right, #3b82f6 0%, #ef4444 100%);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+
+  .ratio-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .ratio-range::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .ratio-indicators {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ratio-indicator {
+    padding: 4px 8px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 4px;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .range-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .param-range {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+
+  .param-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .param-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+  }
+
+  /* 预设面板 */
+  .preset-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    margin-top: 8px;
+    padding: 16px;
+  }
+
+  .preset-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .preset-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .close-preset-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: #f3f4f6;
+    color: #666;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .close-preset-btn:hover {
+    background: #e5e7eb;
+  }
+
+  .preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .preset-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .preset-item:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 248, 220, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .preset-icon {
+    font-size: 24px;
+  }
+
+  .preset-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .preset-desc {
+    font-size: 10px;
+    color: #666;
+    line-height: 1.3;
+  }
+
+  /* 实时预览区域 */
+  .preview-controls {
+    display: flex;
+    gap: 8px;
+  }
+
+  .preview-control-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #666;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .preview-control-btn:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 248, 220, 0.5);
+  }
+
+  .preview-container {
+    display: flex;
+    gap: 16px;
+  }
+
+  .preview-canvas-container {
+    flex: 1;
+    position: relative;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .preview-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 4px;
+  }
+
+  .preview-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .preview-info-panel {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  .info-value {
+    font-size: 14px;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  /* 融合按钮区域 */
+  .fusion-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .preview-fusion-btn,
+  .start-fusion-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .preview-fusion-btn {
+    background: white;
+    border: 2px solid var(--banana-primary, #ffd700);
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .preview-fusion-btn:hover:not(:disabled) {
+    background: rgba(255, 248, 220, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .start-fusion-btn {
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    color: var(--banana-dark, #2d1810);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .start-fusion-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+  }
+
+  .preview-fusion-btn:disabled,
+  .start-fusion-btn:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    border-color: #e5e7eb;
+  }
+
+  .btn-icon {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .start-fusion-btn:hover:not(:disabled) .btn-icon {
+    transform: scale(1.2);
+  }
+
+  .btn-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .fusion-tip {
+    text-align: center;
+    margin: 12px 0 0 0;
+    font-size: 14px;
+    color: #666;
+  }
+
+  /* 进度显示区域 */
+  .progress-section {
+    padding: 24px;
+    background: rgba(255, 248, 220, 0.3);
+    border-top: 1px solid var(--banana-border, #ffe55c);
+  }
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .progress-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .cancel-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #666;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .cancel-btn:hover {
+    border-color: #999;
+    color: #333;
+  }
+
+  .progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 16px;
+  }
+
+  .step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .step.active {
+    opacity: 1;
+  }
+
+  .step.completed {
+    opacity: 0.7;
+  }
+
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s ease;
+  }
+
+  .step.active .step-icon {
+    background: var(--banana-primary, #ffd700);
+    transform: scale(1.1);
+  }
+
+  .step.completed .step-icon {
+    background: #10b981;
+  }
+
+  .step-content {
+    text-align: center;
+  }
+
+  .step-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    margin-bottom: 2px;
+  }
+
+  .step-description {
+    font-size: 10px;
+    color: #666;
+  }
+
+  .progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .progress-percentage {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    min-width: 40px;
+  }
+
+  .progress-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .detail-item {
+    display: flex;
+    gap: 4px;
+  }
+
+  .detail-label {
+    font-weight: 500;
+  }
+
+  /* 错误提示区域 */
+  .error-section {
+    padding: 24px;
+    background: rgba(239, 68, 68, 0.05);
+    border-top: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .error-content {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .error-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .error-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #dc2626;
+  }
+
+  .error-message {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .retry-btn {
+    padding: 10px 20px;
+    border: none;
+    background: #dc2626;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+
+  .retry-btn:hover {
+    background: #b91c1c;
+  }
+
+  .close-error-btn {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    color: #666;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .close-error-btn:hover {
+    border-color: #999;
+    color: #333;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 1024px) {
+    .dual-upload-container {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .fusion-indicator {
+      order: 2;
+      padding: 12px 0;
+    }
+
+    .fusion-arrow {
+      padding: 12px;
+    }
+
+    .arrow-icon {
+      transform: rotate(90deg);
+    }
+
+    .params-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .preview-container {
+      flex-direction: column;
+    }
+
+    .preview-info-panel {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .fusion-header {
+      padding: 16px;
+    }
+
+    .fusion-title {
+      font-size: 20px;
+    }
+
+    .fusion-body {
+      padding: 16px;
+      gap: 20px;
+    }
+
+    .section-title {
+      font-size: 16px;
+    }
+
+    .upload-area {
+      padding: 20px 12px;
+      min-height: 160px;
+    }
+
+    .upload-icon {
+      font-size: 28px;
+    }
+
+    .params-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .fusion-actions {
+      flex-direction: column;
+    }
+
+    .progress-steps {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step {
+      flex-direction: row;
+      text-align: left;
+    }
+
+    .step-content {
+      text-align: left;
+    }
+
+    .progress-details {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .preset-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .upload-content h4 {
+      font-size: 14px;
+    }
+
+    .upload-content p {
+      font-size: 11px;
+    }
+
+    .fusion-actions button {
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+
+    .preset-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* 动画 */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .upload-area {
+      border-color: #000;
+    }
+
+    .param-select {
+      border-color: #000;
+    }
+
+    .preset-item {
+      border-color: #000;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+  /* 相对定位容器用于预设面板 */
+  .params-section {
+    position: relative;
+  }
+
+  /* 融合提示词区域样式 */
+  .fusion-prompt-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .fusion-prompt-section .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .fusion-prompt-section .prompt-input-container {
+    position: relative;
+  }
+
+  .fusion-prompt-section .prompt-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+  }
+
+  .fusion-prompt-section .prompt-textarea:focus {
+    outline: none;
+    border-color: var(--banana-primary, #ffd700);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  }
+
+  .fusion-prompt-section .prompt-counter {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 12px;
+    color: #666;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .fusion-suggestions {
+    margin-top: 12px;
+  }
+
+  .fusion-suggestions .suggestions-header {
+    margin-bottom: 8px;
+  }
+
+  .fusion-suggestions .suggestions-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .fusion-suggestions .suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  .fusion-suggestions .suggestion-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+    transition: all 0.2s ease;
+  }
+
+  .fusion-suggestions .suggestion-tag:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 248, 220, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .fusion-suggestions .suggestion-tag:active {
+    background: var(--banana-primary, #ffd700);
+    transform: translateY(0);
+  }
+
+  .fusion-suggestions .tag-icon {
+    font-size: 14px;
+  }
+</style>
+<script>
+  // BananaEditor图片融合器交互逻辑
+  class BananaImageFusion {
+    private uploadAreas: NodeListOf<HTMLElement> | null = null;
+    private fileInputs: NodeListOf<HTMLInputElement> | null = null;
+    private uploadedPreviews: NodeListOf<HTMLElement> | null = null;
+    private fusionRatioRange: HTMLInputElement | null = null;
+    private previewFusionBtn: HTMLButtonElement | null = null;
+    private startFusionBtn: HTMLButtonElement | null = null;
+    private progressSection: HTMLElement | null = null;
+    private errorSection: HTMLElement | null = null;
+    private previewSection: HTMLElement | null = null;
+    private previewCanvas: HTMLCanvasElement | null = null;
+
+    private fusionPromptTextarea: HTMLTextAreaElement | null = null;
+
+    private uploadedFiles: { image1: File | null; image2: File | null } = {
+      image1: null,
+      image2: null,
+    };
+    private fusionParams = {
+      ratio: 50,
+      blendMode: "normal",
+      intensity: 70,
+      edgeProcessing: "smooth",
+      colorHarmony: 50,
+      outputQuality: "standard",
+    };
+    private fusionPrompt: string = "";
+    private isFusing: boolean = false;
+    private fusionProgress: number = 0;
+    private previewEnabled: boolean = false;
+
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      this.bindElements();
+      this.setupEventListeners();
+      this.updateFusionButtons();
+    }
+
+    private bindElements(): void {
+      this.uploadAreas = document.querySelectorAll(".upload-area");
+      this.fileInputs = document.querySelectorAll('input[type="file"]');
+      this.uploadedPreviews = document.querySelectorAll(".uploaded-preview");
+      this.fusionRatioRange = document.getElementById(
+        "fusion-ratio",
+      ) as HTMLInputElement;
+      this.previewFusionBtn = document.getElementById(
+        "preview-fusion-btn",
+      ) as HTMLButtonElement;
+      this.startFusionBtn = document.getElementById(
+        "start-fusion-btn",
+      ) as HTMLButtonElement;
+      this.progressSection = document.getElementById("progress-section");
+      this.errorSection = document.getElementById("error-section");
+      this.previewSection = document.getElementById("preview-section");
+      this.previewCanvas = document.getElementById(
+        "preview-canvas",
+      ) as HTMLCanvasElement;
+      this.fusionPromptTextarea = document.getElementById(
+        "fusion-prompt-textarea",
+      ) as HTMLTextAreaElement;
+    }
+
+    private setupEventListeners(): void {
+      // 文件上传相关事件
+      this.setupFileUpload();
+
+      // 参数控制事件
+      this.setupParameterControls();
+
+      // 融合按钮事件
+      this.previewFusionBtn?.addEventListener("click", () => {
+        if (!this.isFusing) {
+          this.startPreviewFusion();
+        }
+      });
+
+      this.startFusionBtn?.addEventListener("click", () => {
+        if (!this.isFusing) {
+          this.startFusion();
+        }
+      });
+
+      // 预设面板事件
+      this.setupPresetPanel();
+
+      // 其他控制按钮
+      this.setupControlButtons();
+
+      // 融合提示词事件
+      this.setupFusionPrompt();
+    }
+
+    private setupFileUpload(): void {
+      // 为每个上传区域设置事件
+      this.uploadAreas?.forEach((area, index) => {
+        const target = area.dataset.target as "image1" | "image2";
+        const fileInput = document.getElementById(
+          `image-upload-${index + 1}`,
+        ) as HTMLInputElement;
+
+        // 点击上传区域
+        area.addEventListener("click", () => {
+          fileInput?.click();
+        });
+
+        // 文件选择
+        fileInput?.addEventListener("change", (e) => {
+          const target = e.target as HTMLInputElement;
+          if (target.files && target.files.length > 0) {
+            this.handleFileUpload(target.files[0], index + 1);
+          }
+        });
+
+        // 拖拽上传
+        this.setupDragAndDrop(area, index + 1);
+      });
+    }
+
+    private setupDragAndDrop(
+      uploadArea: HTMLElement,
+      imageIndex: number,
+    ): void {
+      ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        uploadArea.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
+
+      uploadArea.addEventListener("dragenter", () => {
+        uploadArea.classList.add("drag-over");
+      });
+
+      uploadArea.addEventListener("dragover", () => {
+        uploadArea.classList.add("drag-over");
+      });
+
+      uploadArea.addEventListener("dragleave", (e) => {
+        if (!uploadArea.contains(e.relatedTarget as Node)) {
+          uploadArea.classList.remove("drag-over");
+        }
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        uploadArea.classList.remove("drag-over");
+        const files = e.dataTransfer?.files;
+        if (files && files.length > 0) {
+          this.handleFileUpload(files[0], imageIndex);
+        }
+      });
+    }
+
+    private handleFileUpload(file: File, imageIndex: number): void {
+      // 验证文件类型
+      if (!file.type.startsWith("image/")) {
+        this.showError("请选择有效的图片文件");
+        return;
+      }
+
+      // 验证文件大小 (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        this.showError("图片文件大小不能超过10MB");
+        return;
+      }
+
+      const imageKey = `image${imageIndex}` as "image1" | "image2";
+      this.uploadedFiles[imageKey] = file;
+      this.showUploadedPreview(file, imageIndex);
+      this.updateFusionButtons();
+      this.checkSizeCompatibility();
+    }
+    private showUploadedPreview(file: File, imageIndex: number): void {
+      const uploadArea = document.getElementById(`upload-area-${imageIndex}`);
+      const uploadedPreview = document.getElementById(
+        `uploaded-preview-${imageIndex}`,
+      );
+      const previewImage = document.getElementById(
+        `preview-image-${imageIndex}`,
+      ) as HTMLImageElement;
+      const imageName = document.getElementById(`image-name-${imageIndex}`);
+      const imageSize = document.getElementById(`image-size-${imageIndex}`);
+
+      if (!uploadedPreview || !previewImage) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          previewImage.src = e.target.result as string;
+        }
+
+        if (imageName) {
+          imageName.textContent = file.name;
+        }
+
+        if (imageSize) {
+          const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+          imageSize.textContent = `${sizeInMB} MB`;
+        }
+
+        // 隐藏上传区域，显示预览
+        if (uploadArea) {
+          uploadArea.style.display = "none";
+        }
+        uploadedPreview.style.display = "block";
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    private checkSizeCompatibility(): void {
+      const { image1, image2 } = this.uploadedFiles;
+      const sizeSuggestion = document.getElementById("size-suggestion");
+
+      if (!image1 || !image2 || !sizeSuggestion) return;
+
+      // 创建临时图片元素来获取尺寸
+      const img1 = new Image();
+      const img2 = new Image();
+      let loadedCount = 0;
+
+      const checkSizes = () => {
+        loadedCount++;
+        if (loadedCount === 2) {
+          const ratio1 = img1.width / img1.height;
+          const ratio2 = img2.width / img2.height;
+          const sizeDiff = Math.abs(ratio1 - ratio2);
+
+          if (sizeDiff > 0.3) {
+            const suggestionMessage =
+              document.getElementById("suggestion-message");
+            if (suggestionMessage) {
+              suggestionMessage.textContent = `图片尺寸比例差异较大（${img1.width}x${img1.height} vs ${img2.width}x${img2.height}），建议调整以获得更好的融合效果`;
+            }
+            sizeSuggestion.style.display = "block";
+          } else {
+            sizeSuggestion.style.display = "none";
+          }
+        }
+      };
+
+      img1.onload = checkSizes;
+      img2.onload = checkSizes;
+      img1.src = URL.createObjectURL(image1);
+      img2.src = URL.createObjectURL(image2);
+    }
+
+    private setupParameterControls(): void {
+      // 融合比例控制
+      this.fusionRatioRange?.addEventListener("input", (e) => {
+        const target = e.target as HTMLInputElement;
+        const ratio = parseInt(target.value);
+        this.fusionParams.ratio = ratio;
+        this.updateRatioDisplay(ratio);
+
+        if (this.previewEnabled) {
+          this.updatePreview();
+        }
+      });
+
+      // 其他参数控制
+      const paramControls = [
+        "blend-mode",
+        "fusion-intensity",
+        "edge-processing",
+        "color-harmony",
+        "output-quality",
+      ];
+
+      paramControls.forEach((paramId) => {
+        const element = document.getElementById(paramId) as
+          | HTMLInputElement
+          | HTMLSelectElement;
+        element?.addEventListener("change", (e) => {
+          const target = e.target as HTMLInputElement | HTMLSelectElement;
+          const paramKey = paramId.replace(
+            "-",
+            "",
+          ) as keyof typeof this.fusionParams;
+
+          if (target.type === "range") {
+            this.fusionParams[paramKey] = parseInt(target.value) as any;
+            this.updateParamDisplay(paramId, target.value);
+          } else {
+            this.fusionParams[paramKey] = target.value as any;
+          }
+
+          if (this.previewEnabled) {
+            this.updatePreview();
+          }
+        });
+      });
+    }
+    private updateRatioDisplay(ratio: number): void {
+      const ratioValue = document.getElementById("fusion-ratio-value");
+      const indicator1 = document.getElementById("ratio-indicator-1");
+      const indicator2 = document.getElementById("ratio-indicator-2");
+
+      if (ratioValue) {
+        ratioValue.textContent = `${ratio}% : ${100 - ratio}%`;
+      }
+
+      if (indicator1) {
+        indicator1.textContent = `${ratio}%`;
+      }
+
+      if (indicator2) {
+        indicator2.textContent = `${100 - ratio}%`;
+      }
+    }
+
+    private updateParamDisplay(paramId: string, value: string): void {
+      const valueDisplay = document.getElementById(`${paramId}-value`);
+      if (valueDisplay) {
+        valueDisplay.textContent = `${value}%`;
+      }
+    }
+
+    private setupPresetPanel(): void {
+      const presetBtn = document.getElementById("preset-btn");
+      const presetPanel = document.getElementById("preset-panel");
+      const closePresetBtn = document.getElementById("close-preset-btn");
+
+      presetBtn?.addEventListener("click", () => {
+        if (presetPanel) {
+          presetPanel.style.display =
+            presetPanel.style.display === "block" ? "none" : "block";
+        }
+      });
+
+      closePresetBtn?.addEventListener("click", () => {
+        if (presetPanel) {
+          presetPanel.style.display = "none";
+        }
+      });
+
+      // 预设选项
+      const presetItems = document.querySelectorAll(".preset-item");
+      presetItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          const preset = (item as HTMLElement).dataset.preset;
+          if (preset) {
+            this.applyPreset(preset);
+            if (presetPanel) {
+              presetPanel.style.display = "none";
+            }
+          }
+        });
+      });
+    }
+
+    private applyPreset(presetName: string): void {
+      const presets = {
+        artistic: {
+          ratio: 60,
+          blendMode: "overlay",
+          intensity: 80,
+          edgeProcessing: "feather",
+          colorHarmony: 70,
+        },
+        portrait: {
+          ratio: 45,
+          blendMode: "soft-light",
+          intensity: 60,
+          edgeProcessing: "smooth",
+          colorHarmony: 40,
+        },
+        landscape: {
+          ratio: 55,
+          blendMode: "normal",
+          intensity: 65,
+          edgeProcessing: "gradient",
+          colorHarmony: 60,
+        },
+        abstract: {
+          ratio: 70,
+          blendMode: "hard-light",
+          intensity: 90,
+          edgeProcessing: "sharp",
+          colorHarmony: 80,
+        },
+        vintage: {
+          ratio: 40,
+          blendMode: "multiply",
+          intensity: 50,
+          edgeProcessing: "feather",
+          colorHarmony: 30,
+        },
+        modern: {
+          ratio: 50,
+          blendMode: "screen",
+          intensity: 75,
+          edgeProcessing: "smooth",
+          colorHarmony: 65,
+        },
+      };
+
+      const preset = presets[presetName as keyof typeof presets];
+      if (preset) {
+        // 更新参数
+        Object.assign(this.fusionParams, preset);
+
+        // 更新UI
+        this.updateUIFromParams();
+
+        if (this.previewEnabled) {
+          this.updatePreview();
+        }
+      }
+    }
+
+    private updateUIFromParams(): void {
+      // 更新融合比例
+      if (this.fusionRatioRange) {
+        this.fusionRatioRange.value = this.fusionParams.ratio.toString();
+        this.updateRatioDisplay(this.fusionParams.ratio);
+      }
+
+      // 更新其他参数
+      const paramMappings = {
+        "blend-mode": "blendMode",
+        "fusion-intensity": "intensity",
+        "edge-processing": "edgeProcessing",
+        "color-harmony": "colorHarmony",
+        "output-quality": "outputQuality",
+      };
+
+      Object.entries(paramMappings).forEach(([elementId, paramKey]) => {
+        const element = document.getElementById(elementId) as
+          | HTMLInputElement
+          | HTMLSelectElement;
+        if (element) {
+          const value =
+            this.fusionParams[paramKey as keyof typeof this.fusionParams];
+          element.value = value.toString();
+
+          if (element.type === "range") {
+            this.updateParamDisplay(elementId, value.toString());
+          }
+        }
+      });
+    }
+
+    private setupControlButtons(): void {
+      // 移除图片按钮
+      [1, 2].forEach((index) => {
+        const removeBtn = document.getElementById(`remove-image-${index}`);
+        const replaceBtn = document.getElementById(`replace-image-${index}`);
+
+        removeBtn?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this.removeImage(index);
+        });
+
+        replaceBtn?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const fileInput = document.getElementById(
+            `image-upload-${index}`,
+          ) as HTMLInputElement;
+          fileInput?.click();
+        });
+      });
+
+      // 自动调整尺寸按钮
+      const autoResizeBtn = document.getElementById("auto-resize-btn");
+      autoResizeBtn?.addEventListener("click", () => {
+        this.autoResizeImages();
+      });
+
+      // 预览控制按钮
+      const togglePreviewBtn = document.getElementById("toggle-preview");
+      const fullscreenPreviewBtn =
+        document.getElementById("fullscreen-preview");
+
+      togglePreviewBtn?.addEventListener("click", () => {
+        this.togglePreview();
+      });
+
+      fullscreenPreviewBtn?.addEventListener("click", () => {
+        this.openFullscreenPreview();
+      });
+
+      // 取消融合按钮
+      const cancelBtn = document.getElementById("cancel-fusion");
+      cancelBtn?.addEventListener("click", () => {
+        this.cancelFusion();
+      });
+
+      // 错误处理按钮
+      const retryBtn = document.getElementById("retry-fusion");
+      const closeErrorBtn = document.getElementById("close-error");
+
+      retryBtn?.addEventListener("click", () => {
+        this.retryFusion();
+      });
+
+      closeErrorBtn?.addEventListener("click", () => {
+        this.hideError();
+      });
+    }
+
+    private removeImage(imageIndex: number): void {
+      const imageKey = `image${imageIndex}` as "image1" | "image2";
+      this.uploadedFiles[imageKey] = null;
+
+      const uploadArea = document.getElementById(`upload-area-${imageIndex}`);
+      const uploadedPreview = document.getElementById(
+        `uploaded-preview-${imageIndex}`,
+      );
+
+      if (uploadArea && uploadedPreview) {
+        uploadArea.style.display = "flex";
+        uploadedPreview.style.display = "none";
+      }
+
+      this.updateFusionButtons();
+      this.hideSizeSuggestion();
+    }
+
+    private autoResizeImages(): void {
+      // 这里可以实现自动调整图片尺寸的逻辑
+      // 暂时显示提示信息
+      this.showInfo("自动调整功能将在后续版本中实现");
+    }
+
+    private updateFusionButtons(): void {
+      const { image1, image2 } = this.uploadedFiles;
+      const hasImages = image1 && image2;
+      const fusionTip = document.getElementById("fusion-tip");
+
+      if (this.previewFusionBtn) {
+        this.previewFusionBtn.disabled = !hasImages;
+      }
+
+      if (this.startFusionBtn) {
+        this.startFusionBtn.disabled = !hasImages;
+      }
+
+      if (fusionTip) {
+        if (hasImages) {
+          fusionTip.textContent = "准备就绪，可以开始融合";
+        } else if (image1 || image2) {
+          fusionTip.textContent = "请上传第二张图片";
+        } else {
+          fusionTip.textContent = "请上传两张图片开始融合";
+        }
+      }
+    }
+
+    private async startPreviewFusion(): void {
+      if (!this.uploadedFiles.image1 || !this.uploadedFiles.image2) return;
+
+      this.previewEnabled = true;
+      if (this.previewSection) {
+        this.previewSection.style.display = "block";
+      }
+
+      await this.updatePreview();
+    }
+
+    private async updatePreview(): void {
+      if (
+        !this.previewCanvas ||
+        !this.uploadedFiles.image1 ||
+        !this.uploadedFiles.image2
+      )
+        return;
+
+      const previewLoading = document.getElementById("preview-loading");
+      if (previewLoading) {
+        previewLoading.style.display = "flex";
+      }
+
+      try {
+        // 模拟预览生成过程
+        await this.simulatePreviewGeneration();
+
+        // 这里应该调用实际的图片融合预览API
+        // const previewResult = await this.generatePreview();
+
+        if (previewLoading) {
+          previewLoading.style.display = "none";
+        }
+
+        this.updatePreviewInfo();
+      } catch (error) {
+        console.error("预览生成失败:", error);
+        if (previewLoading) {
+          previewLoading.style.display = "none";
+        }
+      }
+    }
+
+    private async simulatePreviewGeneration(): Promise<void> {
+      return new Promise((resolve) => {
+        setTimeout(resolve, 1500);
+      });
+    }
+
+    private updatePreviewInfo(): void {
+      const previewDimensions = document.getElementById("preview-dimensions");
+      const previewMode = document.getElementById("preview-mode");
+      const previewTime = document.getElementById("preview-time");
+
+      if (previewDimensions) {
+        previewDimensions.textContent = "800x600";
+      }
+
+      if (previewMode) {
+        previewMode.textContent = this.fusionParams.blendMode;
+      }
+
+      if (previewTime) {
+        previewTime.textContent = "1.2s";
+      }
+    }
+
+    private togglePreview(): void {
+      this.previewEnabled = !this.previewEnabled;
+
+      if (
+        this.previewEnabled &&
+        this.uploadedFiles.image1 &&
+        this.uploadedFiles.image2
+      ) {
+        this.updatePreview();
+      }
+    }
+
+    private openFullscreenPreview(): void {
+      // 实现全屏预览功能
+      if (this.previewCanvas) {
+        if (this.previewCanvas.requestFullscreen) {
+          this.previewCanvas.requestFullscreen();
+        }
+      }
+    }
+
+    private async startFusion(): void {
+      if (
+        !this.uploadedFiles.image1 ||
+        !this.uploadedFiles.image2 ||
+        this.isFusing
+      )
+        return;
+
+      this.isFusing = true;
+      this.showProgress();
+
+      try {
+        const result = await this.performFusion();
+        this.handleFusionSuccess(result);
+      } catch (error) {
+        console.error("融合失败:", error);
+        this.handleFusionError(error as Error);
+      } finally {
+        this.isFusing = false;
+      }
+    }
+    private async performFusion(): Promise<any> {
+      const formData = new FormData();
+      formData.append("image1", this.uploadedFiles.image1!);
+      formData.append("image2", this.uploadedFiles.image2!);
+      formData.append("params", JSON.stringify(this.fusionParams));
+
+      // 模拟融合进度
+      this.simulateFusionProgress();
+
+      const response = await fetch("/api/banana-editor/fusion", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`融合失败: ${response.statusText}`);
+      }
+
+      return await response.json();
+    }
+
+    private simulateFusionProgress(): void {
+      const steps = ["prepare", "analyze", "blend", "optimize"];
+      let currentStepIndex = 0;
+      let progress = 0;
+
+      const updateProgress = () => {
+        if (currentStepIndex < steps.length) {
+          // 更新步骤状态
+          const currentStep = document.querySelector(
+            `[data-step="${steps[currentStepIndex]}"]`,
+          );
+          if (currentStep) {
+            currentStep.classList.add("active");
+
+            // 完成前一个步骤
+            if (currentStepIndex > 0) {
+              const prevStep = document.querySelector(
+                `[data-step="${steps[currentStepIndex - 1]}"]`,
+              );
+              if (prevStep) {
+                prevStep.classList.remove("active");
+                prevStep.classList.add("completed");
+              }
+            }
+          }
+
+          // 更新进度条
+          progress = ((currentStepIndex + 1) / steps.length) * 100;
+          this.updateProgressBar(progress);
+
+          // 更新详细信息
+          this.updateProgressDetails(steps[currentStepIndex], progress);
+
+          currentStepIndex++;
+
+          if (currentStepIndex <= steps.length) {
+            setTimeout(updateProgress, 2000);
+          }
+        }
+      };
+
+      updateProgress();
+    }
+
+    private updateProgressBar(progress: number): void {
+      const progressFill = document.getElementById("progress-fill");
+      const progressPercentage = document.getElementById("progress-percentage");
+
+      if (progressFill) {
+        progressFill.style.width = `${progress}%`;
+      }
+
+      if (progressPercentage) {
+        progressPercentage.textContent = `${Math.round(progress)}%`;
+      }
+    }
+
+    private updateProgressDetails(step: string, progress: number): void {
+      const currentStepElement = document.getElementById("current-step");
+      const estimatedTimeElement = document.getElementById("estimated-time");
+
+      const stepNames = {
+        prepare: "准备图片数据",
+        analyze: "分析图片特征",
+        blend: "执行融合算法",
+        optimize: "优化输出结果",
+      };
+
+      if (currentStepElement) {
+        currentStepElement.textContent =
+          stepNames[step as keyof typeof stepNames] || step;
+      }
+
+      if (estimatedTimeElement) {
+        const remainingTime = Math.max(0, Math.round((100 - progress) / 20));
+        estimatedTimeElement.textContent = `${remainingTime}秒`;
+      }
+    }
+
+    private showProgress(): void {
+      if (this.progressSection) {
+        this.progressSection.style.display = "block";
+      }
+      this.hideError();
+    }
+
+    private hideProgress(): void {
+      if (this.progressSection) {
+        this.progressSection.style.display = "none";
+      }
+    }
+
+    private handleFusionSuccess(result: any): void {
+      this.hideProgress();
+
+      // 触发自定义事件，通知编辑器显示结果
+      const fusionCompleteEvent = new CustomEvent("fusionComplete", {
+        detail: {
+          result: result,
+          params: this.fusionParams,
+        },
+      });
+
+      document.dispatchEvent(fusionCompleteEvent);
+
+      this.showSuccess("图片融合完成！");
+    }
+
+    private handleFusionError(error: Error): void {
+      this.hideProgress();
+      this.showError(error.message || "融合过程中发生未知错误");
+    }
+
+    private cancelFusion(): void {
+      this.isFusing = false;
+      this.hideProgress();
+
+      // 这里可以添加取消API请求的逻辑
+      this.showInfo("融合已取消");
+    }
+
+    private retryFusion(): void {
+      this.hideError();
+      this.startFusion();
+    }
+
+    private showError(message: string): void {
+      const errorMessage = document.getElementById("error-message");
+      if (errorMessage) {
+        errorMessage.textContent = message;
+      }
+
+      if (this.errorSection) {
+        this.errorSection.style.display = "block";
+      }
+    }
+
+    private hideError(): void {
+      if (this.errorSection) {
+        this.errorSection.style.display = "none";
+      }
+    }
+
+    private showSuccess(message: string): void {
+      // 可以实现成功提示的显示逻辑
+      console.log("成功:", message);
+    }
+
+    private showInfo(message: string): void {
+      // 可以实现信息提示的显示逻辑
+      console.log("信息:", message);
+    }
+
+    private hideSizeSuggestion(): void {
+      const sizeSuggestion = document.getElementById("size-suggestion");
+      if (sizeSuggestion) {
+        sizeSuggestion.style.display = "none";
+      }
+    }
+    // 设置融合提示词事件
+    private setupFusionPrompt(): void {
+      // 提示词输入事件
+      this.fusionPromptTextarea?.addEventListener("input", (e) => {
+        const target = e.target as HTMLTextAreaElement;
+        this.fusionPrompt = target.value;
+        this.updateFusionCharacterCount();
+        this.updateFusionButtons();
+      });
+
+      // 融合建议标签事件
+      const fusionSuggestionTags = document.querySelectorAll(
+        ".fusion-suggestions .suggestion-tag",
+      );
+      fusionSuggestionTags.forEach((tag) => {
+        tag.addEventListener("click", () => {
+          const prompt = (tag as HTMLElement).dataset.prompt;
+          if (prompt) {
+            this.addFusionPromptSuggestion(prompt);
+          }
+        });
+      });
+
+      // 监听提示词优化事件
+      document.addEventListener("promptOptimized", (e: any) => {
+        if (this.fusionPromptTextarea) {
+          this.fusionPromptTextarea.value = e.detail.optimizedPrompt;
+          this.fusionPrompt = e.detail.optimizedPrompt;
+          this.updateFusionCharacterCount();
+          this.updateFusionButtons();
+        }
+      });
+    }
+
+    // 更新融合提示词字符计数
+    private updateFusionCharacterCount(): void {
+      const charCount = document.getElementById("fusion-char-count");
+      if (charCount) {
+        charCount.textContent = this.fusionPrompt.length.toString();
+
+        // 更新颜色提示
+        if (this.fusionPrompt.length > 900) {
+          charCount.style.color = "#dc2626";
+        } else if (this.fusionPrompt.length > 750) {
+          charCount.style.color = "#f59e0b";
+        } else {
+          charCount.style.color = "#666";
+        }
+      }
+    }
+
+    // 添加融合提示词建议
+    private addFusionPromptSuggestion(suggestion: string): void {
+      if (!this.fusionPromptTextarea) return;
+
+      const currentValue = this.fusionPromptTextarea.value;
+      const newValue = currentValue
+        ? `${currentValue}, ${suggestion}`
+        : suggestion;
+
+      this.fusionPromptTextarea.value = newValue;
+      this.fusionPrompt = newValue;
+      this.updateFusionCharacterCount();
+      this.updateFusionButtons();
+
+      // 聚焦到输入框末尾
+      this.fusionPromptTextarea.focus();
+      this.fusionPromptTextarea.setSelectionRange(
+        newValue.length,
+        newValue.length,
+      );
+    }
+
+    // 获取融合提示词（供外部调用）
+    public getFusionPrompt(): string {
+      return this.fusionPrompt;
+    }
+
+    // 设置融合提示词（供外部调用）
+    public setFusionPrompt(prompt: string): void {
+      if (this.fusionPromptTextarea) {
+        this.fusionPromptTextarea.value = prompt;
+        this.fusionPrompt = prompt;
+        this.updateFusionCharacterCount();
+        this.updateFusionButtons();
+      }
+    }
+  }
+
+  // 初始化融合器
+  document.addEventListener("DOMContentLoaded", () => {
+    new BananaImageFusion();
+  });
+</script>

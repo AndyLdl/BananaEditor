@@ -1,0 +1,308 @@
+---
+// 筛选组件 - 提供排序和筛选功能
+---
+
+<div class="prompt-filters">
+  <!-- 排序选择器 -->
+  <div class="filter-group">
+    <label class="filter-label">排序:</label>
+    <select class="filter-select" id="sort-select">
+      <option value="newest">最新</option>
+      <option value="oldest">最旧</option>
+      <option value="rating">评分</option>
+      <option value="usage">使用次数</option>
+      <option value="alphabetical">字母顺序</option>
+    </select>
+  </div>
+
+  <!-- 评分筛选器 -->
+  <div class="filter-group">
+    <label class="filter-label">评分:</label>
+    <select class="filter-select" id="rating-filter">
+      <option value="all">全部</option>
+      <option value="5">5星</option>
+      <option value="4">4星及以上</option>
+      <option value="3">3星及以上</option>
+    </select>
+  </div>
+
+  <!-- 视图切换 -->
+  <div class="filter-group">
+    <label class="filter-label">视图:</label>
+    <div class="view-toggle">
+      <button class="view-button active" data-view="grid" title="网格视图">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path
+            d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+          ></path>
+        </svg>
+      </button>
+      <button class="view-button" data-view="list" title="列表视图">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fill-rule="evenodd"
+            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 重置按钮 -->
+  <button class="reset-button" id="reset-filters" title="重置筛选">
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fill-rule="evenodd"
+        d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+        clip-rule="evenodd"></path>
+    </svg>
+    重置
+  </button>
+</div>
+
+<style>
+  .prompt-filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .filter-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d1810;
+    white-space: nowrap;
+  }
+
+  .filter-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    background: white;
+    color: #2d1810;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+  }
+
+  .filter-select:hover {
+    border-color: #ffa500;
+    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.1);
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #ffa500;
+    box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.1);
+  }
+
+  .view-toggle {
+    display: flex;
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .view-button {
+    padding: 0.5rem;
+    background: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .view-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .view-button:hover {
+    background: #fff8dc;
+    color: #ffa500;
+  }
+
+  .view-button.active {
+    background: #ffd700;
+    color: #2d1810;
+  }
+
+  .view-button + .view-button {
+    border-left: 1px solid #ffd700;
+  }
+
+  .reset-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #666;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .reset-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .reset-button:hover {
+    background: #f5f5f5;
+    border-color: #999;
+    color: #333;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .prompt-filters {
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .filter-label {
+      display: none; /* 在移动端隐藏标签 */
+    }
+
+    .filter-select {
+      min-width: 80px;
+      font-size: 0.85rem;
+    }
+
+    .reset-button span {
+      display: none; /* 在移动端只显示图标 */
+    }
+  }
+</style>
+
+<script>
+  // 筛选功能实现
+  class PromptFilters {
+    constructor() {
+      this.sortSelect = document.getElementById("sort-select");
+      this.ratingFilter = document.getElementById("rating-filter");
+      this.viewButtons = document.querySelectorAll(".view-button");
+      this.resetButton = document.getElementById("reset-filters");
+
+      this.currentFilters = {
+        sort: "newest",
+        rating: "all",
+        view: "grid",
+      };
+
+      this.init();
+    }
+
+    init() {
+      // 绑定事件监听器
+      this.sortSelect.addEventListener(
+        "change",
+        this.handleSortChange.bind(this),
+      );
+      this.ratingFilter.addEventListener(
+        "change",
+        this.handleRatingChange.bind(this),
+      );
+      this.resetButton.addEventListener("click", this.resetFilters.bind(this));
+
+      this.viewButtons.forEach((button) => {
+        button.addEventListener("click", this.handleViewChange.bind(this));
+      });
+    }
+
+    handleSortChange(e) {
+      this.currentFilters.sort = e.target.value;
+      this.applyFilters();
+    }
+
+    handleRatingChange(e) {
+      this.currentFilters.rating = e.target.value;
+      this.applyFilters();
+    }
+
+    handleViewChange(e) {
+      const button = e.currentTarget;
+      const view = button.dataset.view;
+
+      // 更新按钮状态
+      this.viewButtons.forEach((btn) => {
+        if (btn === button) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+
+      this.currentFilters.view = view;
+      this.applyViewChange();
+    }
+
+    resetFilters() {
+      // 重置所有筛选器到默认值
+      this.currentFilters = {
+        sort: "newest",
+        rating: "all",
+        view: "grid",
+      };
+
+      // 更新UI
+      this.sortSelect.value = "newest";
+      this.ratingFilter.value = "all";
+
+      // 重置视图按钮
+      this.viewButtons.forEach((btn) => {
+        if (btn.dataset.view === "grid") {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+
+      // 应用重置后的筛选
+      this.applyFilters();
+      this.applyViewChange();
+    }
+
+    applyFilters() {
+      // 触发筛选事件
+      const filterEvent = new CustomEvent("promptFiltersChanged", {
+        detail: {
+          sort: this.currentFilters.sort,
+          rating: this.currentFilters.rating,
+        },
+      });
+      document.dispatchEvent(filterEvent);
+    }
+
+    applyViewChange() {
+      // 触发视图变更事件
+      const viewEvent = new CustomEvent("promptViewChanged", {
+        detail: { view: this.currentFilters.view },
+      });
+      document.dispatchEvent(viewEvent);
+    }
+
+    getCurrentFilters() {
+      return { ...this.currentFilters };
+    }
+  }
+
+  // 初始化筛选组件
+  document.addEventListener("DOMContentLoaded", () => {
+    window.promptFilters = new PromptFilters();
+  });
+</script>

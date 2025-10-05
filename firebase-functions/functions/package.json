@@ -1,0 +1,33 @@
+{
+    "name": "banana-ai-firebase-functions",
+    "description": "Banana AI Editor Firebase云函数",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "index.js",
+    "engines": {
+        "node": "18"
+    },
+    "scripts": {
+        "serve": "firebase emulators:start --only functions",
+        "shell": "firebase functions:shell",
+        "start": "npm run shell",
+        "deploy": "firebase deploy --only functions",
+        "logs": "firebase functions:log",
+        "test": "node test-function.js"
+    },
+    "dependencies": {
+        "@google-cloud/storage": "^7.7.0",
+        "@google/genai": "^1.21.0",
+        "busboy": "^1.6.0",
+        "cors": "^2.8.5",
+        "firebase-admin": "^12.0.0",
+        "firebase-functions": "^5.0.0",
+        "multer": "^1.4.5-lts.1",
+        "sharp": "^0.33.4"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/multer": "^1.4.12",
+        "firebase-functions-test": "^3.1.0"
+    }
+}

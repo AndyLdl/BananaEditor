@@ -1,0 +1,836 @@
+---
+// BananaEditor进度指示器组件
+// 支持多种进度显示模式
+
+export interface Props {
+  id?: string;
+  type?: "linear" | "circular" | "steps";
+  size?: "sm" | "md" | "lg";
+  color?: "primary" | "secondary" | "success" | "warning" | "error";
+  showLabel?: boolean;
+  showPercentage?: boolean;
+  animated?: boolean;
+  className?: string;
+}
+
+const { 
+  id = "progress-indicator",
+  type = "linear",
+  size = "md",
+  color = "primary",
+  showLabel = true,
+  showPercentage = true,
+  animated = true,
+  className = ""
+} = Astro.props;
+
+const sizeClasses = {
+  sm: "progress-sm",
+  md: "progress-md", 
+  lg: "progress-lg"
+};
+
+const colorClasses = {
+  primary: "progress-primary",
+  secondary: "progress-secondary",
+  success: "progress-success",
+  warning: "progress-warning",
+  error: "progress-error"
+};
+---
+
+<div 
+  class={`banana-progress-indicator ${sizeClasses[size]} ${colorClasses[color]} ${animated ? 'animated' : ''} ${className}`}
+  id={id}
+  data-type={type}
+>
+  {type === "linear" && (
+    <div class="linear-progress">
+      {showLabel && (
+        <div class="progress-header">
+          <span class="progress-label" id={`${id}-label`}>处理中...</span>
+          {showPercentage && (
+            <span class="progress-percentage" id={`${id}-percentage`}>0%</span>
+          )}
+        </div>
+      )}
+      
+      <div class="progress-track">
+        <div class="progress-fill" id={`${id}-fill`}></div>
+        {animated && (
+          <div class="progress-animation"></div>
+        )}
+      </div>
+      
+      <div class="progress-description" id={`${id}-description`} style="display: none;">
+        <span class="description-text">正在处理您的请求...</span>
+      </div>
+    </div>
+  )}
+
+  {type === "circular" && (
+    <div class="circular-progress">
+      <div class="circular-container">
+        <svg class="circular-svg" viewBox="0 0 100 100">
+          <circle
+            class="circular-track"
+            cx="50"
+            cy="50"
+            r="45"
+            fill="none"
+            stroke-width="8"
+          />
+          <circle
+            class="circular-fill"
+            id={`${id}-circle`}
+            cx="50"
+            cy="50"
+            r="45"
+            fill="none"
+            stroke-width="8"
+            stroke-dasharray="283"
+            stroke-dashoffset="283"
+          />
+        </svg>
+        
+        <div class="circular-content">
+          {showPercentage && (
+            <span class="circular-percentage" id={`${id}-circular-percentage`}>0%</span>
+          )}
+          {showLabel && (
+            <span class="circular-label" id={`${id}-circular-label`}>处理中</span>
+          )}
+        </div>
+      </div>
+      
+      <div class="circular-description" id={`${id}-circular-description`} style="display: none;">
+        <span class="description-text">正在处理您的请求...</span>
+      </div>
+    </div>
+  )}
+
+  {type === "steps" && (
+    <div class="steps-progress">
+      {showLabel && (
+        <div class="steps-header">
+          <span class="steps-label" id={`${id}-steps-label`}>处理步骤</span>
+          {showPercentage && (
+            <span class="steps-percentage" id={`${id}-steps-percentage`}>0%</span>
+          )}
+        </div>
+      )}
+      
+      <div class="steps-container" id={`${id}-steps`}>
+        <!-- 步骤将通过JavaScript动态添加 -->
+      </div>
+      
+      <div class="steps-description" id={`${id}-steps-description`} style="display: none;">
+        <span class="description-text">正在执行处理步骤...</span>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .banana-progress-indicator {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* 尺寸变体 */
+  .progress-sm {
+    font-size: 12px;
+  }
+
+  .progress-md {
+    font-size: 14px;
+  }
+
+  .progress-lg {
+    font-size: 16px;
+  }
+
+  /* 颜色变体 */
+  .progress-primary {
+    --progress-color: var(--banana-primary, #ffd700);
+    --progress-bg: var(--banana-light, #fff8dc);
+  }
+
+  .progress-secondary {
+    --progress-color: var(--banana-secondary, #ffa500);
+    --progress-bg: #f3f4f6;
+  }
+
+  .progress-success {
+    --progress-color: #10b981;
+    --progress-bg: #ecfdf5;
+  }
+
+  .progress-warning {
+    --progress-color: #f59e0b;
+    --progress-bg: #fffbeb;
+  }
+
+  .progress-error {
+    --progress-color: #ef4444;
+    --progress-bg: #fef2f2;
+  }
+
+  /* 线性进度条 */
+  .linear-progress {
+    width: 100%;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .progress-percentage {
+    font-weight: 700;
+    color: var(--progress-color);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .progress-track {
+    position: relative;
+    height: 8px;
+    background: var(--progress-bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-sm .progress-track {
+    height: 6px;
+  }
+
+  .progress-lg .progress-track {
+    height: 12px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--progress-color);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+    position: relative;
+  }
+
+  .progress-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+    border-radius: 4px;
+  }
+
+  .animated .progress-animation {
+    display: block;
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .progress-description {
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  .description-text {
+    color: #666;
+    font-size: 0.9em;
+  }
+
+  /* 圆形进度条 */
+  .circular-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .circular-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .circular-svg {
+    width: 80px;
+    height: 80px;
+    transform: rotate(-90deg);
+  }
+
+  .progress-sm .circular-svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .progress-lg .circular-svg {
+    width: 120px;
+    height: 120px;
+  }
+
+  .circular-track {
+    stroke: var(--progress-bg);
+  }
+
+  .circular-fill {
+    stroke: var(--progress-color);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+
+  .circular-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .circular-percentage {
+    font-weight: 700;
+    color: var(--progress-color);
+    font-size: 1.2em;
+  }
+
+  .circular-label {
+    font-size: 0.7em;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .circular-description {
+    text-align: center;
+  }
+
+  /* 步骤进度条 */
+  .steps-progress {
+    width: 100%;
+  }
+
+  .steps-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .steps-label {
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .steps-percentage {
+    font-weight: 700;
+    color: var(--progress-color);
+  }
+
+  .steps-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+  }
+
+  .step-item.active {
+    opacity: 1;
+  }
+
+  .step-item.completed {
+    opacity: 0.8;
+  }
+
+  .step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--progress-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+
+  .step-item.active .step-icon {
+    background: var(--progress-color);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  .step-item.completed .step-icon {
+    background: var(--progress-color);
+    color: white;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    margin-bottom: 2px;
+  }
+
+  .step-description {
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  .step-item.active .step-title {
+    color: var(--progress-color);
+  }
+
+  .steps-description {
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  /* 动画效果 */
+  .animated .step-icon {
+    animation: pulse 2s infinite;
+  }
+
+  .step-item.active.animated .step-icon {
+    animation: pulse 1s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .progress-header,
+    .steps-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .progress-percentage,
+    .steps-percentage {
+      min-width: auto;
+    }
+
+    .circular-svg {
+      width: 60px;
+      height: 60px;
+    }
+
+    .step-item {
+      gap: 8px;
+    }
+
+    .step-icon {
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .steps-container {
+      gap: 8px;
+    }
+
+    .step-content {
+      font-size: 0.9em;
+    }
+
+    .step-description {
+      font-size: 0.8em;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .progress-track {
+      border: 1px solid #000;
+    }
+
+    .circular-track {
+      stroke: #000;
+    }
+
+    .step-icon {
+      border: 1px solid #000;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .progress-fill,
+    .circular-fill,
+    .step-item,
+    .step-icon {
+      transition: none;
+    }
+
+    .progress-animation,
+    .animated .step-icon {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // BananaEditor进度指示器
+  class BananaProgressIndicator {
+    private indicatorId: string;
+    private type: "linear" | "circular" | "steps";
+    private container: HTMLElement | null = null;
+    private currentProgress: number = 0;
+    private steps: any[] = [];
+    private currentStepIndex: number = -1;
+
+    constructor(indicatorId: string) {
+      this.indicatorId = indicatorId;
+      this.container = document.getElementById(indicatorId);
+      this.type = (this.container?.dataset.type as any) || "linear";
+      
+      this.init();
+    }
+
+    private init(): void {
+      // 初始化完成，等待外部调用
+    }
+
+    // 设置进度 (0-100)
+    public setProgress(progress: number): void {
+      this.currentProgress = Math.max(0, Math.min(100, progress));
+      
+      if (this.type === "linear") {
+        this.updateLinearProgress();
+      } else if (this.type === "circular") {
+        this.updateCircularProgress();
+      } else if (this.type === "steps") {
+        this.updateStepsProgress();
+      }
+    }
+
+    private updateLinearProgress(): void {
+      const fill = document.getElementById(`${this.indicatorId}-fill`);
+      const percentage = document.getElementById(`${this.indicatorId}-percentage`);
+
+      if (fill) {
+        fill.style.width = `${this.currentProgress}%`;
+      }
+
+      if (percentage) {
+        percentage.textContent = `${Math.round(this.currentProgress)}%`;
+      }
+    }
+
+    private updateCircularProgress(): void {
+      const circle = document.getElementById(`${this.indicatorId}-circle`);
+      const percentage = document.getElementById(`${this.indicatorId}-circular-percentage`);
+
+      if (circle) {
+        const circumference = 2 * Math.PI * 45; // r=45
+        const offset = circumference - (this.currentProgress / 100) * circumference;
+        circle.style.strokeDashoffset = offset.toString();
+      }
+
+      if (percentage) {
+        percentage.textContent = `${Math.round(this.currentProgress)}%`;
+      }
+    }
+
+    private updateStepsProgress(): void {
+      const percentage = document.getElementById(`${this.indicatorId}-steps-percentage`);
+
+      if (percentage) {
+        percentage.textContent = `${Math.round(this.currentProgress)}%`;
+      }
+
+      // 根据进度更新步骤状态
+      if (this.steps.length > 0) {
+        const progressPerStep = 100 / this.steps.length;
+        const activeStepIndex = Math.floor(this.currentProgress / progressPerStep);
+        
+        if (activeStepIndex !== this.currentStepIndex) {
+          this.setActiveStep(activeStepIndex);
+        }
+      }
+    }
+
+    // 设置标签文本
+    public setLabel(label: string): void {
+      const labelElements = [
+        document.getElementById(`${this.indicatorId}-label`),
+        document.getElementById(`${this.indicatorId}-circular-label`),
+        document.getElementById(`${this.indicatorId}-steps-label`)
+      ];
+
+      labelElements.forEach(element => {
+        if (element) {
+          element.textContent = label;
+        }
+      });
+    }
+
+    // 设置描述文本
+    public setDescription(description: string): void {
+      const descriptionElements = [
+        document.getElementById(`${this.indicatorId}-description`),
+        document.getElementById(`${this.indicatorId}-circular-description`),
+        document.getElementById(`${this.indicatorId}-steps-description`)
+      ];
+
+      descriptionElements.forEach(element => {
+        if (element) {
+          const textElement = element.querySelector(".description-text");
+          if (textElement) {
+            textElement.textContent = description;
+          }
+          element.style.display = "block";
+        }
+      });
+    }
+
+    // 隐藏描述
+    public hideDescription(): void {
+      const descriptionElements = [
+        document.getElementById(`${this.indicatorId}-description`),
+        document.getElementById(`${this.indicatorId}-circular-description`),
+        document.getElementById(`${this.indicatorId}-steps-description`)
+      ];
+
+      descriptionElements.forEach(element => {
+        if (element) {
+          element.style.display = "none";
+        }
+      });
+    }
+
+    // 设置步骤 (仅用于steps类型)
+    public setSteps(steps: Array<{id: string, title: string, description?: string}>): void {
+      if (this.type !== "steps") return;
+
+      this.steps = steps;
+      this.renderSteps();
+    }
+
+    private renderSteps(): void {
+      const stepsContainer = document.getElementById(`${this.indicatorId}-steps`);
+      if (!stepsContainer) return;
+
+      stepsContainer.innerHTML = "";
+
+      this.steps.forEach((step, index) => {
+        const stepElement = document.createElement("div");
+        stepElement.className = "step-item";
+        stepElement.dataset.stepId = step.id;
+
+        stepElement.innerHTML = `
+          <div class="step-icon">${index + 1}</div>
+          <div class="step-content">
+            <div class="step-title">${step.title}</div>
+            ${step.description ? `<div class="step-description">${step.description}</div>` : ""}
+          </div>
+        `;
+
+        stepsContainer.appendChild(stepElement);
+      });
+    }
+
+    // 设置当前活动步骤
+    public setActiveStep(stepIndex: number): void {
+      if (this.type !== "steps") return;
+
+      this.currentStepIndex = stepIndex;
+
+      const stepItems = this.container?.querySelectorAll(".step-item");
+      stepItems?.forEach((item, index) => {
+        item.classList.remove("active", "completed");
+        
+        if (index < stepIndex) {
+          item.classList.add("completed");
+        } else if (index === stepIndex) {
+          item.classList.add("active");
+        }
+      });
+
+      // 更新进度
+      if (this.steps.length > 0) {
+        const progress = ((stepIndex + 1) / this.steps.length) * 100;
+        this.setProgress(Math.min(progress, 100));
+      }
+    }
+
+    // 根据步骤ID设置活动步骤
+    public setActiveStepById(stepId: string): void {
+      const stepIndex = this.steps.findIndex(step => step.id === stepId);
+      if (stepIndex !== -1) {
+        this.setActiveStep(stepIndex);
+      }
+    }
+
+    // 完成当前步骤并移动到下一步
+    public completeCurrentStep(): void {
+      if (this.currentStepIndex < this.steps.length - 1) {
+        this.setActiveStep(this.currentStepIndex + 1);
+      }
+    }
+
+    // 完成所有步骤
+    public complete(): void {
+      this.setProgress(100);
+      
+      if (this.type === "steps") {
+        const stepItems = this.container?.querySelectorAll(".step-item");
+        stepItems?.forEach(item => {
+          item.classList.remove("active");
+          item.classList.add("completed");
+        });
+      }
+    }
+
+    // 重置进度
+    public reset(): void {
+      this.currentProgress = 0;
+      this.currentStepIndex = -1;
+      
+      this.setProgress(0);
+      
+      if (this.type === "steps") {
+        const stepItems = this.container?.querySelectorAll(".step-item");
+        stepItems?.forEach(item => {
+          item.classList.remove("active", "completed");
+        });
+      }
+      
+      this.hideDescription();
+    }
+
+    // 显示/隐藏进度指示器
+    public show(): void {
+      if (this.container) {
+        this.container.style.display = "block";
+      }
+    }
+
+    public hide(): void {
+      if (this.container) {
+        this.container.style.display = "none";
+      }
+    }
+
+    // 设置颜色主题
+    public setColor(color: "primary" | "secondary" | "success" | "warning" | "error"): void {
+      if (this.container) {
+        // 移除所有颜色类
+        this.container.classList.remove(
+          "progress-primary", 
+          "progress-secondary", 
+          "progress-success", 
+          "progress-warning", 
+          "progress-error"
+        );
+        
+        // 添加新颜色类
+        this.container.classList.add(`progress-${color}`);
+      }
+    }
+
+    // 启用/禁用动画
+    public setAnimated(animated: boolean): void {
+      if (this.container) {
+        if (animated) {
+          this.container.classList.add("animated");
+        } else {
+          this.container.classList.remove("animated");
+        }
+      }
+    }
+  }
+
+  // 创建进度指示器的工厂函数
+  function createProgressIndicator(
+    containerId: string, 
+    type: "linear" | "circular" | "steps" = "linear",
+    options: any = {}
+  ): BananaProgressIndicator {
+    const indicator = new BananaProgressIndicator(containerId);
+    
+    if (options.steps && type === "steps") {
+      indicator.setSteps(options.steps);
+    }
+    
+    if (options.label) {
+      indicator.setLabel(options.label);
+    }
+    
+    if (options.color) {
+      indicator.setColor(options.color);
+    }
+    
+    if (options.animated !== undefined) {
+      indicator.setAnimated(options.animated);
+    }
+    
+    return indicator;
+  }
+
+  // 自动初始化所有进度指示器
+  document.addEventListener("DOMContentLoaded", () => {
+    const indicators = document.querySelectorAll(".banana-progress-indicator");
+    
+    indicators.forEach(indicator => {
+      const indicatorId = indicator.id;
+      if (indicatorId) {
+        new BananaProgressIndicator(indicatorId);
+      }
+    });
+  });
+
+  // 导出到全局作用域
+  (window as any).BananaProgressIndicator = BananaProgressIndicator;
+  (window as any).createProgressIndicator = createProgressIndicator;
+</script>

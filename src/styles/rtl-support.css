@@ -1,0 +1,331 @@
+/**
+ * RTL (Right-to-Left) 语言支持样式
+ * 为阿拉伯语、希伯来语等RTL语言提供布局支持
+ */
+
+/* RTL基础样式 */
+html[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+html[dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+}
+
+/* RTL布局工具类 */
+.rtl-container {
+    direction: var(--direction, ltr);
+}
+
+.rtl-text {
+    text-align: var(--text-align, left);
+}
+
+/* 逻辑属性支持 */
+.logical-margin-start {
+    margin-inline-start: var(--margin-start, 0);
+}
+
+.logical-margin-end {
+    margin-inline-end: var(--margin-end, 0);
+}
+
+.logical-padding-start {
+    padding-inline-start: var(--padding-start, 0);
+}
+
+.logical-padding-end {
+    padding-inline-end: var(--padding-end, 0);
+}
+
+/* RTL特定的组件样式 */
+
+/* 导航栏 */
+html[dir="rtl"] .navbar {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .navbar-menu {
+    text-align: right;
+}
+
+html[dir="rtl"] .navbar-item {
+    margin-left: 0;
+    margin-right: 1rem;
+}
+
+/* 按钮组 */
+html[dir="rtl"] .button-group {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .button-group .button:first-child {
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+html[dir="rtl"] .button-group .button:last-child {
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+/* 表单元素 */
+html[dir="rtl"] .form-group {
+    text-align: right;
+}
+
+html[dir="rtl"] .form-label {
+    text-align: right;
+}
+
+html[dir="rtl"] .form-input {
+    text-align: right;
+}
+
+html[dir="rtl"] .form-input::placeholder {
+    text-align: right;
+}
+
+/* 下拉菜单 */
+html[dir="rtl"] .dropdown-menu {
+    left: auto;
+    right: 0;
+    text-align: right;
+}
+
+html[dir="rtl"] .dropdown-item {
+    text-align: right;
+}
+
+/* 模态框 */
+html[dir="rtl"] .modal-header {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .modal-close {
+    left: 1rem;
+    right: auto;
+}
+
+/* 编辑器特定样式 */
+html[dir="rtl"] .editor-layout {
+    direction: rtl;
+}
+
+html[dir="rtl"] .editor-toolbar {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .editor-sidebar {
+    left: auto;
+    right: 0;
+}
+
+html[dir="rtl"] .editor-properties {
+    right: auto;
+    left: 0;
+}
+
+/* 语言切换器 */
+html[dir="rtl"] .language-switcher .language-dropdown {
+    left: 0;
+    right: auto;
+}
+
+html[dir="rtl"] .language-switcher .dropdown-icon {
+    margin-left: 0;
+    margin-right: 0.5rem;
+}
+
+/* 提示词库 */
+html[dir="rtl"] .prompt-card {
+    text-align: right;
+}
+
+html[dir="rtl"] .prompt-actions {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .prompt-tags {
+    flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .prompt-tag {
+    margin-left: 0;
+    margin-right: 0.5rem;
+}
+
+/* 图标和箭头方向调整 */
+html[dir="rtl"] .icon-arrow-right {
+    transform: scaleX(-1);
+}
+
+html[dir="rtl"] .icon-arrow-left {
+    transform: scaleX(-1);
+}
+
+html[dir="rtl"] .chevron-right {
+    transform: rotate(180deg);
+}
+
+html[dir="rtl"] .chevron-left {
+    transform: rotate(180deg);
+}
+
+/* 动画和过渡效果 */
+html[dir="rtl"] .slide-in-right {
+    animation: slideInLeft 0.3s ease-out;
+}
+
+html[dir="rtl"] .slide-in-left {
+    animation: slideInRight 0.3s ease-out;
+}
+
+html[dir="rtl"] .slide-out-right {
+    animation: slideOutLeft 0.3s ease-out;
+}
+
+html[dir="rtl"] .slide-out-left {
+    animation: slideOutRight 0.3s ease-out;
+}
+
+/* 文本方向混合支持 */
+.mixed-text {
+    unicode-bidi: plaintext;
+}
+
+.force-ltr {
+    direction: ltr !important;
+    text-align: left !important;
+}
+
+.force-rtl {
+    direction: rtl !important;
+    text-align: right !important;
+}
+
+/* 数字和代码块保持LTR */
+html[dir="rtl"] .number,
+html[dir="rtl"] .code,
+html[dir="rtl"] .url,
+html[dir="rtl"] .email {
+    direction: ltr;
+    text-align: left;
+    unicode-bidi: embed;
+}
+
+/* 响应式RTL支持 */
+@media (max-width: 768px) {
+    html[dir="rtl"] .mobile-menu {
+        right: auto;
+        left: 0;
+    }
+
+    html[dir="rtl"] .mobile-sidebar {
+        right: auto;
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    html[dir="rtl"] .mobile-sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+/* 打印样式RTL支持 */
+@media print {
+    html[dir="rtl"] {
+        direction: rtl;
+    }
+
+    html[dir="rtl"] .print-header {
+        text-align: right;
+    }
+
+    html[dir="rtl"] .print-content {
+        text-align: right;
+    }
+}
+
+/* 高对比度模式RTL支持 */
+@media (prefers-contrast: high) {
+    html[dir="rtl"] .rtl-border {
+        border-right: 2px solid;
+        border-left: none;
+    }
+}
+
+/* 减少动画模式RTL支持 */
+@media (prefers-reduced-motion: reduce) {
+    html[dir="rtl"] .rtl-transition {
+        transition: none;
+    }
+
+    html[dir="rtl"] .rtl-animation {
+        animation: none;
+    }
+}
+
+/* Tailwind CSS RTL支持扩展 */
+.rtl\:text-right {
+    text-align: right;
+}
+
+.rtl\:text-left {
+    text-align: left;
+}
+
+.rtl\:ml-auto {
+    margin-left: auto;
+}
+
+.rtl\:mr-auto {
+    margin-right: auto;
+}
+
+.rtl\:flex-row-reverse {
+    flex-direction: row-reverse;
+}
+
+/* 自定义RTL工具类 */
+.rtl-flip {
+    transform: scaleX(-1);
+}
+
+html[dir="rtl"] .rtl-flip {
+    transform: scaleX(1);
+}
+
+.rtl-mirror {
+    transform: scaleX(-1);
+}
+
+.rtl-rotate-180 {
+    transform: rotate(180deg);
+}
+
+html[dir="rtl"] .auto-rtl-rotate {
+    transform: rotate(180deg);
+}
+
+/* RTL调试工具 */
+.rtl-debug {
+    position: relative;
+}
+
+.rtl-debug::before {
+    content: attr(data-rtl-debug);
+    position: absolute;
+    top: -20px;
+    left: 0;
+    font-size: 10px;
+    background: #ff0;
+    padding: 2px 4px;
+    z-index: 9999;
+}
+
+html[dir="rtl"] .rtl-debug::before {
+    content: "RTL: " attr(data-rtl-debug);
+    left: auto;
+    right: 0;
+}

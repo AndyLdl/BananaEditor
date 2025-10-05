@@ -1,0 +1,479 @@
+---
+/**
+ * BananaEditor专用Hero组件
+ * 突出"nano banana"关键词和品牌展示
+ */
+
+import { Picture } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import Link from "@components/ui/link.astro";
+import BananaButton from "@components/ui/BananaButton.astro";
+import { loadTranslations, createTranslator } from "../../i18n/utils";
+
+// 获取当前语言
+import { detectLanguageFromRequest } from "../../utils/language-detector";
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载翻译
+const homeTranslations = await loadTranslations(currentLang, "home");
+const t = createTranslator(currentLang, homeTranslations);
+
+// Hero图片 - 可以是AI生成的示例图片
+const heroImageUrl = "/images/banana-hero-demo.jpg";
+---
+
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-banana-light via-white to-banana-light/50 pt-16 pb-20 sm:pt-24 sm:pb-32">
+  <!-- 背景装饰 -->
+  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5">
+  </div>
+
+  <!-- 浮动的香蕉元素装饰 -->
+  <div
+    class="absolute top-20 left-10 w-8 h-8 text-banana-primary/20 animate-float">
+    🍌
+  </div>
+  <div
+    class="absolute top-40 right-20 w-6 h-6 text-banana-secondary/30 animate-float-delayed">
+    🍌
+  </div>
+  <div
+    class="absolute bottom-32 left-1/4 w-4 h-4 text-banana-accent/20 animate-float-slow">
+    🍌
+  </div>
+
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <!-- 左侧内容 -->
+      <div class="text-center lg:text-left">
+        <!-- 品牌标识 -->
+        <div class="mb-6">
+          <div
+            class="inline-flex items-center gap-3 px-4 py-2 bg-banana-gradient rounded-full text-white font-semibold text-sm shadow-lg">
+            <span class="text-lg">🍌</span>
+            <span>Nano Banana AI Technology</span>
+          </div>
+        </div>
+
+        <!-- 主标题 -->
+        <h1
+          class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-gray-900 mb-6">
+          <span class="block">{t("hero.title")}</span>
+          <span
+            class="block text-transparent bg-clip-text bg-banana-gradient mt-2">
+            {t("hero.subtitle")}
+          </span>
+        </h1>
+
+        <!-- 描述文本 -->
+        <p
+          class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+          {t("hero.description")}
+        </p>
+
+        <!-- 特性标签 -->
+        <div class="flex flex-wrap gap-3 justify-center lg:justify-start mb-8">
+          <span
+            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
+            <Icon name="heroicons:user" class="w-4 h-4 text-banana-primary" />
+            Your Personal AI Designer
+          </span>
+          <span
+            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
+            <Icon
+              name="heroicons:check-circle"
+              class="w-4 h-4 text-banana-primary"
+            />
+            Perfect Element Consistency
+          </span>
+          <span
+            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
+            <Icon
+              name="heroicons:sparkles"
+              class="w-4 h-4 text-banana-primary"
+            />
+            Characters & Objects
+          </span>
+          <span
+            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
+            <Icon
+              name="heroicons:light-bulb"
+              class="w-4 h-4 text-banana-primary"
+            />
+            Styles & Quality
+          </span>
+        </div>
+
+        <!-- CTA按钮 -->
+        <div
+          class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <BananaButton
+            href="/editor"
+            size="lg"
+            variant="primary"
+            class="group touch-friendly">
+            <Icon
+              name="heroicons:sparkles"
+              class="w-5 h-5 mr-2 group-hover:animate-pulse"
+            />
+            {t("hero.cta.primary")}
+          </BananaButton>
+
+          <button
+            disabled
+            class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-400 rounded-xl cursor-not-allowed opacity-60">
+            <Icon name="heroicons:book-open" class="w-5 h-5" />
+            <span>Prompt Library</span>
+            <span
+              class="ml-2 px-2 py-1 bg-gray-200 text-gray-500 text-xs rounded-full"
+              >Coming Soon</span
+            >
+          </button>
+        </div>
+
+        <!-- 社会证明 -->
+        <div class="mt-12 pt-8 border-t border-gray-200">
+          <p class="text-sm text-gray-500 mb-4">
+            Trusted by creators worldwide
+          </p>
+          <div class="flex items-center gap-6 justify-center lg:justify-start">
+            <div class="flex items-center gap-2">
+              <div class="flex -space-x-2">
+                <div class="w-8 h-8 rounded-full bg-banana-gradient"></div>
+                <div class="w-8 h-8 rounded-full bg-banana-secondary"></div>
+                <div class="w-8 h-8 rounded-full bg-banana-accent"></div>
+              </div>
+              <span class="text-sm font-medium text-gray-700"
+                >10,000+ users</span
+              >
+            </div>
+            <div class="flex items-center gap-1">
+              {
+                [...Array(5)].map((_, i) => (
+                  <Icon
+                    name="heroicons:star-solid"
+                    class="w-4 h-4 text-yellow-400"
+                  />
+                ))
+              }
+              <span class="text-sm font-medium text-gray-700 ml-1">4.9/5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧演示区域 -->
+      <div class="relative">
+        <!-- 一致性展示区域 -->
+        <div
+          class="bg-white rounded-2xl shadow-2xl border border-banana-primary/10 overflow-hidden">
+          <!-- 标题区域 -->
+          <div
+            class="bg-gradient-to-r from-banana-primary to-banana-secondary p-4">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <Icon
+                  name="heroicons:check-circle"
+                  class="w-5 h-5 text-white"
+                />
+              </div>
+              <div>
+                <h3 class="text-white font-bold text-lg">
+                  Perfect Element Consistency
+                </h3>
+                <p class="text-white/80 text-sm">
+                  Like your personal AI designer - consistent across all
+                  elements
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4个季节展示 -->
+          <div class="p-4">
+            <div class="grid grid-cols-2 gap-3">
+              <!-- 春季 -->
+              <div
+                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                <img
+                  src="/images/hero-example-original.png"
+                  alt="Spring portrait - Cherry blossom garden"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div
+                  class="absolute top-2 right-2 bg-pink-100 text-pink-700 rounded-full px-2 py-1 text-xs font-medium">
+                  Spring
+                </div>
+              </div>
+
+              <!-- 夏季 -->
+              <div
+                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                <img
+                  src="/images/hero-example-summer.png"
+                  alt="Summer portrait - Beach and ocean"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div
+                  class="absolute top-2 right-2 bg-blue-100 text-blue-700 rounded-full px-2 py-1 text-xs font-medium">
+                  Summer
+                </div>
+              </div>
+
+              <!-- 秋季 -->
+              <div
+                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                <img
+                  src="/images/hero-example-autumn.png"
+                  alt="Autumn portrait - Maple forest"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div
+                  class="absolute top-2 right-2 bg-orange-100 text-orange-700 rounded-full px-2 py-1 text-xs font-medium">
+                  Autumn
+                </div>
+              </div>
+
+              <!-- 冬季 -->
+              <div
+                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                <img
+                  src="/images/hero-example-winter.png"
+                  alt="Winter portrait - Snow garden"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div
+                  class="absolute top-2 right-2 bg-blue-50 text-blue-600 rounded-full px-2 py-1 text-xs font-medium">
+                  Winter
+                </div>
+              </div>
+            </div>
+
+            <!-- 一致性保证 -->
+            <div class="mt-4 bg-banana-light/30 rounded-lg p-3">
+              <div class="flex items-center gap-2 mb-2">
+                <Icon
+                  name="heroicons:check-circle"
+                  class="w-4 h-4 text-green-500"
+                />
+                <span class="font-medium text-gray-700 text-sm"
+                  >Perfect Consistency Guaranteed</span
+                >
+              </div>
+              <div class="grid grid-cols-2 gap-1 text-xs text-gray-600">
+                <div class="flex items-center gap-1">
+                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
+                  <span>Characters</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
+                  <span>Objects</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
+                  <span>Styles</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
+                  <span>Quality</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 浮动元素 -->
+        <div
+          class="absolute -top-6 -right-6 w-12 h-12 bg-banana-primary rounded-full flex items-center justify-center text-white font-bold shadow-lg ai-button-glow">
+          AI
+        </div>
+
+        <div
+          class="absolute -bottom-4 -left-4 w-20 h-20 bg-white rounded-full shadow-lg flex items-center justify-center border-4 border-banana-secondary/20">
+          <Icon
+            name="heroicons:paint-brush"
+            class="w-8 h-8 text-banana-primary"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(5deg);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) rotate(-5deg);
+    }
+  }
+
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-8px) rotate(3deg);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 4s ease-in-out infinite 1s;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 5s ease-in-out infinite 2s;
+  }
+
+  /* AI按钮优雅动画 */
+  .ai-button-glow {
+    animation: aiGlow 3s ease-in-out infinite;
+    transition: all 0.3s ease;
+  }
+
+  .ai-button-glow:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(217, 119, 6, 0.4);
+  }
+
+  @keyframes aiGlow {
+    0%,
+    100% {
+      transform: translateY(0px) scale(1);
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+    }
+    50% {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.5);
+    }
+  }
+
+  /* 移动端优化 */
+  .touch-friendly {
+    -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* 移动端响应式调整 */
+  @media (max-width: 768px) {
+    .animate-float,
+    .animate-float-delayed,
+    .animate-float-slow {
+      display: none; /* 在移动端隐藏装饰动画以提升性能 */
+    }
+
+    /* 移动端AI按钮动画优化 */
+    .ai-button-glow {
+      animation: aiGlowMobile 4s ease-in-out infinite;
+    }
+
+    @keyframes aiGlowMobile {
+      0%,
+      100% {
+        transform: translateY(0px) scale(1);
+        box-shadow: 0 2px 8px rgba(217, 119, 6, 0.2);
+      }
+      50% {
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+      }
+    }
+
+    /* 移动端标题调整 */
+    h1 {
+      font-size: 2.5rem !important;
+      line-height: 1.1;
+    }
+
+    /* 移动端按钮优化 */
+    .touch-friendly {
+      padding: 16px 24px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    /* 移动端演示区域调整 */
+    .relative > div:first-child {
+      padding: 1rem;
+    }
+
+    /* 移动端社会证明简化 */
+    .mt-12 {
+      margin-top: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    /* 小屏幕进一步优化 */
+    h1 {
+      font-size: 2rem !important;
+    }
+
+    .text-lg {
+      font-size: 1rem;
+    }
+
+    /* 移动端特性标签堆叠 */
+    .flex-wrap {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .flex-wrap > span {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .bg-banana-gradient {
+      background: #000;
+      color: #fff;
+    }
+
+    .text-transparent {
+      color: #000 !important;
+      background: none !important;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-float-delayed,
+    .animate-float-slow,
+    .animate-pulse,
+    .animate-bounce,
+    .ai-button-glow {
+      animation: none;
+    }
+  }
+</style>

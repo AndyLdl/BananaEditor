@@ -1,0 +1,758 @@
+---
+// BananaEditor 聊天消息组件
+// 显示用户和AI的对话消息
+
+export interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<div class={`chat-message-component ${className}`} id="chat-message-component">
+  <!-- 用户消息模板 -->
+  <template id="user-message-template">
+    <div class="message user-message">
+      <div class="message-avatar">
+        <svg
+          class="avatar-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-sender">You</span>
+          <span class="message-time"></span>
+        </div>
+        <div class="message-text"></div>
+      </div>
+    </div>
+  </template>
+
+  <!-- AI消息模板 -->
+  <template id="ai-message-template">
+    <div class="message ai-message">
+      <div class="message-avatar">
+        <svg
+          class="avatar-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <rect x="3" y="11" width="18" height="10" rx="2" ry="2"></rect>
+          <circle cx="12" cy="5" r="2"></circle>
+          <path d="M12 7v4"></path>
+          <line x1="8" y1="16" x2="8" y2="16"></line>
+          <line x1="16" y1="16" x2="16" y2="16"></line>
+        </svg>
+      </div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-sender">BananaAI</span>
+          <span class="message-time"></span>
+          <span class="message-status"></span>
+        </div>
+        <div class="message-text"></div>
+        <div class="message-actions" style="display: none;">
+          <button class="action-btn regenerate-btn" title="Regenerate">
+            <svg
+              class="btn-icon"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <polyline points="23,4 23,10 17,10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            <span class="btn-text">Regenerate</span>
+          </button>
+          <button class="action-btn copy-btn" title="Copy prompt">
+            <svg
+              class="btn-icon"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+              ></path>
+            </svg>
+            <span class="btn-text">Copy</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- 加载消息模板 -->
+  <template id="loading-message-template">
+    <div class="message ai-message loading-message">
+      <div class="message-avatar">
+        <svg
+          class="avatar-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <rect x="3" y="11" width="18" height="10" rx="2" ry="2"></rect>
+          <circle cx="12" cy="5" r="2"></circle>
+          <path d="M12 7v4"></path>
+          <line x1="8" y1="16" x2="8" y2="16"></line>
+          <line x1="16" y1="16" x2="16" y2="16"></line>
+        </svg>
+      </div>
+      <div class="message-content">
+        <div class="message-header">
+          <span class="message-sender">BananaAI</span>
+          <span class="message-status">Thinking...</span>
+        </div>
+        <div class="message-loading">
+          <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <span class="loading-text"
+            >AI is generating image, please wait...</span
+          >
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- 系统消息模板 -->
+  <template id="system-message-template">
+    <div class="message system-message">
+      <div class="message-content">
+        <svg
+          class="system-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div class="system-text"></div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<style>
+  /* 聊天消息组件样式 */
+  .chat-message-component {
+    width: 100%;
+  }
+
+  /* 消息基础样式 */
+  .message {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    animation: messageSlideIn 0.3s ease-out;
+  }
+
+  .message-avatar {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .user-message .message-avatar {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+  }
+
+  .ai-message .message-avatar {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: #2d1810;
+  }
+
+  .message-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .message-sender {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .message-time {
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  .message-status {
+    font-size: 11px;
+    color: #6b7280;
+    padding: 2px 6px;
+    background: #f3f4f6;
+    border-radius: 8px;
+  }
+
+  .ai-message .message-status.success {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .ai-message .message-status.error {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .ai-message .message-status.loading {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .message-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #374151;
+    word-wrap: break-word;
+  }
+
+  .user-message .message-text {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .ai-message .message-text {
+    background: rgba(255, 248, 220, 0.3);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+  }
+
+  /* 消息操作 */
+  .message-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .message:hover .message-actions {
+    opacity: 1;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #6b7280;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.2s ease;
+  }
+
+  .action-btn:hover {
+    border-color: #ffd700;
+    background: rgba(255, 248, 220, 0.5);
+  }
+
+  .btn-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  .btn-text {
+    font-size: 10px;
+  }
+
+  /* 加载消息 */
+  .loading-message .message-content {
+    opacity: 0.8;
+  }
+
+  .message-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(255, 248, 220, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+  }
+
+  .loading-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: #ffd700;
+    border-radius: 50%;
+    animation: dotPulse 1.4s ease-in-out infinite both;
+  }
+
+  .dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  .dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+  .dot:nth-child(3) {
+    animation-delay: 0s;
+  }
+
+  .loading-text {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  /* 系统消息 */
+  .system-message {
+    justify-content: center;
+    margin: 8px 0;
+  }
+
+  .system-message .message-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border-radius: 16px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .system-icon {
+    width: 14px;
+    height: 14px;
+    color: #6b7280;
+    flex-shrink: 0;
+  }
+
+  /* 动画 */
+  @keyframes messageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes dotPulse {
+    0%,
+    80%,
+    100% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    .message {
+      gap: 8px;
+    }
+
+    .message-avatar {
+      width: 28px;
+      height: 28px;
+    }
+
+    .avatar-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .message-text {
+      font-size: 13px;
+      padding: 10px;
+    }
+  }
+</style>
+
+<script>
+  // 聊天消息管理类
+  class ChatManager {
+    constructor() {
+      this.chatHistory = document.getElementById("chat-history");
+      this.templates = {
+        user: document.getElementById("user-message-template"),
+        ai: document.getElementById("ai-message-template"),
+        loading: document.getElementById("loading-message-template"),
+        system: document.getElementById("system-message-template"),
+      };
+      this.messages = [];
+      this.currentLoadingMessage = null;
+
+      this.init();
+    }
+
+    init() {
+      // 监听发送消息事件
+      window.addEventListener("sendMessage", (e) => {
+        this.addUserMessage(e.detail.message);
+      });
+
+      // 监听AI响应事件
+      window.addEventListener("aiResponse", (e) => {
+        this.addAIMessage(e.detail);
+      });
+
+      // 监听清空聊天事件
+      const clearBtn = document.getElementById("clear-chat");
+      if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+          this.clearChat();
+        });
+      }
+    }
+
+    // 添加用户消息
+    addUserMessage(text) {
+      if (!text.trim() || !this.templates.user) return;
+
+      const messageData = {
+        id: this.generateId(),
+        type: "user",
+        text: text.trim(),
+        timestamp: Date.now(),
+      };
+
+      const messageElement = this.createMessage("user", messageData);
+      this.appendMessage(messageElement);
+      this.messages.push(messageData);
+
+      // 显示加载状态
+      this.showLoadingMessage();
+
+      // 触发AI处理事件
+      window.dispatchEvent(
+        new CustomEvent("processUserMessage", {
+          detail: messageData,
+        }),
+      );
+
+      this.updateEmptyState();
+    }
+
+    // 添加AI消息
+    addAIMessage(data) {
+      const { text, status = "success", imageUrl, prompt } = data;
+
+      // 移除加载消息
+      this.hideLoadingMessage();
+
+      if (!this.templates.ai) return;
+
+      const messageData = {
+        id: this.generateId(),
+        type: "ai",
+        text: text || "图片生成完成",
+        status,
+        imageUrl,
+        prompt,
+        timestamp: Date.now(),
+      };
+
+      const messageElement = this.createMessage("ai", messageData);
+      this.appendMessage(messageElement);
+      this.messages.push(messageData);
+
+      this.updateEmptyState();
+    }
+
+    // 显示加载消息
+    showLoadingMessage() {
+      if (this.currentLoadingMessage || !this.templates.loading) return;
+
+      const loadingElement = this.templates.loading.content.cloneNode(true);
+      this.currentLoadingMessage =
+        loadingElement.querySelector(".loading-message");
+
+      this.appendMessage(loadingElement);
+    }
+
+    // 隐藏加载消息
+    hideLoadingMessage() {
+      if (this.currentLoadingMessage) {
+        this.currentLoadingMessage.remove();
+        this.currentLoadingMessage = null;
+      }
+    }
+
+    // 添加系统消息
+    addSystemMessage(text) {
+      if (!text || !this.templates.system) return;
+
+      const messageData = {
+        id: this.generateId(),
+        type: "system",
+        text,
+        timestamp: Date.now(),
+      };
+
+      const messageElement = this.createMessage("system", messageData);
+      this.appendMessage(messageElement);
+      this.messages.push(messageData);
+    }
+
+    // 创建消息元素
+    createMessage(type, data) {
+      const template = this.templates[type];
+      if (!template) return null;
+
+      const clone = template.content.cloneNode(true);
+      const message = clone.querySelector(".message");
+
+      // 设置消息ID
+      message.dataset.id = data.id;
+
+      // 设置时间
+      const timeElement = message.querySelector(".message-time");
+      if (timeElement) {
+        timeElement.textContent = this.formatTime(data.timestamp);
+      }
+
+      // 设置文本内容
+      const textElement = message.querySelector(".message-text, .system-text");
+      if (textElement) {
+        textElement.textContent = data.text;
+      }
+
+      // AI消息特殊处理
+      if (type === "ai") {
+        this.setupAIMessage(message, data);
+      }
+
+      return clone;
+    }
+
+    // 设置AI消息
+    setupAIMessage(message, data) {
+      const { status, imageUrl, prompt } = data;
+
+      // 设置状态
+      const statusElement = message.querySelector(".message-status");
+      if (statusElement) {
+        statusElement.textContent = this.getStatusText(status);
+        statusElement.className = `message-status ${status}`;
+      }
+
+      // 绑定操作按钮
+      const regenerateBtn = message.querySelector(".regenerate-btn");
+      if (regenerateBtn) {
+        regenerateBtn.addEventListener("click", () => {
+          this.regenerateImage(prompt);
+        });
+      }
+
+      const copyBtn = message.querySelector(".copy-btn");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          this.copyToClipboard(prompt || data.text);
+        });
+      }
+
+      // 显示操作按钮
+      const actions = message.querySelector(".message-actions");
+      if (actions && (prompt || status === "success")) {
+        actions.style.display = "flex";
+      }
+    }
+
+    // 追加消息到聊天区域
+    appendMessage(messageElement) {
+      if (!this.chatHistory) return;
+
+      this.chatHistory.appendChild(messageElement);
+
+      // 滚动到底部
+      this.scrollToBottom();
+    }
+
+    // 滚动到底部
+    scrollToBottom() {
+      if (this.chatHistory) {
+        this.chatHistory.scrollTop = this.chatHistory.scrollHeight;
+      }
+    }
+
+    // 清空聊天
+    clearChat() {
+      if (this.messages.length === 0) return;
+
+      if (confirm("Are you sure you want to clear the chat history?")) {
+        this.messages = [];
+        this.currentLoadingMessage = null;
+
+        if (this.chatHistory) {
+          this.chatHistory.innerHTML = "";
+        }
+
+        this.updateEmptyState();
+
+        // 触发清空事件
+        window.dispatchEvent(new CustomEvent("chatCleared"));
+      }
+    }
+
+    // 重新生成图片
+    regenerateImage(prompt) {
+      if (prompt) {
+        // 添加用户消息
+        this.addUserMessage(`Regenerate: ${prompt}`);
+      }
+    }
+
+    // 复制到剪贴板
+    copyToClipboard(text) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          this.showToast("Copied to clipboard");
+        });
+      } else {
+        // 降级方案
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        this.showToast("Copied to clipboard");
+      }
+    }
+
+    // 显示提示
+    showToast(message) {
+      // 简单的提示实现
+      const toast = document.createElement("div");
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #2d1810;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        z-index: 1000;
+        animation: fadeInOut 2s ease-in-out;
+      `;
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 2000);
+    }
+
+    // 更新空状态
+    updateEmptyState() {
+      const emptyElement = this.chatHistory?.querySelector(".history-empty");
+      if (emptyElement) {
+        emptyElement.style.display =
+          this.messages.length > 0 ? "none" : "block";
+      }
+    }
+
+    // 获取状态文本
+    getStatusText(status) {
+      const statusMap = {
+        success: "Generated successfully",
+        error: "Generation failed",
+        loading: "Generating...",
+      };
+      return statusMap[status] || status;
+    }
+
+    // 格式化时间
+    formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString("zh-CN", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    // 生成ID
+    generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // 获取消息历史
+    getMessages() {
+      return this.messages;
+    }
+
+    // 获取最后一条用户消息
+    getLastUserMessage() {
+      return this.messages.filter((msg) => msg.type === "user").pop();
+    }
+  }
+
+  // 初始化聊天管理器
+  document.addEventListener("DOMContentLoaded", function () {
+    window.chatManager = new ChatManager();
+  });
+
+  // 添加CSS动画
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; transform: translateY(-10px); }
+      10%, 90% { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  document.head.appendChild(style);
+</script>

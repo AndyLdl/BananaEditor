@@ -1,0 +1,155 @@
+---
+/**
+ * BananaEditor品牌按钮组件
+ * 统一的按钮样式系统
+ */
+
+export interface Props {
+  variant?:
+    | "primary"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "gradient"
+    | "white";
+  size?: "sm" | "md" | "lg" | "xl";
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  loading?: boolean;
+  icon?: string;
+  iconPosition?: "left" | "right";
+  class?: string;
+  target?: string;
+  rel?: string;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  href,
+  type = "button",
+  disabled = false,
+  loading = false,
+  icon,
+  iconPosition = "left",
+  class: className = "",
+  target,
+  rel,
+  ...rest
+} = Astro.props;
+
+// 基础样式类
+const baseClasses =
+  "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+
+// 变体样式
+const variantClasses = {
+  primary:
+    "bg-banana-primary text-white hover:bg-banana-secondary focus:ring-banana-primary shadow-md hover:shadow-lg",
+  secondary:
+    "bg-banana-secondary text-white hover:bg-banana-accent focus:ring-banana-secondary shadow-md hover:shadow-lg",
+  outline:
+    "border-2 border-banana-primary text-banana-primary hover:bg-banana-light focus:ring-banana-primary",
+  ghost: "text-banana-primary hover:bg-banana-light focus:ring-banana-primary",
+  gradient:
+    "bg-banana-gradient text-white hover:shadow-lg focus:ring-banana-primary shadow-md",
+  white:
+    "bg-white text-banana-primary hover:bg-gray-50 focus:ring-banana-primary shadow-lg hover:shadow-xl border border-white/20",
+};
+
+// 尺寸样式
+const sizeClasses = {
+  sm: "px-3 py-1.5 text-sm",
+  md: "px-4 py-2 text-base",
+  lg: "px-6 py-3 text-lg",
+  xl: "px-8 py-4 text-xl",
+};
+
+// 组合样式类
+const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+
+// 如果有href，渲染为链接
+const Component = href ? "a" : "button";
+---
+
+<Component
+  class={buttonClasses}
+  href={href}
+  type={href ? undefined : type}
+  disabled={disabled || loading}
+  target={target}
+  rel={rel}
+  {...rest}>
+  {
+    loading && (
+      <svg
+        class="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+        fill="none"
+        viewBox="0 0 24 24">
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        />
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+      </svg>
+    )
+  }
+
+  {
+    icon && iconPosition === "left" && !loading && (
+      <span class="mr-2" set:html={icon} />
+    )
+  }
+
+  <slot />
+
+  {
+    icon && iconPosition === "right" && !loading && (
+      <span class="ml-2" set:html={icon} />
+    )
+  }
+</Component>
+
+<style>
+  /* 渐变按钮悬停效果 */
+  .bg-banana-gradient:hover {
+    background: linear-gradient(135deg, #d97706 0%, #ea580c 100%);
+    transform: translateY(-1px);
+  }
+
+  /* 按钮按下效果 */
+  button:active,
+  a:active {
+    transform: translateY(0);
+  }
+
+  /* 禁用状态 */
+  button:disabled,
+  a[disabled] {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 加载状态动画 */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

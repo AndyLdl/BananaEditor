@@ -1,0 +1,363 @@
+---
+// 搜索组件 - 提供提示词搜索功能
+---
+
+<div class="prompt-search">
+  <div class="search-input-container">
+    <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fill-rule="evenodd"
+        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+        clip-rule="evenodd"></path>
+    </svg>
+
+    <input
+      type="text"
+      id="prompt-search-input"
+      class="search-input"
+      placeholder="搜索提示词..."
+      autocomplete="off"
+    />
+
+    <button class="clear-button" id="clear-search" style="display: none;">
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- 搜索建议下拉框 -->
+  <div
+    class="search-suggestions"
+    id="search-suggestions"
+    style="display: none;">
+    <div class="suggestions-list" id="suggestions-list">
+      <!-- 动态生成的搜索建议 -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .prompt-search {
+    position: relative;
+    width: 100%;
+  }
+
+  .search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #ffd700;
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.1);
+  }
+
+  .search-input-container:focus-within {
+    border-color: #ffa500;
+    box-shadow: 0 4px 16px rgba(255, 165, 0, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .search-icon {
+    width: 20px;
+    height: 20px;
+    color: #ffa500;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #2d1810;
+    background: transparent;
+    padding: 0.5rem 0;
+  }
+
+  .search-input::placeholder {
+    color: #999;
+  }
+
+  .clear-button {
+    width: 20px;
+    height: 20px;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.5rem;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .clear-button:hover {
+    color: #666;
+  }
+
+  .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ffd700;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .suggestions-list {
+    padding: 0.5rem 0;
+  }
+
+  .suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .suggestion-item:hover,
+  .suggestion-item.active {
+    background-color: #fff8dc;
+  }
+
+  .suggestion-item:last-child {
+    border-bottom: none;
+  }
+
+  .suggestion-text {
+    font-size: 0.9rem;
+    color: #2d1810;
+  }
+
+  .suggestion-category {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 0.25rem;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .search-input-container {
+      padding: 0.75rem 1rem;
+    }
+
+    .search-input {
+      font-size: 16px; /* 防止iOS缩放 */
+    }
+  }
+</style>
+
+<script>
+  // 搜索功能实现
+  class PromptSearch {
+    constructor() {
+      this.searchInput = document.getElementById("prompt-search-input");
+      this.clearButton = document.getElementById("clear-search");
+      this.suggestionsContainer = document.getElementById("search-suggestions");
+      this.suggestionsList = document.getElementById("suggestions-list");
+
+      this.searchTimeout = null;
+      this.currentQuery = "";
+      this.activeSuggestionIndex = -1;
+
+      this.init();
+    }
+
+    init() {
+      // 绑定事件监听器
+      this.searchInput.addEventListener("input", this.handleInput.bind(this));
+      this.searchInput.addEventListener(
+        "keydown",
+        this.handleKeydown.bind(this),
+      );
+      this.searchInput.addEventListener("focus", this.handleFocus.bind(this));
+      this.clearButton.addEventListener("click", this.clearSearch.bind(this));
+
+      // 点击外部关闭建议
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".prompt-search")) {
+          this.hideSuggestions();
+        }
+      });
+    }
+
+    handleInput(e) {
+      const query = e.target.value.trim();
+      this.currentQuery = query;
+
+      // 显示/隐藏清除按钮
+      this.clearButton.style.display = query ? "block" : "none";
+
+      // 防抖搜索
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => {
+        this.performSearch(query);
+      }, 300);
+
+      // 显示搜索建议
+      if (query.length > 0) {
+        this.showSuggestions(query);
+      } else {
+        this.hideSuggestions();
+      }
+    }
+
+    handleKeydown(e) {
+      const suggestions =
+        this.suggestionsList.querySelectorAll(".suggestion-item");
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          this.activeSuggestionIndex = Math.min(
+            this.activeSuggestionIndex + 1,
+            suggestions.length - 1,
+          );
+          this.updateActiveSuggestion();
+          break;
+
+        case "ArrowUp":
+          e.preventDefault();
+          this.activeSuggestionIndex = Math.max(
+            this.activeSuggestionIndex - 1,
+            -1,
+          );
+          this.updateActiveSuggestion();
+          break;
+
+        case "Enter":
+          e.preventDefault();
+          if (this.activeSuggestionIndex >= 0) {
+            const activeSuggestion = suggestions[this.activeSuggestionIndex];
+            this.selectSuggestion(activeSuggestion.dataset.query);
+          } else {
+            this.performSearch(this.currentQuery);
+          }
+          break;
+
+        case "Escape":
+          this.hideSuggestions();
+          this.searchInput.blur();
+          break;
+      }
+    }
+
+    handleFocus() {
+      if (this.currentQuery.length > 0) {
+        this.showSuggestions(this.currentQuery);
+      }
+    }
+
+    clearSearch() {
+      this.searchInput.value = "";
+      this.currentQuery = "";
+      this.clearButton.style.display = "none";
+      this.hideSuggestions();
+      this.performSearch("");
+      this.searchInput.focus();
+    }
+
+    showSuggestions(query) {
+      // 生成搜索建议
+      const suggestions = this.generateSuggestions(query);
+
+      if (suggestions.length > 0) {
+        this.suggestionsList.innerHTML = suggestions
+          .map(
+            (suggestion, index) => `
+          <div class="suggestion-item" data-query="${suggestion.query}" data-index="${index}">
+            <div class="suggestion-text">${this.highlightMatch(suggestion.text, query)}</div>
+            ${suggestion.category ? `<div class="suggestion-category">${suggestion.category}</div>` : ""}
+          </div>
+        `,
+          )
+          .join("");
+
+        // 绑定点击事件
+        this.suggestionsList
+          .querySelectorAll(".suggestion-item")
+          .forEach((item) => {
+            item.addEventListener("click", () => {
+              this.selectSuggestion(item.dataset.query);
+            });
+          });
+
+        this.suggestionsContainer.style.display = "block";
+        this.activeSuggestionIndex = -1;
+      } else {
+        this.hideSuggestions();
+      }
+    }
+
+    hideSuggestions() {
+      this.suggestionsContainer.style.display = "none";
+      this.activeSuggestionIndex = -1;
+    }
+
+    updateActiveSuggestion() {
+      const suggestions =
+        this.suggestionsList.querySelectorAll(".suggestion-item");
+
+      suggestions.forEach((item, index) => {
+        if (index === this.activeSuggestionIndex) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
+    }
+
+    selectSuggestion(query) {
+      this.searchInput.value = query;
+      this.currentQuery = query;
+      this.hideSuggestions();
+      this.performSearch(query);
+    }
+
+    generateSuggestions(query) {
+      // 这里可以根据实际需求生成搜索建议
+      // 暂时返回一些示例建议
+      const suggestions = [
+        { query: query, text: query, category: "搜索" },
+        { query: `${query} 专业`, text: `${query} 专业`, category: "建议" },
+        { query: `${query} 高质量`, text: `${query} 高质量`, category: "建议" },
+      ];
+
+      return suggestions.filter((s) => s.query.length > 0);
+    }
+
+    highlightMatch(text, query) {
+      if (!query) return text;
+
+      const regex = new RegExp(`(${query})`, "gi");
+      return text.replace(regex, "<strong>$1</strong>");
+    }
+
+    performSearch(query) {
+      // 触发自定义事件，通知其他组件执行搜索
+      const searchEvent = new CustomEvent("promptSearch", {
+        detail: { query: query },
+      });
+      document.dispatchEvent(searchEvent);
+    }
+  }
+
+  // 初始化搜索组件
+  document.addEventListener("DOMContentLoaded", () => {
+    new PromptSearch();
+  });
+</script>

@@ -1,0 +1,425 @@
+---
+/**
+ * Core Web Vitals 性能监控组件
+ * 监控和报告页面性能指标，优化SEO排名
+ */
+
+export interface Props {
+  enableAnalytics?: boolean;
+  enableConsoleLog?: boolean;
+  enableBeacon?: boolean;
+  analyticsEndpoint?: string;
+}
+
+const {
+  enableAnalytics = true,
+  enableConsoleLog = false,
+  enableBeacon = true,
+  analyticsEndpoint = "/api/monitoring/analytics",
+} = Astro.props;
+---
+
+<script
+  define:vars={{
+    enableAnalytics,
+    enableConsoleLog,
+    enableBeacon,
+    analyticsEndpoint,
+  }}
+>
+  /**
+   * Web Vitals 监控脚本
+   * 收集和报告Core Web Vitals指标
+   */
+
+  class WebVitalsMonitor {
+    constructor(options = {}) {
+      this.options = {
+        enableAnalytics: true,
+        enableConsoleLog: false,
+        enableBeacon: true,
+        analyticsEndpoint: "/api/monitoring/analytics",
+        ...options,
+      };
+
+      this.metrics = new Map();
+      this.init();
+    }
+
+    async init() {
+      // 检查浏览器支持
+      if (!this.isSupported()) {
+        console.warn("Web Vitals monitoring not supported in this browser");
+        return;
+      }
+
+      try {
+        // 动态导入web-vitals库
+        const webVitals = await this.loadWebVitals();
+        if (webVitals) {
+          this.setupMetricsCollection(webVitals);
+        }
+      } catch (error) {
+        console.error("Failed to load web-vitals:", error);
+        // 使用备用的性能监控
+        this.setupFallbackMonitoring();
+      }
+    }
+
+    isSupported() {
+      return (
+        "performance" in window &&
+        "PerformanceObserver" in window &&
+        "navigator" in window &&
+        "sendBeacon" in navigator
+      );
+    }
+
+    async loadWebVitals() {
+      try {
+        // 尝试从CDN加载
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/web-vitals@3/dist/web-vitals.iife.js";
+
+        return new Promise((resolve, reject) => {
+          script.onload = () => {
+            resolve(window.webVitals);
+          };
+          script.onerror = () => {
+            reject(new Error("Failed to load web-vitals from CDN"));
+          };
+          document.head.appendChild(script);
+        });
+      } catch (error) {
+        console.warn("CDN loading failed, using fallback monitoring");
+        return null;
+      }
+    }
+
+    setupMetricsCollection(webVitals) {
+      const { getCLS, getFID, getFCP, getLCP, getTTFB, onINP } = webVitals;
+
+      // Cumulative Layout Shift (CLS)
+      getCLS((metric) => {
+        this.handleMetric("CLS", metric);
+      });
+
+      // First Input Delay (FID)
+      getFID((metric) => {
+        this.handleMetric("FID", metric);
+      });
+
+      // First Contentful Paint (FCP)
+      getFCP((metric) => {
+        this.handleMetric("FCP", metric);
+      });
+
+      // Largest Contentful Paint (LCP)
+      getLCP((metric) => {
+        this.handleMetric("LCP", metric);
+      });
+
+      // Time to First Byte (TTFB)
+      getTTFB((metric) => {
+        this.handleMetric("TTFB", metric);
+      });
+
+      // Interaction to Next Paint (INP) - 新指标
+      if (onINP) {
+        onINP((metric) => {
+          this.handleMetric("INP", metric);
+        });
+      }
+    }
+
+    setupFallbackMonitoring() {
+      // 使用Performance API的备用监控
+      if ("performance" in window) {
+        // 监控导航时间
+        window.addEventListener("load", () => {
+          setTimeout(() => {
+            const navigation = performance.getEntriesByType("navigation")[0];
+            if (navigation) {
+              this.handleMetric("LoadTime", {
+                name: "LoadTime",
+                value: navigation.loadEventEnd - navigation.fetchStart,
+                rating: this.getRating(
+                  "LoadTime",
+                  navigation.loadEventEnd - navigation.fetchStart,
+                ),
+              });
+            }
+          }, 0);
+        });
+
+        // 监控资源加载时间
+        this.monitorResourceTiming();
+      }
+    }
+
+    monitorResourceTiming() {
+      const observer = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (entry.duration > 1000) {
+            // 超过1秒的资源
+            this.handleMetric("SlowResource", {
+              name: "SlowResource",
+              value: entry.duration,
+              resource: entry.name,
+              rating: "poor",
+            });
+          }
+        }
+      });
+
+      observer.observe({ entryTypes: ["resource"] });
+    }
+
+    handleMetric(name, metric) {
+      // 存储指标
+      this.metrics.set(name, metric);
+
+      // 控制台输出（开发环境）
+      if (this.options.enableConsoleLog) {
+        console.log(`${name}:`, metric);
+      }
+
+      // 评估性能等级
+      const rating = this.evaluateMetric(name, metric.value);
+
+      // 发送到分析服务
+      if (this.options.enableAnalytics) {
+        this.sendToAnalytics(name, metric, rating);
+      }
+
+      // 触发自定义事件
+      this.dispatchMetricEvent(name, metric, rating);
+
+      // 性能警告
+      if (rating === "poor") {
+        this.handlePoorPerformance(name, metric);
+      }
+    }
+
+    evaluateMetric(name, value) {
+      const thresholds = {
+        CLS: { good: 0.1, poor: 0.25 },
+        FID: { good: 100, poor: 300 },
+        FCP: { good: 1800, poor: 3000 },
+        LCP: { good: 2500, poor: 4000 },
+        TTFB: { good: 800, poor: 1800 },
+        INP: { good: 200, poor: 500 },
+        LoadTime: { good: 3000, poor: 5000 },
+      };
+
+      const threshold = thresholds[name];
+      if (!threshold) return "unknown";
+
+      if (value <= threshold.good) return "good";
+      if (value <= threshold.poor) return "needs-improvement";
+      return "poor";
+    }
+
+    sendToAnalytics(name, metric, rating) {
+      const data = {
+        metric: name,
+        value: metric.value,
+        rating: rating,
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now(),
+        sessionId: this.getSessionId(),
+        userId: this.getUserId(),
+      };
+
+      // 使用sendBeacon发送数据
+      if (this.options.enableBeacon && navigator.sendBeacon) {
+        navigator.sendBeacon(
+          this.options.analyticsEndpoint,
+          JSON.stringify(data),
+        );
+      } else {
+        // 备用：使用fetch
+        fetch(this.options.analyticsEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+          keepalive: true,
+        }).catch((error) => {
+          console.warn("Failed to send analytics:", error);
+        });
+      }
+    }
+
+    dispatchMetricEvent(name, metric, rating) {
+      const event = new CustomEvent("webvital", {
+        detail: {
+          name,
+          metric,
+          rating,
+          timestamp: Date.now(),
+        },
+      });
+
+      window.dispatchEvent(event);
+    }
+
+    handlePoorPerformance(name, metric) {
+      // 性能差时的处理逻辑
+      console.warn(`Poor ${name} performance detected:`, metric.value);
+
+      // 可以在这里添加性能优化建议
+      const suggestions = this.getPerformanceSuggestions(name);
+      if (suggestions.length > 0) {
+        console.group(`Performance suggestions for ${name}:`);
+        suggestions.forEach((suggestion) => console.log(`• ${suggestion}`));
+        console.groupEnd();
+      }
+    }
+
+    getPerformanceSuggestions(metricName) {
+      const suggestions = {
+        CLS: [
+          "Add size attributes to images and videos",
+          "Avoid inserting content above existing content",
+          "Use CSS transform instead of changing layout properties",
+        ],
+        FID: [
+          "Reduce JavaScript execution time",
+          "Break up long tasks",
+          "Use web workers for heavy computations",
+        ],
+        LCP: [
+          "Optimize images and use modern formats",
+          "Preload important resources",
+          "Reduce server response times",
+        ],
+        FCP: [
+          "Eliminate render-blocking resources",
+          "Minify CSS and JavaScript",
+          "Use efficient cache policies",
+        ],
+        TTFB: [
+          "Optimize server performance",
+          "Use a CDN",
+          "Reduce server response times",
+        ],
+      };
+
+      return suggestions[metricName] || [];
+    }
+
+    getSessionId() {
+      let sessionId = sessionStorage.getItem("webvitals-session");
+      if (!sessionId) {
+        sessionId =
+          "session-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substr(2, 9);
+        sessionStorage.setItem("webvitals-session", sessionId);
+      }
+      return sessionId;
+    }
+
+    getUserId() {
+      let userId = localStorage.getItem("webvitals-user");
+      if (!userId) {
+        userId =
+          "user-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem("webvitals-user", userId);
+      }
+      return userId;
+    }
+
+    // 获取所有收集的指标
+    getMetrics() {
+      return Object.fromEntries(this.metrics);
+    }
+
+    // 生成性能报告
+    generateReport() {
+      const metrics = this.getMetrics();
+      const report = {
+        url: window.location.href,
+        timestamp: new Date().toISOString(),
+        metrics: {},
+        overall: "good",
+      };
+
+      let poorCount = 0;
+      let needsImprovementCount = 0;
+
+      for (const [name, metric] of Object.entries(metrics)) {
+        const rating = this.evaluateMetric(name, metric.value);
+        report.metrics[name] = {
+          value: metric.value,
+          rating: rating,
+        };
+
+        if (rating === "poor") poorCount++;
+        else if (rating === "needs-improvement") needsImprovementCount++;
+      }
+
+      // 计算整体评级
+      if (poorCount > 0) {
+        report.overall = "poor";
+      } else if (needsImprovementCount > 0) {
+        report.overall = "needs-improvement";
+      }
+
+      return report;
+    }
+  }
+
+  // 初始化Web Vitals监控
+  document.addEventListener("DOMContentLoaded", () => {
+    const monitor = new WebVitalsMonitor({
+      enableAnalytics,
+      enableConsoleLog,
+      enableBeacon,
+      analyticsEndpoint,
+    });
+
+    // 将监控实例暴露到全局，便于调试
+    if (typeof window !== "undefined") {
+      window.webVitalsMonitor = monitor;
+    }
+
+    // 页面卸载时发送最终报告
+    window.addEventListener("beforeunload", () => {
+      const report = monitor.generateReport();
+
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+          analyticsEndpoint + "/final-report",
+          JSON.stringify(report),
+        );
+      }
+    });
+  });
+</script>
+
+<!-- 性能优化提示 -->
+<style>
+  /* 防止布局偏移的CSS */
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 为异步加载的内容预留空间 */
+  .async-content {
+    min-height: 200px;
+  }
+
+  /* 优化字体加载 */
+  @font-face {
+    font-family: "Inter";
+    font-display: swap;
+    src: url("/fonts/inter-var.woff2") format("woff2");
+  }
+</style>

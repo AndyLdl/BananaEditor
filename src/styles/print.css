@@ -1,0 +1,329 @@
+/* 打印样式文件 */
+/* 为打印页面提供优化的样式 */
+
+@media print {
+
+    /* 基础打印样式 */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    body {
+        font-size: 12pt;
+        line-height: 1.4;
+        color: #000;
+        background: #fff;
+    }
+
+    /* 隐藏不需要打印的元素 */
+    .no-print,
+    .notification-container,
+    .operation-status-container,
+    nav,
+    .navbar,
+    .footer,
+    button,
+    .btn,
+    .cta,
+    .social-share,
+    .back-to-top,
+    .scroll-indicator,
+    .mobile-menu,
+    .search-box,
+    .filter-controls,
+    .pagination,
+    .sidebar,
+    .advertisement,
+    .cookie-banner,
+    .modal,
+    .tooltip,
+    .dropdown-menu,
+    .loading-spinner,
+    .progress-indicator,
+    .notification,
+    .alert,
+    .toast,
+    video,
+    audio,
+    iframe,
+    .video-container,
+    .audio-player,
+    .interactive-demo,
+    .animation,
+    .carousel-controls,
+    .tab-controls,
+    .accordion-toggle,
+    .collapsible-trigger {
+        display: none !important;
+    }
+
+    /* 页面布局 */
+    .container,
+    .main-content {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        float: none !important;
+    }
+
+    /* 标题样式 */
+    h1 {
+        font-size: 18pt;
+        font-weight: bold;
+        margin: 0 0 12pt 0;
+        page-break-after: avoid;
+    }
+
+    h2 {
+        font-size: 16pt;
+        font-weight: bold;
+        margin: 12pt 0 8pt 0;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        font-size: 14pt;
+        font-weight: bold;
+        margin: 10pt 0 6pt 0;
+        page-break-after: avoid;
+    }
+
+    h4,
+    h5,
+    h6 {
+        font-size: 12pt;
+        font-weight: bold;
+        margin: 8pt 0 4pt 0;
+        page-break-after: avoid;
+    }
+
+    /* 段落样式 */
+    p {
+        margin: 0 0 8pt 0;
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* 列表样式 */
+    ul,
+    ol {
+        margin: 0 0 8pt 20pt;
+    }
+
+    li {
+        margin: 0 0 4pt 0;
+    }
+
+    /* 表格样式 */
+    table {
+        width: 100% !important;
+        border-collapse: collapse;
+        margin: 8pt 0;
+        page-break-inside: avoid;
+    }
+
+    th,
+    td {
+        border: 1pt solid #000;
+        padding: 4pt 6pt;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+    }
+
+    /* 图片样式 */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid;
+        margin: 8pt 0;
+    }
+
+    /* 代码样式 */
+    code {
+        font-family: 'Courier New', monospace;
+        font-size: 10pt;
+        background: #f5f5f5 !important;
+        padding: 1pt 2pt;
+        border: 1pt solid #ddd;
+    }
+
+    pre {
+        font-family: 'Courier New', monospace;
+        font-size: 10pt;
+        background: #f5f5f5 !important;
+        padding: 6pt;
+        border: 1pt solid #ddd;
+        margin: 8pt 0;
+        white-space: pre-wrap;
+        page-break-inside: avoid;
+    }
+
+    /* 引用样式 */
+    blockquote {
+        margin: 8pt 20pt;
+        padding: 4pt 8pt;
+        border-left: 2pt solid #ccc;
+        font-style: italic;
+        page-break-inside: avoid;
+    }
+
+    /* 链接样式 */
+    a {
+        color: #000 !important;
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 10pt;
+        color: #666;
+    }
+
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after,
+    a[href^="mailto:"]:after {
+        content: "";
+    }
+
+    /* 分页控制 */
+    .page-break-before {
+        page-break-before: always;
+    }
+
+    .page-break-after {
+        page-break-after: always;
+    }
+
+    .page-break-inside-avoid {
+        page-break-inside: avoid;
+    }
+
+    /* 文章内容 */
+    .article-content,
+    .blog-post,
+    .content-main {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 日期和元信息 */
+    .date,
+    .meta,
+    .author,
+    .tags {
+        font-size: 10pt;
+        color: #666 !important;
+        margin: 4pt 0;
+    }
+
+    /* 卡片和框架 */
+    .card,
+    .box,
+    .panel {
+        border: 1pt solid #ddd !important;
+        padding: 8pt !important;
+        margin: 8pt 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* 表单元素（如果需要打印） */
+    .print-form input,
+    .print-form textarea,
+    .print-form select {
+        border: 1pt solid #000 !important;
+        background: #fff !important;
+        padding: 2pt !important;
+        font-size: 10pt !important;
+    }
+
+    /* 页眉页脚 */
+    @page {
+        margin: 2cm;
+        size: A4;
+
+        @top-center {
+            content: "AI图片编辑器";
+            font-size: 10pt;
+            color: #666;
+        }
+
+        @bottom-center {
+            content: "第 " counter(page) " 页";
+            font-size: 10pt;
+            color: #666;
+        }
+    }
+
+    /* 首页特殊样式 */
+    @page :first {
+        @top-center {
+            content: "";
+        }
+    }
+
+    /* 强制显示的打印元素 */
+    .print-only {
+        display: block !important;
+    }
+
+    .print-inline {
+        display: inline !important;
+    }
+
+    /* 打印时的颜色调整 */
+    .text-primary,
+    .text-secondary,
+    .text-success,
+    .text-warning,
+    .text-danger,
+    .text-info {
+        color: #000 !important;
+    }
+
+    /* 背景色移除 */
+    .bg-primary,
+    .bg-secondary,
+    .bg-success,
+    .bg-warning,
+    .bg-danger,
+    .bg-info,
+    .bg-light,
+    .bg-dark {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    /* 边框调整 */
+    .border,
+    .border-top,
+    .border-bottom,
+    .border-left,
+    .border-right {
+        border-color: #000 !important;
+    }
+
+    /* 阴影移除 */
+    .shadow,
+    .shadow-sm,
+    .shadow-lg {
+        box-shadow: none !important;
+    }
+
+    /* 圆角移除 */
+    .rounded,
+    .rounded-sm,
+    .rounded-lg,
+    .rounded-circle {
+        border-radius: 0 !important;
+    }
+}

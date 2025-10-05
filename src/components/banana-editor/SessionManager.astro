@@ -1,0 +1,466 @@
+---
+// 会话管理器组件
+// 负责管理多个对话会话的创建、切换、删除等功能
+
+export interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<div class={`session-manager ${className}`} id="session-manager">
+  <!-- 会话管理器主要包含JavaScript逻辑 -->
+</div>
+
+<script>
+  // 会话数据结构接口
+  interface Message {
+    id: string;
+    role: "user" | "model";
+    content: string;
+    imageUrl?: string;
+    timestamp: number;
+    hasImage?: boolean;
+  }
+
+  interface Session {
+    id: string;
+    title: string;
+    createdAt: number;
+    updatedAt: number;
+    messages: Message[];
+    lastImageUrl?: string; // 最后生成的图片
+  }
+
+  // 会话管理器类
+  class SessionManager {
+    constructor() {
+      this.sessions = new Map(); // sessionId -> Session
+      this.currentSessionId = null;
+      this.maxSessions = 50; // 最多保存50个会话
+      this.init();
+    }
+
+    init() {
+      // 加载本地存储的会话
+      this.loadSessions();
+
+      // 如果没有会话，创建默认会话
+      if (this.sessions.size === 0) {
+        this.createNewSession();
+      } else {
+        // 恢复最后活跃的会话
+        const lastSessionId = localStorage.getItem("banana-last-session-id");
+        if (lastSessionId && this.sessions.has(lastSessionId)) {
+          this.switchToSession(lastSessionId);
+        } else {
+          // 切换到第一个会话
+          const firstSessionId = Array.from(this.sessions.keys())[0];
+          this.switchToSession(firstSessionId);
+        }
+      }
+
+      // 设置全局方法
+      this.setupGlobalMethods();
+
+      console.log("🗂️ SessionManager initialized");
+      console.log("📊 Sessions loaded:", this.sessions.size);
+      console.log("🎯 Current session:", this.currentSessionId);
+    }
+
+    // 生成唯一ID
+    generateId() {
+      return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    // 创建新会话
+    createNewSession(title = null) {
+      const sessionId = `session_${this.generateId()}`;
+      const now = Date.now();
+
+      const session = {
+        id: sessionId,
+        title: title || this.generateSessionTitle(),
+        createdAt: now,
+        updatedAt: now,
+        messages: [],
+        lastImageUrl: null,
+      };
+
+      this.sessions.set(sessionId, session);
+      this.switchToSession(sessionId);
+      this.saveSessions();
+
+      // 触发会话列表更新事件
+      this.dispatchSessionListUpdate();
+
+      console.log("✨ Created new session:", sessionId, session.title);
+      return sessionId;
+    }
+
+    // 生成会话标题
+    generateSessionTitle() {
+      const titles = [
+        "New Creation",
+        "AI Image Generation",
+        "Creative Chat",
+        "Image Creation",
+        "Art Exploration",
+      ];
+      const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+      const sessionCount = this.sessions.size + 1;
+      return `${randomTitle} ${sessionCount}`;
+    }
+
+    // 切换到指定会话
+    switchToSession(sessionId) {
+      if (!this.sessions.has(sessionId)) {
+        console.error("❌ Session not found:", sessionId);
+        return false;
+      }
+
+      this.currentSessionId = sessionId;
+      localStorage.setItem("banana-last-session-id", sessionId);
+
+      // 触发会话切换事件
+      this.dispatchSessionSwitch(sessionId);
+
+      console.log("🔄 Switched to session:", sessionId);
+      return true;
+    }
+
+    // 获取当前会话
+    getCurrentSession() {
+      if (!this.currentSessionId) return null;
+      return this.sessions.get(this.currentSessionId);
+    }
+
+    // 获取所有会话
+    getAllSessions() {
+      return Array.from(this.sessions.values()).sort(
+        (a, b) => b.updatedAt - a.updatedAt
+      );
+    }
+
+    // 添加消息到当前会话
+    addMessage(message) {
+      const session = this.getCurrentSession();
+      if (!session) {
+        console.error("❌ No current session to add message");
+        return false;
+      }
+
+      const messageWithId = {
+        id: `msg_${this.generateId()}`,
+        ...message,
+        timestamp: message.timestamp || Date.now(),
+      };
+
+      session.messages.push(messageWithId);
+      session.updatedAt = Date.now();
+
+      // 如果是AI消息且包含图片，更新最后图片URL
+      if (message.role === "model" && message.imageUrl) {
+        session.lastImageUrl = message.imageUrl;
+      }
+
+      this.saveSessions();
+
+      // 触发消息更新事件
+      this.dispatchMessageUpdate(session.id, messageWithId);
+
+      return messageWithId;
+    }
+
+    // 获取当前会话的消息历史（用于发送给后端）
+    // excludeLastUserMessage: 是否排除最后一条用户消息（避免重复发送）
+    getCurrentConversationHistory(excludeLastUserMessage = false) {
+      const session = this.getCurrentSession();
+      if (!session) return [];
+
+      console.log(
+        "🔍 [SessionManager] 当前会话消息总数:",
+        session.messages.length
+      );
+      console.log(
+        "🔍 [SessionManager] 所有消息:",
+        session.messages.map((m) => ({
+          role: m.role,
+          content: m.content.substring(0, 50) + "...",
+          timestamp: m.timestamp,
+        }))
+      );
+
+      let messages = session.messages;
+
+      // 如果需要排除最后一条用户消息（通常在发送新消息时）
+      if (excludeLastUserMessage && messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        console.log("🔍 [SessionManager] 最后一条消息角色:", lastMessage.role);
+        if (lastMessage.role === "user") {
+          messages = messages.slice(0, -1);
+          console.log(
+            "✂️ [SessionManager] 已排除最后一条用户消息，剩余:",
+            messages.length
+          );
+        }
+      }
+
+      const history = messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+        timestamp: msg.timestamp,
+        hasImage: !!msg.imageUrl,
+        imageUrl: msg.imageUrl,
+      }));
+
+      console.log("📤 [SessionManager] 返回的对话历史条数:", history.length);
+
+      return history;
+    }
+
+    // 更新会话标题
+    updateSessionTitle(sessionId, newTitle) {
+      const session = this.sessions.get(sessionId);
+      if (!session) return false;
+
+      session.title = newTitle.trim() || this.generateSessionTitle();
+      session.updatedAt = Date.now();
+      this.saveSessions();
+
+      // 触发会话列表更新事件
+      this.dispatchSessionListUpdate();
+
+      console.log("📝 Updated session title:", sessionId, session.title);
+      return true;
+    }
+
+    // 删除会话
+    deleteSession(sessionId) {
+      if (!this.sessions.has(sessionId)) return false;
+
+      const session = this.sessions.get(sessionId);
+      this.sessions.delete(sessionId);
+
+      // 如果删除的是当前会话，切换到其他会话
+      if (this.currentSessionId === sessionId) {
+        const remainingSessions = Array.from(this.sessions.keys());
+        if (remainingSessions.length > 0) {
+          this.switchToSession(remainingSessions[0]);
+        } else {
+          // 没有剩余会话，创建新会话
+          this.createNewSession();
+        }
+      }
+
+      this.saveSessions();
+      this.dispatchSessionListUpdate();
+
+      console.log("🗑️ Deleted session:", sessionId, session.title);
+      return true;
+    }
+
+    // 清空当前会话
+    clearCurrentSession() {
+      const session = this.getCurrentSession();
+      if (!session) return false;
+
+      session.messages = [];
+      session.lastImageUrl = null;
+      session.updatedAt = Date.now();
+      this.saveSessions();
+
+      // 触发会话清空事件
+      this.dispatchSessionClear(session.id);
+
+      console.log("🧹 Cleared session:", session.id);
+      return true;
+    }
+
+    // 导出会话
+    exportSession(sessionId) {
+      const session = this.sessions.get(sessionId);
+      if (!session) return null;
+
+      const exportData = {
+        exportTime: new Date().toISOString(),
+        session: {
+          ...session,
+          messageCount: session.messages.length,
+        },
+      };
+
+      return exportData;
+    }
+
+    // 导出所有会话
+    exportAllSessions() {
+      const exportData = {
+        exportTime: new Date().toISOString(),
+        sessionCount: this.sessions.size,
+        sessions: Array.from(this.sessions.values()),
+      };
+
+      return exportData;
+    }
+
+    // 保存会话到本地存储
+    saveSessions() {
+      try {
+        const sessionsData = Array.from(this.sessions.entries());
+        localStorage.setItem("banana-sessions", JSON.stringify(sessionsData));
+        console.log("💾 Sessions saved to localStorage");
+      } catch (error) {
+        console.error("❌ Failed to save sessions:", error);
+      }
+    }
+
+    // 从本地存储加载会话
+    loadSessions() {
+      try {
+        const saved = localStorage.getItem("banana-sessions");
+        if (saved) {
+          const sessionsData = JSON.parse(saved);
+          this.sessions = new Map(sessionsData);
+
+          // 修复每个会话的 lastImageUrl，确保它是最新的
+          this.sessions.forEach((session) => {
+            // 从消息列表中找到最后一张图片
+            let lastImageUrl = null;
+            for (let i = session.messages.length - 1; i >= 0; i--) {
+              const msg = session.messages[i];
+              if (msg.role === "model" && msg.imageUrl) {
+                lastImageUrl = msg.imageUrl;
+                break;
+              }
+            }
+
+            const oldLastImageUrl = session.lastImageUrl;
+            session.lastImageUrl = lastImageUrl;
+
+            if (oldLastImageUrl !== lastImageUrl) {
+              console.log(
+                `🔧 [SessionManager] Fixed lastImageUrl for session ${session.id}:`,
+                {
+                  old: oldLastImageUrl,
+                  new: lastImageUrl,
+                }
+              );
+            }
+          });
+
+          console.log(
+            "📚 Sessions loaded from localStorage:",
+            this.sessions.size
+          );
+        }
+      } catch (error) {
+        console.error("❌ Failed to load sessions:", error);
+        this.sessions = new Map();
+      }
+    }
+
+    // 限制会话数量
+    trimSessions() {
+      if (this.sessions.size <= this.maxSessions) return;
+
+      const sessions = this.getAllSessions();
+      const sessionsToDelete = sessions.slice(this.maxSessions);
+
+      sessionsToDelete.forEach((session) => {
+        if (session.id !== this.currentSessionId) {
+          this.sessions.delete(session.id);
+        }
+      });
+
+      this.saveSessions();
+      console.log("✂️ Trimmed sessions to", this.maxSessions);
+    }
+
+    // 事件分发方法
+    dispatchSessionListUpdate() {
+      window.dispatchEvent(
+        new CustomEvent("sessionListUpdate", {
+          detail: { sessions: this.getAllSessions() },
+        })
+      );
+    }
+
+    dispatchSessionSwitch(sessionId) {
+      const session = this.sessions.get(sessionId);
+      window.dispatchEvent(
+        new CustomEvent("sessionSwitch", {
+          detail: { sessionId, session },
+        })
+      );
+    }
+
+    dispatchMessageUpdate(sessionId, message) {
+      window.dispatchEvent(
+        new CustomEvent("messageUpdate", {
+          detail: { sessionId, message },
+        })
+      );
+    }
+
+    dispatchSessionClear(sessionId) {
+      window.dispatchEvent(
+        new CustomEvent("sessionClear", {
+          detail: { sessionId },
+        })
+      );
+    }
+
+    // 设置全局方法
+    setupGlobalMethods() {
+      window.sessionManager = this;
+
+      // 全局快捷方法
+      window.createNewSession = (title) => this.createNewSession(title);
+      window.switchToSession = (sessionId) => this.switchToSession(sessionId);
+      window.deleteSession = (sessionId) => this.deleteSession(sessionId);
+      window.clearCurrentSession = () => this.clearCurrentSession();
+      window.exportCurrentSession = () => {
+        if (!this.currentSessionId) return null;
+        return this.exportSession(this.currentSessionId);
+      };
+      window.exportAllSessions = () => this.exportAllSessions();
+    }
+
+    // 获取会话统计信息
+    getStats() {
+      const sessions = this.getAllSessions();
+      const totalMessages = sessions.reduce(
+        (sum, session) => sum + session.messages.length,
+        0
+      );
+      const totalImages = sessions.reduce(
+        (sum, session) =>
+          sum + session.messages.filter((msg) => msg.imageUrl).length,
+        0
+      );
+
+      return {
+        sessionCount: sessions.length,
+        totalMessages,
+        totalImages,
+        currentSessionId: this.currentSessionId,
+      };
+    }
+  }
+
+  // 初始化会话管理器
+  document.addEventListener("DOMContentLoaded", function () {
+    window.sessionManager = new SessionManager();
+  });
+
+  // 导出到全局作用域
+  window.SessionManager = SessionManager;
+</script>
+
+<style>
+  .session-manager {
+    display: none; /* 这个组件没有可见的UI */
+  }
+</style>

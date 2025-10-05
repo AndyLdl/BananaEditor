@@ -1,0 +1,517 @@
+---
+// 全局通知系统组件
+// 显示错误、成功、警告和信息消息
+---
+
+<div id="notification-container" class="notification-container">
+  <!-- 通知将通过JavaScript动态添加到这里 -->
+</div>
+
+<style>
+  .notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    pointer-events: none;
+  }
+
+  .notification {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 12px;
+    padding: 16px;
+    pointer-events: auto;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+    border-left: 4px solid #e5e7eb;
+    max-width: 100%;
+    word-wrap: break-word;
+  }
+
+  .notification.show {
+    transform: translateX(0);
+  }
+
+  .notification.hide {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  /* 通知类型样式 */
+  .notification.success {
+    border-left-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  }
+
+  .notification.error {
+    border-left-color: #ef4444;
+    background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
+  }
+
+  .notification.warning {
+    border-left-color: #f59e0b;
+    background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+  }
+
+  .notification.info {
+    border-left-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+  }
+
+  .notification.loading {
+    border-left-color: #8b5cf6;
+    background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
+  }
+
+  /* 通知头部 */
+  .notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .notification-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notification-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    color: #6b7280;
+    transition: all 0.2s ease;
+  }
+
+  .notification-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #374151;
+  }
+
+  /* 通知内容 */
+  .notification-message {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  /* 通知操作按钮 */
+  .notification-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .notification-action {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .notification-action.primary {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .notification-action.primary:hover {
+    background: #2563eb;
+  }
+
+  .notification-action.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+  }
+
+  .notification-action.secondary:hover {
+    background: #e5e7eb;
+  }
+
+  .notification-action.danger {
+    background: #ef4444;
+    color: white;
+  }
+
+  .notification-action.danger:hover {
+    background: #dc2626;
+  }
+
+  /* 加载动画 */
+  .loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #8b5cf6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 进度条 */
+  .notification-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .notification-progress-bar {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 640px) {
+    .notification-container {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      max-width: none;
+    }
+
+    .notification {
+      margin-bottom: 8px;
+      padding: 12px;
+    }
+
+    .notification-title {
+      font-size: 13px;
+    }
+
+    .notification-message {
+      font-size: 12px;
+    }
+  }
+
+  /* 暗色主题支持 */
+  @media (prefers-color-scheme: dark) {
+    .notification {
+      background: #1f2937;
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .notification.success {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    }
+
+    .notification.error {
+      background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    }
+
+    .notification.warning {
+      background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    }
+
+    .notification.info {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    }
+
+    .notification.loading {
+      background: linear-gradient(135deg, #581c87 0%, #6b21a8 100%);
+    }
+
+    .notification-title {
+      color: #f9fafb;
+    }
+
+    .notification-message {
+      color: #d1d5db;
+    }
+
+    .notification-close {
+      color: #9ca3af;
+    }
+
+    .notification-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #f3f4f6;
+    }
+
+    .notification-action.secondary {
+      background: #374151;
+      color: #f9fafb;
+      border-color: #4b5563;
+    }
+
+    .notification-action.secondary:hover {
+      background: #4b5563;
+    }
+  }
+</style>
+
+<script>
+  // 通知系统JavaScript实现
+  class NotificationSystem {
+    private container: HTMLElement;
+    private notifications = new Map<string, HTMLElement>();
+
+    constructor() {
+      this.container = document.getElementById("notification-container")!;
+      this.initializeGlobalHandler();
+    }
+
+    // 初始化全局错误处理器集成
+    private initializeGlobalHandler(): void {
+      // 暂时禁用全局错误处理器集成，直到解决导入问题
+      console.log("NotificationSystem initialized with basic functionality");
+    }
+
+    // 显示通知
+    showNotification(feedback: any): void {
+      const notification = this.createNotificationElement(feedback);
+      this.container.appendChild(notification);
+      this.notifications.set(feedback.id, notification);
+
+      // 触发显示动画
+      requestAnimationFrame(() => {
+        notification.classList.add("show");
+      });
+
+      // 自动移除（如果设置了持续时间）
+      if (feedback.duration && feedback.duration > 0) {
+        setTimeout(() => {
+          this.removeNotification(feedback.id);
+        }, feedback.duration);
+      }
+    }
+
+    // 创建通知元素
+    private createNotificationElement(feedback: any): HTMLElement {
+      const notification = document.createElement("div");
+      notification.className = `notification ${feedback.type}`;
+      notification.setAttribute("data-id", feedback.id);
+
+      // 创建图标
+      const icon = this.createIcon(feedback.type);
+
+      // 创建关闭按钮
+      const closeButton = document.createElement("button");
+      closeButton.className = "notification-close";
+      closeButton.innerHTML = "×";
+      closeButton.onclick = () => this.removeNotification(feedback.id);
+
+      // 创建操作按钮
+      const actions = feedback.actions
+        ? this.createActions(feedback.actions)
+        : "";
+
+      // 创建进度条（如果是加载类型）
+      const progressBar =
+        feedback.type === "loading" ? this.createProgressBar() : "";
+
+      notification.innerHTML = `
+        <div class="notification-header">
+          <div class="notification-title">
+            ${icon}
+            ${feedback.title}
+          </div>
+          ${closeButton.outerHTML}
+        </div>
+        <div class="notification-message">${feedback.message}</div>
+        ${actions}
+        ${progressBar}
+      `;
+
+      // 重新绑定关闭按钮事件
+      const closeBtn = notification.querySelector(
+        ".notification-close",
+      ) as HTMLElement;
+      if (closeBtn) {
+        closeBtn.onclick = () => this.removeNotification(feedback.id);
+      }
+
+      // 绑定操作按钮事件
+      if (feedback.actions) {
+        feedback.actions.forEach((action: any, index: number) => {
+          const actionBtn = notification.querySelector(
+            `[data-action="${index}"]`,
+          ) as HTMLElement;
+          if (actionBtn && action.action) {
+            actionBtn.onclick = async () => {
+              try {
+                await action.action();
+                // 执行操作后可能需要移除通知
+                if (feedback.type !== "loading") {
+                  this.removeNotification(feedback.id);
+                }
+              } catch (error) {
+                console.error("Action execution failed:", error);
+              }
+            };
+          }
+        });
+      }
+
+      return notification;
+    }
+
+    // 创建图标
+    private createIcon(type: string): string {
+      const icons = {
+        success: `<svg class="notification-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>`,
+        error: `<svg class="notification-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>`,
+        warning: `<svg class="notification-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>`,
+        info: `<svg class="notification-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>`,
+        loading: `<div class="loading-spinner"></div>`,
+      };
+
+      return icons[type as keyof typeof icons] || icons.info;
+    }
+
+    // 创建操作按钮
+    private createActions(actions: any[]): string {
+      if (!actions || actions.length === 0) return "";
+
+      const actionButtons = actions
+        .map(
+          (action, index) =>
+            `<button class="notification-action ${action.style || "secondary"}" data-action="${index}">
+          ${action.label}
+        </button>`,
+        )
+        .join("");
+
+      return `<div class="notification-actions">${actionButtons}</div>`;
+    }
+
+    // 创建进度条
+    private createProgressBar(): string {
+      return `
+        <div class="notification-progress">
+          <div class="notification-progress-bar" style="width: 0%"></div>
+        </div>
+      `;
+    }
+
+    // 更新进度
+    updateProgress(notificationId: string, progress: number): void {
+      const notification = this.notifications.get(notificationId);
+      if (notification) {
+        const progressBar = notification.querySelector(
+          ".notification-progress-bar",
+        ) as HTMLElement;
+        if (progressBar) {
+          progressBar.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+        }
+      }
+    }
+
+    // 移除通知
+    removeNotification(notificationId: string): void {
+      const notification = this.notifications.get(notificationId);
+      if (notification) {
+        notification.classList.add("hide");
+
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+          this.notifications.delete(notificationId);
+        }, 300);
+      }
+    }
+
+    // 清除所有通知
+    clearAll(): void {
+      this.notifications.forEach((_, id) => {
+        this.removeNotification(id);
+      });
+    }
+
+    // 获取通知数量
+    getCount(): number {
+      return this.notifications.size;
+    }
+  }
+
+  // 初始化通知系统
+  let notificationSystem: NotificationSystem;
+
+  // 等待DOM加载完成
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      notificationSystem = new NotificationSystem();
+    });
+  } else {
+    notificationSystem = new NotificationSystem();
+  }
+
+  // 导出全局函数供其他脚本使用
+  (window as any).showNotification = (
+    type: string,
+    title: string,
+    message: string,
+    options?: any,
+  ) => {
+    if (notificationSystem) {
+      const feedback = {
+        id: `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        title,
+        message,
+        duration: options?.duration || 4000,
+        actions: options?.actions,
+        timestamp: new Date(),
+      };
+      notificationSystem.showNotification(feedback);
+      return feedback.id;
+    }
+  };
+
+  (window as any).removeNotification = (id: string) => {
+    if (notificationSystem) {
+      notificationSystem.removeNotification(id);
+    }
+  };
+
+  (window as any).updateNotificationProgress = (
+    id: string,
+    progress: number,
+  ) => {
+    if (notificationSystem) {
+      notificationSystem.updateProgress(id, progress);
+    }
+  };
+</script>

@@ -1,0 +1,294 @@
+---
+/**
+ * 语言切换组件
+ * 提供多语言切换功能
+ */
+
+import { enabledLanguages, type LanguageConfig } from "../../i18n/config";
+
+export interface Props {
+  currentLang?: string;
+  className?: string;
+}
+
+const { currentLang = "en", className = "" } = Astro.props;
+---
+
+<div class={`language-switcher ${className}`}>
+  <div class="relative inline-block text-left">
+    <button
+      type="button"
+      class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-banana-500 focus:border-banana-500 transition-colors"
+      id="language-menu-button"
+      aria-expanded="false"
+      aria-haspopup="true">
+      <span class="language-flag mr-2" data-current-lang={currentLang}>
+        {
+          enabledLanguages.find((lang) => lang.code === currentLang)?.flag ||
+            "🌐"
+        }
+      </span>
+      <span class="language-name">
+        {
+          enabledLanguages.find((lang) => lang.code === currentLang)
+            ?.nativeName || "Language"
+        }
+      </span>
+      <svg class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </button>
+
+    <div
+      class="language-dropdown absolute right-0 z-10 mt-2 w-48 origin-top-right bg-white border border-gray-200 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none opacity-0 invisible transform scale-95 transition-all duration-200"
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="language-menu-button">
+      <div class="py-1" role="none">
+        {
+          enabledLanguages.map((language: LanguageConfig) => (
+            <button
+              type="button"
+              class={`language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-banana-50 hover:text-banana-900 transition-colors ${
+                language.code === currentLang
+                  ? "bg-banana-100 text-banana-900 font-medium"
+                  : ""
+              }`}
+              role="menuitem"
+              data-language={language.code}>
+              <span class="mr-3 text-lg">{language.flag}</span>
+              <div class="flex flex-col items-start">
+                <span class="font-medium">{language.nativeName}</span>
+                <span class="text-xs text-gray-500">{language.name}</span>
+              </div>
+              {language.code === currentLang && (
+                <svg
+                  class="w-4 h-4 ml-auto text-banana-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              )}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { languageManager } from "../../i18n/language-manager";
+  import { getLanguageConfig } from "../../i18n/config";
+
+  class LanguageSwitcher {
+    private button: HTMLButtonElement;
+    private dropdown: HTMLDivElement;
+    private options: NodeListOf<HTMLButtonElement>;
+    private flagElement: HTMLElement;
+    private nameElement: HTMLElement;
+
+    constructor() {
+      this.button = document.getElementById(
+        "language-menu-button",
+      ) as HTMLButtonElement;
+      this.dropdown = this.button?.nextElementSibling as HTMLDivElement;
+      this.options = this.dropdown?.querySelectorAll(
+        ".language-option",
+      ) as NodeListOf<HTMLButtonElement>;
+      this.flagElement = this.button?.querySelector(
+        ".language-flag",
+      ) as HTMLElement;
+      this.nameElement = this.button?.querySelector(
+        ".language-name",
+      ) as HTMLElement;
+
+      if (this.button && this.dropdown && this.options) {
+        this.init();
+      }
+    }
+
+    private init() {
+      // 设置初始语言状态
+      this.updateCurrentLanguage();
+      this.updateMenuSelection();
+
+      // 绑定事件
+      this.button.addEventListener("click", this.toggleDropdown.bind(this));
+      this.options.forEach((option) => {
+        option.addEventListener("click", this.handleLanguageChange.bind(this));
+      });
+
+      // 监听语言变化
+      languageManager.addLanguageChangeListener(() => {
+        this.updateCurrentLanguage();
+        this.updateMenuSelection();
+      });
+
+      // 点击外部关闭下拉菜单
+      document.addEventListener("click", (event) => {
+        if (
+          !this.button.contains(event.target as Node) &&
+          !this.dropdown.contains(event.target as Node)
+        ) {
+          this.closeDropdown();
+        }
+      });
+
+      // ESC键关闭下拉菜单
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          this.closeDropdown();
+        }
+      });
+    }
+
+    private updateCurrentLanguage() {
+      const currentLang = languageManager.getCurrentLanguage();
+      const config = getLanguageConfig(currentLang);
+
+      if (config && this.flagElement && this.nameElement) {
+        this.flagElement.textContent = config.flag;
+        this.nameElement.textContent = config.nativeName;
+        this.flagElement.setAttribute("data-current-lang", currentLang);
+      }
+    }
+
+    private updateMenuSelection() {
+      const currentLang = languageManager.getCurrentLanguage();
+
+      this.options.forEach((option) => {
+        const isSelected = option.dataset.language === currentLang;
+
+        // 更新样式
+        if (isSelected) {
+          option.classList.add(
+            "bg-banana-100",
+            "text-banana-900",
+            "font-medium",
+          );
+        } else {
+          option.classList.remove(
+            "bg-banana-100",
+            "text-banana-900",
+            "font-medium",
+          );
+        }
+
+        // 更新选中图标
+        const checkIcon = option.querySelector("svg");
+        if (checkIcon) {
+          checkIcon.style.display = isSelected ? "block" : "none";
+        }
+      });
+    }
+
+    private toggleDropdown() {
+      const isOpen = this.dropdown.classList.contains("opacity-100");
+      if (isOpen) {
+        this.closeDropdown();
+      } else {
+        this.openDropdown();
+      }
+    }
+
+    private openDropdown() {
+      this.dropdown.classList.remove("opacity-0", "invisible", "scale-95");
+      this.dropdown.classList.add("opacity-100", "visible", "scale-100");
+      this.button.setAttribute("aria-expanded", "true");
+    }
+
+    private closeDropdown() {
+      this.dropdown.classList.remove("opacity-100", "visible", "scale-100");
+      this.dropdown.classList.add("opacity-0", "invisible", "scale-95");
+      this.button.setAttribute("aria-expanded", "false");
+    }
+
+    private handleLanguageChange(event: Event) {
+      const target = event.currentTarget as HTMLButtonElement;
+      const newLanguage = target.dataset.language;
+
+      if (newLanguage) {
+        // 使用语言管理器设置语言
+        const success = languageManager.setLanguage(newLanguage);
+
+        if (success) {
+          // 显示切换成功的反馈
+          this.showLanguageChangeNotification(newLanguage);
+
+          // 延迟重新加载页面以应用新语言
+          setTimeout(() => {
+            window.location.reload();
+          }, 300);
+        }
+      }
+
+      this.closeDropdown();
+    }
+
+    private showLanguageChangeNotification(language: string) {
+      const config = getLanguageConfig(language);
+      if (!config) return;
+
+      // 创建通知元素
+      const notification = document.createElement("div");
+      notification.className =
+        "fixed top-4 right-4 bg-banana-100 border border-banana-300 text-banana-800 px-4 py-2 rounded-md shadow-lg z-50 transition-all duration-300 transform translate-x-full";
+      notification.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span>${config.flag}</span>
+          <span>Language changed to ${config.nativeName}</span>
+        </div>
+      `;
+
+      document.body.appendChild(notification);
+
+      // 显示动画
+      setTimeout(() => {
+        notification.classList.remove("translate-x-full");
+      }, 10);
+
+      // 自动移除
+      setTimeout(() => {
+        notification.classList.add("translate-x-full");
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, 2000);
+    }
+  }
+
+  // 初始化语言切换器
+  document.addEventListener("DOMContentLoaded", () => {
+    new LanguageSwitcher();
+  });
+</script>
+
+<style>
+  .language-switcher {
+    @apply relative;
+  }
+
+  .language-dropdown {
+    min-width: 200px;
+  }
+
+  .language-option:focus {
+    @apply outline-none bg-banana-50 text-banana-900;
+  }
+
+  /* 动画优化 */
+  .language-dropdown {
+    transition:
+      opacity 200ms ease-out,
+      transform 200ms ease-out,
+      visibility 200ms ease-out;
+  }
+</style>

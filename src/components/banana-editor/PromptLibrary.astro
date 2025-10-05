@@ -1,0 +1,652 @@
+---
+import PromptSearch from "./ui/PromptSearch.astro";
+import PromptCategories from "./ui/PromptCategories.astro";
+import PromptGrid from "./ui/PromptGrid.astro";
+import PromptFilters from "./ui/PromptFilters.astro";
+---
+
+<div class="prompt-library">
+  <!-- 移动端顶部操作栏 -->
+  <div class="mobile-top-bar">
+    <button class="mobile-search-toggle" id="mobile-search-toggle">
+      <span class="icon">🔍</span>
+      <span class="label">搜索</span>
+    </button>
+    <button class="mobile-filter-toggle" id="mobile-filter-toggle">
+      <span class="icon">🎛️</span>
+      <span class="label">筛选</span>
+    </button>
+    <button class="mobile-category-toggle" id="mobile-category-toggle">
+      <span class="icon">📂</span>
+      <span class="label">分类</span>
+    </button>
+  </div>
+
+  <!-- 搜索和筛选区域 -->
+  <div class="library-header" id="library-header">
+    <div class="search-section">
+      <PromptSearch />
+    </div>
+
+    <div class="filters-section">
+      <PromptFilters />
+    </div>
+  </div>
+
+  <!-- 分类导航 -->
+  <div class="categories-section" id="categories-section">
+    <PromptCategories />
+  </div>
+
+  <!-- 提示词网格展示 -->
+  <div class="prompts-section">
+    <PromptGrid />
+  </div>
+
+  <!-- 移动端浮动操作按钮 -->
+  <div class="mobile-fab-container">
+    <button class="mobile-fab" id="mobile-scroll-top">
+      <span class="fab-icon">↑</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .prompt-library {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .library-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #fff8dc 0%, #fffacd 100%);
+    border-radius: 12px;
+    border: 1px solid #ffd700;
+  }
+
+  .search-section {
+    flex: 1;
+  }
+
+  .filters-section {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .categories-section {
+    margin-bottom: 2rem;
+  }
+
+  .prompts-section {
+    min-height: 400px;
+  }
+
+  /* 响应式设计 */
+  @media (min-width: 768px) {
+    .library-header {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-section {
+      max-width: 400px;
+    }
+  }
+
+  /* 移动端顶部操作栏 */
+  .mobile-top-bar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 16px;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-search-toggle,
+  .mobile-filter-toggle,
+  .mobile-category-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-height: 60px;
+    -webkit-tap-highlight-color: rgba(255, 215, 0, 0.2);
+  }
+
+  .mobile-search-toggle:hover,
+  .mobile-filter-toggle:hover,
+  .mobile-category-toggle:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 215, 0, 0.05);
+  }
+
+  .mobile-search-toggle:active,
+  .mobile-filter-toggle:active,
+  .mobile-category-toggle:active {
+    transform: scale(0.98);
+  }
+
+  .mobile-search-toggle.active,
+  .mobile-filter-toggle.active,
+  .mobile-category-toggle.active {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .mobile-top-bar .icon {
+    font-size: 20px;
+  }
+
+  .mobile-top-bar .label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  /* 移动端浮动操作按钮 */
+  .mobile-fab-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: none;
+  }
+
+  .mobile-fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
+  }
+
+  .mobile-fab:active {
+    transform: scale(0.95);
+  }
+
+  .fab-icon {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  /* 移动端响应式设计 */
+  @media (max-width: 768px) {
+    .prompt-library {
+      padding: 0;
+      position: relative;
+    }
+
+    .mobile-top-bar {
+      display: flex;
+    }
+
+    .mobile-fab-container {
+      display: block;
+    }
+
+    .library-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      margin: 0;
+      border-radius: 0 0 16px 16px;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .library-header.show {
+      transform: translateY(0);
+    }
+
+    .categories-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: white;
+      border-radius: 0 0 16px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      transform: translateY(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .categories-section.show {
+      transform: translateY(0);
+    }
+
+    .filters-section {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .prompts-section {
+      padding-top: 16px;
+    }
+
+    /* 移动端触摸优化 */
+    .library-header,
+    .categories-section {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    /* 移动端背景遮罩 */
+    .library-header.show::before,
+    .categories-section.show::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .mobile-top-bar {
+      padding: 8px 12px;
+    }
+
+    .mobile-search-toggle,
+    .mobile-filter-toggle,
+    .mobile-category-toggle {
+      padding: 6px 8px;
+      min-height: 50px;
+    }
+
+    .mobile-top-bar .icon {
+      font-size: 18px;
+    }
+
+    .mobile-top-bar .label {
+      font-size: 11px;
+    }
+
+    .mobile-fab {
+      width: 48px;
+      height: 48px;
+      bottom: 16px;
+      right: 16px;
+    }
+
+    .fab-icon {
+      font-size: 18px;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .mobile-top-bar {
+      border-bottom-color: #000;
+    }
+
+    .mobile-search-toggle,
+    .mobile-filter-toggle,
+    .mobile-category-toggle {
+      border-color: #000;
+    }
+
+    .mobile-fab {
+      background: #000;
+      color: #fff;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .library-header,
+    .categories-section,
+    .mobile-fab {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import {
+    TouchGestureHandler,
+    isMobileDevice,
+    debounce,
+  } from "../../utils/touch-gestures.ts";
+
+  // 移动端提示词库交互逻辑
+  class MobilePromptLibrary {
+    private searchToggle: HTMLElement | null = null;
+    private filterToggle: HTMLElement | null = null;
+    private categoryToggle: HTMLElement | null = null;
+    private libraryHeader: HTMLElement | null = null;
+    private categoriesSection: HTMLElement | null = null;
+    private scrollTopFab: HTMLElement | null = null;
+    private isMobile: boolean = false;
+    private touchHandler: TouchGestureHandler | null = null;
+    private lastScrollY: number = 0;
+
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      this.isMobile = isMobileDevice();
+
+      if (!this.isMobile) return;
+
+      this.searchToggle = document.getElementById("mobile-search-toggle");
+      this.filterToggle = document.getElementById("mobile-filter-toggle");
+      this.categoryToggle = document.getElementById("mobile-category-toggle");
+      this.libraryHeader = document.getElementById("library-header");
+      this.categoriesSection = document.getElementById("categories-section");
+      this.scrollTopFab = document.getElementById("mobile-scroll-top");
+
+      this.setupEventListeners();
+      this.setupTouchGestures();
+      this.setupScrollHandling();
+    }
+
+    private setupEventListeners(): void {
+      // 搜索切换
+      this.searchToggle?.addEventListener("click", () => {
+        this.togglePanel("search");
+      });
+
+      // 筛选切换
+      this.filterToggle?.addEventListener("click", () => {
+        this.togglePanel("filter");
+      });
+
+      // 分类切换
+      this.categoryToggle?.addEventListener("click", () => {
+        this.togglePanel("category");
+      });
+
+      // 回到顶部
+      this.scrollTopFab?.addEventListener("click", () => {
+        this.scrollToTop();
+      });
+
+      // 点击遮罩关闭面板
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+
+        if (
+          this.libraryHeader?.classList.contains("show") &&
+          !this.libraryHeader.contains(target) &&
+          !this.searchToggle?.contains(target) &&
+          !this.filterToggle?.contains(target)
+        ) {
+          this.hideAllPanels();
+        }
+
+        if (
+          this.categoriesSection?.classList.contains("show") &&
+          !this.categoriesSection.contains(target) &&
+          !this.categoryToggle?.contains(target)
+        ) {
+          this.hideAllPanels();
+        }
+      });
+
+      // 键盘事件
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          this.hideAllPanels();
+        }
+      });
+
+      // 窗口大小变化
+      window.addEventListener(
+        "resize",
+        debounce(() => {
+          this.isMobile = isMobileDevice();
+          if (!this.isMobile) {
+            this.hideAllPanels();
+          }
+        }, 250),
+      );
+    }
+
+    private setupTouchGestures(): void {
+      const promptsSection = document.querySelector(".prompts-section");
+      if (!promptsSection) return;
+
+      this.touchHandler = new TouchGestureHandler(
+        promptsSection as HTMLElement,
+      );
+
+      // 向下滑动隐藏面板
+      this.touchHandler.on("swipe", (event: any) => {
+        if (event.direction === "down" && event.velocity > 0.5) {
+          this.hideAllPanels();
+        }
+      });
+
+      // 双击回到顶部
+      this.touchHandler.on("tap", (event: any) => {
+        const now = Date.now();
+        const lastTap = (promptsSection as any).lastTapTime || 0;
+
+        if (now - lastTap < 300) {
+          this.scrollToTop();
+        }
+
+        (promptsSection as any).lastTapTime = now;
+      });
+    }
+
+    private setupScrollHandling(): void {
+      let ticking = false;
+
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateScrollState();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    }
+
+    private updateScrollState(): void {
+      const currentScrollY = window.scrollY;
+
+      // 显示/隐藏回到顶部按钮
+      if (this.scrollTopFab) {
+        if (currentScrollY > 300) {
+          this.scrollTopFab.style.display = "flex";
+          this.scrollTopFab.style.opacity = "1";
+        } else {
+          this.scrollTopFab.style.opacity = "0";
+          setTimeout(() => {
+            if (currentScrollY <= 300) {
+              this.scrollTopFab!.style.display = "none";
+            }
+          }, 200);
+        }
+      }
+
+      // 向下滚动时隐藏面板
+      if (currentScrollY > this.lastScrollY + 50) {
+        this.hideAllPanels();
+      }
+
+      this.lastScrollY = currentScrollY;
+    }
+
+    private togglePanel(type: "search" | "filter" | "category"): void {
+      // 先隐藏所有面板
+      this.hideAllPanels();
+
+      // 更新按钮状态
+      this.updateToggleStates(type);
+
+      // 显示对应面板
+      if (type === "search" || type === "filter") {
+        this.showLibraryHeader();
+      } else if (type === "category") {
+        this.showCategoriesSection();
+      }
+
+      // 添加触觉反馈（如果支持）
+      this.addHapticFeedback();
+    }
+
+    private updateToggleStates(activeType: string): void {
+      // 重置所有按钮状态
+      this.searchToggle?.classList.remove("active");
+      this.filterToggle?.classList.remove("active");
+      this.categoryToggle?.classList.remove("active");
+
+      // 激活当前按钮
+      switch (activeType) {
+        case "search":
+          this.searchToggle?.classList.add("active");
+          break;
+        case "filter":
+          this.filterToggle?.classList.add("active");
+          break;
+        case "category":
+          this.categoryToggle?.classList.add("active");
+          break;
+      }
+    }
+
+    private showLibraryHeader(): void {
+      if (this.libraryHeader) {
+        this.libraryHeader.classList.add("show");
+
+        // 聚焦到搜索输入框
+        setTimeout(() => {
+          const searchInput = this.libraryHeader?.querySelector(
+            'input[type="search"]',
+          ) as HTMLInputElement;
+          if (searchInput) {
+            searchInput.focus();
+          }
+        }, 300);
+      }
+    }
+
+    private showCategoriesSection(): void {
+      if (this.categoriesSection) {
+        this.categoriesSection.classList.add("show");
+      }
+    }
+
+    private hideAllPanels(): void {
+      this.libraryHeader?.classList.remove("show");
+      this.categoriesSection?.classList.remove("show");
+
+      // 重置按钮状态
+      this.searchToggle?.classList.remove("active");
+      this.filterToggle?.classList.remove("active");
+      this.categoryToggle?.classList.remove("active");
+
+      // 移除焦点
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && activeElement.blur) {
+        activeElement.blur();
+      }
+    }
+
+    private scrollToTop(): void {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      // 添加触觉反馈
+      this.addHapticFeedback();
+    }
+
+    private addHapticFeedback(): void {
+      // 如果设备支持触觉反馈
+      if ("vibrate" in navigator) {
+        navigator.vibrate(50);
+      }
+    }
+
+    // 公共方法
+    public hidePanel(): void {
+      this.hideAllPanels();
+    }
+
+    public showSearchPanel(): void {
+      this.togglePanel("search");
+    }
+
+    public showFilterPanel(): void {
+      this.togglePanel("filter");
+    }
+
+    public showCategoryPanel(): void {
+      this.togglePanel("category");
+    }
+
+    public destroy(): void {
+      if (this.touchHandler) {
+        this.touchHandler.destroy();
+      }
+    }
+  }
+
+  // 初始化移动端提示词库
+  document.addEventListener("DOMContentLoaded", () => {
+    const mobileLibrary = new MobilePromptLibrary();
+
+    // 导出到全局作用域
+    (window as any).MobilePromptLibrary = mobileLibrary;
+  });
+</script>

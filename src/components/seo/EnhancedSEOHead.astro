@@ -1,0 +1,376 @@
+---
+/**
+ * 增强的SEO头部组件
+ * 提供完整的SEO优化，包括关键词密度优化、结构化数据等
+ */
+
+import {
+  getPageSEOConfig,
+  generateStructuredData,
+  generateAlternateLanguages,
+  baseSEOConfig,
+} from "../../config/seo";
+import { getCurrentLanguage } from "../../i18n/language-manager";
+
+export interface Props {
+  page: string;
+  language?: string;
+  customTitle?: string;
+  customDescription?: string;
+  customKeywords?: string[];
+  canonical?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+  ogImage?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  section?: string;
+}
+
+const {
+  page,
+  language = "en",
+  customTitle,
+  customDescription,
+  customKeywords,
+  canonical,
+  noindex = false,
+  nofollow = false,
+  ogImage,
+  publishedTime,
+  modifiedTime,
+  author,
+  section,
+} = Astro.props;
+
+// 获取SEO配置
+const seoConfig = getPageSEOConfig(page, language);
+const structuredData = generateStructuredData(page, language);
+const alternateLanguages = generateAlternateLanguages(page, language);
+
+// 构建最终的SEO数据
+const finalTitle =
+  customTitle || seoConfig?.title || `${baseSEOConfig.siteName}`;
+const finalDescription = customDescription || seoConfig?.description || "";
+const finalKeywords = customKeywords || seoConfig?.keywords || [];
+const finalOgImage =
+  ogImage || `${baseSEOConfig.siteUrl}${baseSEOConfig.defaultImage}`;
+const finalCanonical =
+  canonical || `${baseSEOConfig.siteUrl}${Astro.url.pathname}`;
+
+// 生成robots指令
+const robotsContent = [
+  noindex ? "noindex" : "index",
+  nofollow ? "nofollow" : "follow",
+  "max-snippet:-1",
+  "max-image-preview:large",
+  "max-video-preview:-1",
+].join(", ");
+
+// 关键词密度优化
+const optimizeKeywordDensity = (text: string, keywords: string[]): string => {
+  let optimizedText = text;
+
+  // 确保主关键词出现在描述中
+  keywords.slice(0, 3).forEach((keyword) => {
+    if (!optimizedText.toLowerCase().includes(keyword.toLowerCase())) {
+      optimizedText = `${keyword} - ${optimizedText}`;
+    }
+  });
+
+  return optimizedText;
+};
+
+const optimizedDescription = optimizeKeywordDensity(
+  finalDescription,
+  finalKeywords,
+);
+---
+
+<!-- 基础SEO标签 -->
+<title>{finalTitle}</title>
+<meta name="description" content={optimizedDescription} />
+<meta name="keywords" content={finalKeywords.join(", ")} />
+<meta name="author" content={author || "BananaEditor Team"} />
+<meta name="robots" content={robotsContent} />
+<meta name="language" content={language} />
+<meta name="revisit-after" content="7 days" />
+
+<!-- 规范链接 -->
+<link rel="canonical" href={finalCanonical} />
+
+<!-- 多语言支持 -->
+{
+  alternateLanguages.map(({ lang, url }) => (
+    <link rel="alternate" hreflang={lang} href={url} />
+  ))
+}
+<link
+  rel="alternate"
+  hreflang="x-default"
+  href={`${baseSEOConfig.siteUrl}${Astro.url.pathname}`}
+/>
+
+<!-- Open Graph 标签 -->
+<meta property="og:type" content={seoConfig?.ogType || "website"} />
+<meta property="og:title" content={finalTitle} />
+<meta property="og:description" content={optimizedDescription} />
+<meta property="og:image" content={finalOgImage} />
+<meta property="og:image:alt" content={`${finalTitle} - BananaEditor`} />
+<meta property="og:url" content={finalCanonical} />
+<meta property="og:site_name" content={baseSEOConfig.siteName} />
+<meta
+  property="og:locale"
+  content={language === "zh" ? "zh_CN" : `${language}_US`}
+/>
+
+{
+  alternateLanguages.map(({ lang }) => (
+    <meta
+      property="og:locale:alternate"
+      content={lang === "zh" ? "zh_CN" : `${lang}_US`}
+    />
+  ))
+}
+
+<!-- 文章特定的Open Graph标签 -->
+{
+  publishedTime && (
+    <meta property="article:published_time" content={publishedTime} />
+  )
+}
+{
+  modifiedTime && (
+    <meta property="article:modified_time" content={modifiedTime} />
+  )
+}
+{author && <meta property="article:author" content={author} />}
+{section && <meta property="article:section" content={section} />}
+
+<!-- Twitter Card 标签 -->
+<meta
+  name="twitter:card"
+  content={seoConfig?.twitterCard || "summary_large_image"}
+/>
+<meta name="twitter:site" content={baseSEOConfig.twitterHandle} />
+<meta name="twitter:creator" content={baseSEOConfig.twitterHandle} />
+<meta name="twitter:title" content={finalTitle} />
+<meta name="twitter:description" content={optimizedDescription} />
+<meta name="twitter:image" content={finalOgImage} />
+<meta name="twitter:image:alt" content={`${finalTitle} - BananaEditor`} />
+
+<!-- 移动端优化 -->
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+/>
+<meta name="format-detection" content="telephone=no" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="BananaEditor" />
+
+<!-- 主题颜色 -->
+<meta name="theme-color" content="#F59E0B" />
+<meta name="msapplication-TileColor" content="#F59E0B" />
+<meta name="msapplication-navbutton-color" content="#F59E0B" />
+
+<!-- 性能优化提示 -->
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- 安全性标头 -->
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+/>
+<meta http-equiv="X-Content-Type-Options" content="nosniff" />
+<meta http-equiv="X-Frame-Options" content="DENY" />
+
+<!-- DNS预解析 -->
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+<link rel="dns-prefetch" href="//fonts.gstatic.com" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- 资源预加载 -->
+<link
+  rel="preload"
+  href="/fonts/inter-var.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+
+<!-- Favicon 和图标 -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- 结构化数据 -->
+{
+  structuredData && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    />
+  )
+}
+
+<!-- 面包屑导航结构化数据 -->
+{
+  page !== "home" && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: baseSEOConfig.siteUrl,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: finalTitle,
+            item: finalCanonical,
+          },
+        ],
+      })}
+    />
+  )
+}
+
+<!-- 网站导航结构化数据 -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    name: ["Home", "Editor", "Prompt Library", "About", "Contact"],
+    url: [
+      baseSEOConfig.siteUrl,
+      `${baseSEOConfig.siteUrl}/editor`,
+      `${baseSEOConfig.siteUrl}/prompts`,
+      `${baseSEOConfig.siteUrl}/about`,
+      `${baseSEOConfig.siteUrl}/contact`,
+    ],
+  })}
+/>
+
+<!-- 组织信息结构化数据 -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "BananaEditor",
+    url: baseSEOConfig.siteUrl,
+    logo: `${baseSEOConfig.siteUrl}/logo.png`,
+    description:
+      "Professional AI image editor powered by nano banana technology",
+    foundingDate: "2024",
+    sameAs: [
+      `https://twitter.com/${baseSEOConfig.twitterHandle.replace("@", "")}`,
+      `https://github.com/bananaeditor`,
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      url: `${baseSEOConfig.siteUrl}/contact`,
+    },
+  })}
+/>
+
+<!-- 关键词相关的FAQ结构化数据 -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What is nano banana AI technology?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Nano banana AI is our advanced artificial intelligence technology that powers professional image generation, editing, and fusion capabilities in BananaEditor.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How does banana AI image generation work?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Our banana AI uses advanced machine learning models to generate high-quality images from text prompts and reference images, providing professional-grade results.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is BananaEditor free to use?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, BananaEditor offers free access to our nano banana AI image editing tools, including generation, fusion, and prompt optimization features.",
+        },
+      },
+    ],
+  })}
+/>
+
+<!-- 性能监控 -->
+<script>
+  // Core Web Vitals 监控
+  if ("web-vital" in window) {
+    import("web-vitals").then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(console.log);
+      getFID(console.log);
+      getFCP(console.log);
+      getLCP(console.log);
+      getTTFB(console.log);
+    });
+  }
+</script>
+
+<!-- 搜索引擎验证 -->
+<!-- Google Search Console -->
+<meta name="google-site-verification" content="your-google-verification-code" />
+<!-- Bing Webmaster Tools -->
+<meta name="msvalidate.01" content="your-bing-verification-code" />
+<!-- Yandex Webmaster -->
+<meta name="yandex-verification" content="your-yandex-verification-code" />
+
+<style>
+  /* 关键CSS内联以提高性能 */
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #fafaf9;
+    color: #1c1917;
+    line-height: 1.6;
+  }
+
+  /* 防止布局偏移 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 提升首屏渲染性能 */
+  .hero-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

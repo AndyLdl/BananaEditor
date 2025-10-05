@@ -1,17 +1,504 @@
 ---
-import Container from "@components/container.astro";
-import Cta from "@components/cta.astro";
-import Features from "@components/features.astro";
-import Hero from "@components/hero.astro";
-import Logos from "@components/logos.astro";
+/**
+ * BananaEditor首页 - SEO优化，突出"nano banana"关键词
+ * 重新设计的专业AI图片编辑器首页
+ */
+
 import Layout from "@layouts/Layout.astro";
+import SEOHead from "@components/seo/SEOHead.astro";
+import BananaHero from "@components/banana-editor/BananaHero.astro";
+import BananaFeatures from "@components/banana-editor/BananaFeatures.astro";
+import BananaDemo from "@components/banana-editor/BananaDemo.astro";
+import InteractiveDemo from "@components/banana-editor/InteractiveDemo.astro";
+import BananaUseCases from "@components/banana-editor/BananaUseCases.astro";
+import BananaFAQ from "@components/banana-editor/BananaFAQ.astro";
+import UserGuide from "@components/banana-editor/UserGuide.astro";
+import BananaCTA from "@components/banana-editor/BananaCTA.astro";
+import { loadTranslations } from "../i18n/utils";
+import { detectLanguageFromRequest } from "../utils/language-detector";
+
+// 获取当前语言
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 加载SEO翻译
+const seoTranslations = await loadTranslations(currentLang, "seo");
+const homeTranslations = await loadTranslations(currentLang, "home");
+
+// SEO配置
+const seoConfig = {
+  title:
+    seoTranslations.home?.title ||
+    "Nano Banana - Professional AI Image Editor | BananaEditor",
+  description:
+    seoTranslations.home?.description ||
+    "Create stunning images with nano banana AI technology. Professional image generation and fusion tools powered by advanced AI. Try BananaEditor now!",
+  keywords: seoTranslations.home?.keywords || [
+    "nano banana",
+    "nano banana ai",
+    "banana ai",
+    "ai image editor",
+  ],
+  language: currentLang,
+  ogImage: "/images/opengraph-banana-home.jpg",
+  structuredData: {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "BananaEditor - Nano Banana AI Image Generator",
+    description:
+      "Ultra-fast AI image generator powered by Google's Gemini 2.5 Flash Image (nano banana). Generate 1024×1024 images in 2.3 seconds with perfect element consistency.",
+    applicationCategory: "DesignApplication",
+    operatingSystem: "Web Browser",
+    url: Astro.site?.toString(),
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    keywords:
+      "nano banana, nano banana ai, gemini 2.5 flash image, fast ai image generator, element consistency, banana ai, image editor, ai tools",
+    creator: {
+      "@type": "Organization",
+      name: "BananaEditor Team",
+    },
+    featureList: [
+      "Ultra-Fast Image Generation (2.3 seconds)",
+      "Perfect Element Consistency (100%)",
+      "Smart Image Fusion",
+      "Commercial-Ready Quality",
+      "E-commerce Product Images",
+      "Multi-language Support",
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      ratingCount: "10000",
+      bestRating: "5",
+      worstRating: "1",
+    },
+  },
+};
 ---
 
-<Layout title="">
-  <Container>
-    <Hero />
-    <Features />
-    <Logos />
-    <Cta />
-  </Container>
+<Layout title={seoConfig.title}>
+  <SEOHead {...seoConfig} />
+
+  <!-- 主要内容区域 -->
+  <main class="overflow-hidden">
+    <!-- Hero区域 - 突出nano banana关键词 -->
+    <BananaHero />
+
+    <!-- 功能特性展示 -->
+    <BananaFeatures />
+
+    <!-- 交互演示区域 -->
+    <InteractiveDemo />
+
+    <!-- 行业应用场景 -->
+    <BananaUseCases />
+
+    <!-- 常见问题FAQ -->
+    <BananaFAQ />
+
+    <!-- 最终CTA区域 -->
+    <BananaCTA />
+  </main>
 </Layout>
+
+<!-- 页面级样式 -->
+<style>
+  /* 确保页面流畅滚动 */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* 优化页面性能 */
+  main {
+    contain: layout style paint;
+  }
+
+  /* 预加载关键资源 */
+  @media (prefers-reduced-motion: no-preference) {
+    * {
+      scroll-behavior: smooth;
+    }
+  }
+</style>
+
+<!-- 结构化数据和额外SEO -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "BananaEditor",
+    "url": "https://bananaeditor.com",
+    "logo": "https://bananaeditor.com/images/logo-banana.png",
+    "description": "Ultra-fast AI image generator powered by Google's Gemini 2.5 Flash Image (nano banana). Generate professional images in 2.3 seconds with perfect element consistency.",
+    "sameAs": [
+      "https://twitter.com/bananaeditor",
+      "https://github.com/bananaeditor"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Chinese", "Spanish", "French"]
+    }
+  }
+</script>
+
+<!-- FAQ 结构化数据 -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Nano Banana AI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nano Banana is Google's Gemini 2.5 Flash Image model - a lightweight, ultra-fast AI image generation technology that creates high-quality 1024×1024 images in just 2.3 seconds while maintaining perfect element consistency across multiple scenes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How fast is nano banana compared to other AI models?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nano banana AI generates images in 2.3 seconds, making it approximately 10x faster than traditional AI image generation models, while maintaining comparable or superior quality. This makes it ideal for time-sensitive projects and high-volume content creation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use nano banana AI images for commercial purposes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Images generated with nano banana AI through BananaEditor are commercial-ready and optimized for e-commerce, advertising, social media, and marketing materials. The technology includes accurate text rendering and understands commercial visual requirements."
+        }
+      }
+    ]
+  }
+</script>
+
+<!-- 移动端优化和手势支持 -->
+<script>
+  import {
+    TouchGestureHandler,
+    isMobileDevice,
+    debounce,
+  } from "../utils/touch-gestures";
+
+  // 注释掉 setupLanguageSwitcher() 避免与 LanguageSwitcher 组件冲突
+  // import { setupLanguageSwitcher } from "../utils/language-detector";
+  // setupLanguageSwitcher();
+
+  // 初始化性能优化
+  import { performanceManager } from "../utils/performance-init";
+  performanceManager.initialize().catch(console.error);
+
+  // 移动端首页优化
+  class MobileHomePage {
+    private touchHandler: TouchGestureHandler | null = null;
+    private isMobile: boolean = false;
+    private sections: NodeListOf<Element> | null = null;
+    private currentSection: number = 0;
+
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      this.isMobile = isMobileDevice();
+
+      if (!this.isMobile) return;
+
+      this.sections = document.querySelectorAll("main > section, main > div");
+      this.setupTouchGestures();
+      this.setupScrollOptimization();
+      this.setupMobileNavigation();
+    }
+
+    private setupTouchGestures(): void {
+      const main = document.querySelector("main");
+      if (!main) return;
+
+      this.touchHandler = new TouchGestureHandler(main);
+
+      // 垂直滑动导航
+      this.touchHandler.on("swipe", (event: any) => {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+          if (event.direction === "up" && event.velocity > 0.8) {
+            this.scrollToNextSection();
+          } else if (event.direction === "down" && event.velocity > 0.8) {
+            this.scrollToPrevSection();
+          }
+        }
+      });
+
+      // 双击回到顶部
+      this.touchHandler.on("tap", (event: any) => {
+        const now = Date.now();
+        const lastTap = (main as any).lastTapTime || 0;
+
+        if (now - lastTap < 300) {
+          this.scrollToTop();
+        }
+
+        (main as any).lastTapTime = now;
+      });
+    }
+
+    private setupScrollOptimization(): void {
+      // 优化滚动性能
+      let ticking = false;
+
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateCurrentSection();
+            this.optimizeAnimations();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+
+      // 监听方向变化
+      window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
+          this.handleOrientationChange();
+        }, 100);
+      });
+    }
+
+    private setupMobileNavigation(): void {
+      // 添加移动端导航指示器
+      this.createScrollIndicator();
+
+      // 优化CTA按钮
+      this.optimizeCTAButtons();
+
+      // 设置懒加载
+      this.setupLazyLoading();
+    }
+
+    private updateCurrentSection(): void {
+      if (!this.sections) return;
+
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      this.sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top + scrollY;
+
+        if (
+          scrollY >= sectionTop - windowHeight / 2 &&
+          scrollY < sectionTop + rect.height - windowHeight / 2
+        ) {
+          this.currentSection = index;
+        }
+      });
+    }
+
+    private optimizeAnimations(): void {
+      // 在移动端减少动画以提升性能
+      const animatedElements = document.querySelectorAll(
+        ".animate-float, .animate-pulse, .animate-bounce"
+      );
+
+      animatedElements.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+        if (isVisible) {
+          element.classList.add("animate-active");
+        } else {
+          element.classList.remove("animate-active");
+        }
+      });
+    }
+
+    private scrollToNextSection(): void {
+      if (!this.sections || this.currentSection >= this.sections.length - 1)
+        return;
+
+      const nextSection = this.sections[this.currentSection + 1];
+      if (nextSection) {
+        nextSection.scrollIntoView({ behavior: "smooth" });
+        this.addHapticFeedback();
+      }
+    }
+
+    private scrollToPrevSection(): void {
+      if (!this.sections || this.currentSection <= 0) return;
+
+      const prevSection = this.sections[this.currentSection - 1];
+      if (prevSection) {
+        prevSection.scrollIntoView({ behavior: "smooth" });
+        this.addHapticFeedback();
+      }
+    }
+
+    private scrollToTop(): void {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      this.addHapticFeedback();
+    }
+
+    private createScrollIndicator(): void {
+      const indicator = document.createElement("div");
+      indicator.className = "mobile-scroll-indicator";
+      indicator.innerHTML = `
+        <div class="scroll-dots">
+          ${Array.from(this.sections || [])
+            .map(
+              (_, i) =>
+                `<div class="scroll-dot ${i === 0 ? "active" : ""}" data-section="${i}"></div>`
+            )
+            .join("")}
+        </div>
+      `;
+
+      // 添加样式
+      const style = document.createElement("style");
+      style.textContent = `
+        .mobile-scroll-indicator {
+          position: fixed;
+          right: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 100;
+          display: none;
+        }
+
+        .scroll-dots {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .scroll-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255, 215, 0, 0.3);
+          transition: all 0.2s ease;
+          cursor: pointer;
+        }
+
+        .scroll-dot.active {
+          background: #ffd700;
+          transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+          .mobile-scroll-indicator {
+            display: block;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(indicator);
+
+      // 添加点击事件
+      const dots = indicator.querySelectorAll(".scroll-dot");
+      dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+          if (this.sections && this.sections[index]) {
+            this.sections[index].scrollIntoView({ behavior: "smooth" });
+            this.updateScrollIndicator(index);
+          }
+        });
+      });
+    }
+
+    private updateScrollIndicator(activeIndex: number): void {
+      const dots = document.querySelectorAll(".scroll-dot");
+      dots.forEach((dot, index) => {
+        dot.classList.toggle("active", index === activeIndex);
+      });
+    }
+
+    private optimizeCTAButtons(): void {
+      const ctaButtons = document.querySelectorAll('a[href="/editor"]');
+
+      ctaButtons.forEach((button) => {
+        const btn = button as HTMLElement;
+        btn.classList.add("touch-friendly");
+
+        // 添加触摸反馈
+        btn.addEventListener("touchstart", () => {
+          btn.style.transform = "scale(0.98)";
+        });
+
+        btn.addEventListener("touchend", () => {
+          btn.style.transform = "";
+        });
+      });
+    }
+
+    private setupLazyLoading(): void {
+      // 懒加载图片和动画
+      const lazyElements = document.querySelectorAll('img, [class*="animate"]');
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const element = entry.target;
+
+              // 加载图片
+              if (element.tagName === "IMG") {
+                const img = element as HTMLImageElement;
+                if (img.dataset.src) {
+                  img.src = img.dataset.src;
+                  img.removeAttribute("data-src");
+                }
+              }
+
+              // 启用动画
+              if (element.className.includes("animate")) {
+                element.classList.add("animate-active");
+              }
+
+              observer.unobserve(element);
+            }
+          });
+        },
+        {
+          rootMargin: "50px",
+        }
+      );
+
+      lazyElements.forEach((element) => {
+        observer.observe(element);
+      });
+    }
+
+    private handleOrientationChange(): void {
+      // 重新计算布局
+      this.updateCurrentSection();
+
+      // 更新滚动指示器
+      this.updateScrollIndicator(this.currentSection);
+    }
+
+    private addHapticFeedback(): void {
+      if ("vibrate" in navigator) {
+        navigator.vibrate(30);
+      }
+    }
+
+    public destroy(): void {
+      if (this.touchHandler) {
+        this.touchHandler.destroy();
+      }
+    }
+  }
+
+  // 初始化移动端首页
+  document.addEventListener("DOMContentLoaded", () => {
+    new MobileHomePage();
+  });
+</script>

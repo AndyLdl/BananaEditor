@@ -1,0 +1,209 @@
+---
+// 面包屑导航组件
+// 用于内链建设和提升用户体验
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  icon?: string;
+  svgIcon?: string;
+}
+
+export interface Props {
+  items: BreadcrumbItem[];
+  className?: string;
+  separator?: string;
+}
+
+const { items, className = "", separator = "/" } = Astro.props;
+---
+
+<nav class={`breadcrumb-navigation ${className}`} aria-label="面包屑导航">
+  <ol
+    class="breadcrumb-list"
+    itemscope
+    itemtype="https://schema.org/BreadcrumbList">
+    {
+      items.map((item, index) => {
+        const isLast = index === items.length - 1;
+        const position = index + 1;
+
+        return (
+          <>
+            <li
+              class="breadcrumb-item"
+              itemprop="itemListElement"
+              itemscope
+              itemtype="https://schema.org/ListItem">
+              {item.href && !isLast ? (
+                <a href={item.href} class="breadcrumb-link" itemprop="item">
+                  {item.svgIcon && (
+                    <span class="breadcrumb-svg-icon" set:html={item.svgIcon} />
+                  )}
+                  {item.icon && (
+                    <span class="breadcrumb-icon">{item.icon}</span>
+                  )}
+                  <span itemprop="name">{item.label}</span>
+                  <meta itemprop="position" content={position.toString()} />
+                </a>
+              ) : (
+                <span
+                  class={`breadcrumb-current ${isLast ? "active" : ""}`}
+                  itemprop="item">
+                  {item.svgIcon && (
+                    <span class="breadcrumb-svg-icon" set:html={item.svgIcon} />
+                  )}
+                  {item.icon && (
+                    <span class="breadcrumb-icon">{item.icon}</span>
+                  )}
+                  <span itemprop="name">{item.label}</span>
+                  <meta itemprop="position" content={position.toString()} />
+                </span>
+              )}
+            </li>
+            {!isLast && (
+              <li class="breadcrumb-separator" aria-hidden="true">
+                {separator}
+              </li>
+            )}
+          </>
+        );
+      })
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb-navigation {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 229, 92, 0.3);
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumb-link {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #2d1810;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+  }
+
+  .breadcrumb-link:hover {
+    opacity: 1;
+    background: rgba(255, 215, 0, 0.1);
+    color: #ff6b35;
+  }
+
+  .breadcrumb-current {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #2d1810;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0.125rem 0.375rem;
+  }
+
+  .breadcrumb-current.active {
+    color: #ff6b35;
+  }
+
+  .breadcrumb-separator {
+    color: #2d1810;
+    opacity: 0.4;
+    font-size: 12px;
+    user-select: none;
+  }
+
+  .breadcrumb-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .breadcrumb-svg-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+
+  .breadcrumb-svg-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 640px) {
+    .breadcrumb-navigation {
+      padding: 0.375rem 0.625rem;
+    }
+
+    .breadcrumb-link,
+    .breadcrumb-current {
+      font-size: 12px;
+      padding: 0.125rem 0.3rem;
+    }
+
+    .breadcrumb-separator {
+      font-size: 11px;
+    }
+
+    .breadcrumb-icon {
+      font-size: 13px;
+    }
+  }
+
+  /* 深色模式支持 */
+  @media (prefers-color-scheme: dark) {
+    .breadcrumb-navigation {
+      background: rgba(45, 24, 16, 0.5);
+      border-color: rgba(255, 229, 92, 0.2);
+    }
+
+    .breadcrumb-link,
+    .breadcrumb-current {
+      color: #ffe55c;
+    }
+
+    .breadcrumb-separator {
+      color: #ffe55c;
+    }
+
+    .breadcrumb-link:hover {
+      background: rgba(255, 229, 92, 0.2);
+      color: #ffd700;
+    }
+
+    .breadcrumb-current.active {
+      color: #ffd700;
+    }
+  }
+</style>

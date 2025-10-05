@@ -4,41 +4,295 @@ import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
 import Layout from "@layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
+import { loadTranslations } from "../i18n/utils";
+import { detectLanguageFromRequest } from "../utils/language-detector";
+
+// 获取当前语言
+const currentLang = detectLanguageFromRequest(Astro.request);
+const seoTranslations = await loadTranslations(currentLang, "seo");
 ---
 
-<Layout title="Contact">
+<Layout
+  title={seoTranslations.contact?.title ||
+    "Contact BananaEditor - Nano Banana AI Support"}>
   <Container>
-    <Sectionhead>
-      <Fragment slot="title">Contact</Fragment>
-      <Fragment slot="desc">We are a here to help.</Fragment>
-    </Sectionhead>
+    <!-- Hero 区域 -->
+    <div class="relative py-20 sm:py-32 overflow-hidden">
+      <!-- 背景装饰 -->
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-banana-light/20 via-white to-banana-secondary/10">
+      </div>
+      <div
+        class="absolute top-20 left-10 w-16 h-16 bg-banana-primary/10 rounded-full animate-float">
+      </div>
+      <div
+        class="absolute bottom-20 right-10 w-12 h-12 bg-banana-secondary/10 rounded-full animate-float-delayed">
+      </div>
 
-    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-16">
-      <div>
-        <h2 class="font-medium text-2xl text-gray-800">Contact Astroship</h2>
-        <p class="text-lg leading-relaxed text-slate-500 mt-3">
-          Have something to say? We are here to help. Fill up the form or send
-          email or call phone.
+      <div class="relative text-center max-w-4xl mx-auto">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 bg-banana-gradient/10 rounded-full text-banana-primary font-medium text-sm mb-6">
+          <Icon name="heroicons:chat-bubble-left-right" class="w-4 h-4" />
+          <span>Support & Contact</span>
+        </div>
+
+        <h1
+          class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+          <span class="block">We're Here to Help</span>
+          <span
+            class="block text-transparent bg-clip-text bg-banana-gradient mt-2">
+            with Nano Banana AI
+          </span>
+        </h1>
+
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          Get support for nano banana AI tools, technical assistance, or share
+          your feedback. Our team is ready to help you create amazing images
+          with our advanced AI technology.
         </p>
-        <div class="mt-5">
-          <div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" />
-            <span>1734 Sanfransico, CA 93063</span>
-          </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" /><a
-              href="mailto:hello@astroshipstarter.com"
-              >hello@astroshipstarter.com</a
-            >
-          </div><div class="flex items-center mt-2 space-x-2 text-gray-600">
-            <Icon class="text-gray-400 w-4 h-4" name="uil:phone" /><a
-              href="tel:+1 (987) 4587 899">+1 (987) 4587 899</a
-            >
+      </div>
+    </div>
+
+    <!-- 支持选项 -->
+    <div class="py-20 bg-white">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            How Can We Help You?
+          </h2>
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+            Choose the best way to get support for your nano banana AI needs
+          </p>
+        </div>
+
+        <div class="max-w-2xl mx-auto">
+          <div
+            class="text-center p-8 bg-gradient-to-br from-banana-light/10 to-white rounded-2xl border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-xl">
+            <div
+              class="w-20 h-20 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Icon name="heroicons:envelope" class="w-10 h-10 text-white" />
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              Email Support
+            </h3>
+            <p class="text-lg text-gray-600 mb-6">
+              Send us detailed questions about BananaEditor's nano banana AI
+              features and usage. We typically respond within 2 hours.
+            </p>
+            <a
+              href="mailto:support@bananaeditor.com"
+              class="inline-flex items-center gap-2 px-8 py-4 bg-banana-primary text-white font-semibold rounded-xl hover:bg-banana-secondary transition-colors hover:shadow-lg">
+              <Icon name="heroicons:envelope" class="w-5 h-5" />
+              <span>Send Email</span>
+            </a>
+            <p class="text-sm text-gray-500 mt-4">
+              Monday - Friday, 9 AM - 6 PM PST
+            </p>
           </div>
         </div>
       </div>
-      <div>
-        <Contactform />
+    </div>
+
+    <!-- 联系表单区域 -->
+    <div class="py-20 bg-gradient-to-br from-banana-light/10 to-white">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+          <!-- 联系信息 -->
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+            <p class="text-lg text-gray-600 mb-8">
+              Have questions about nano banana AI? Need technical support? We're
+              here to help you get the most out of our advanced image generation
+              technology.
+            </p>
+
+            <div class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-12 h-12 bg-banana-gradient rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Icon name="heroicons:envelope" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 mb-1">
+                    Email Support
+                  </h3>
+                  <p class="text-gray-600 mb-2">
+                    Get detailed help with nano banana AI tools
+                  </p>
+                  <a
+                    href="mailto:support@bananaeditor.com"
+                    class="text-banana-primary font-medium hover:text-banana-secondary">
+                    support@bananaeditor.com
+                  </a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-12 h-12 bg-banana-gradient rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Icon name="heroicons:clock" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 mb-1">
+                    Response Time
+                  </h3>
+                  <p class="text-gray-600 mb-2">
+                    We typically respond within 2 hours
+                  </p>
+                  <span class="text-gray-500 text-sm"
+                    >Monday - Friday, 9 AM - 6 PM PST</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ 快速链接 -->
+            <div class="mt-12 p-6 bg-white rounded-2xl border border-gray-200">
+              <h3 class="font-semibold text-gray-900 mb-4">Quick Help</h3>
+              <div class="space-y-3">
+                <a
+                  href="#faq"
+                  class="flex items-center gap-2 text-banana-primary hover:text-banana-secondary">
+                  <Icon name="heroicons:question-mark-circle" class="w-4 h-4" />
+                  <span>How fast is nano banana AI generation?</span>
+                </a>
+                <a
+                  href="#faq"
+                  class="flex items-center gap-2 text-banana-primary hover:text-banana-secondary">
+                  <Icon name="heroicons:question-mark-circle" class="w-4 h-4" />
+                  <span>What makes element consistency special?</span>
+                </a>
+                <a
+                  href="#faq"
+                  class="flex items-center gap-2 text-banana-primary hover:text-banana-secondary">
+                  <Icon name="heroicons:question-mark-circle" class="w-4 h-4" />
+                  <span>Can I use generated images commercially?</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 联系表单 -->
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl border border-gray-200">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">
+              Send us a Message
+            </h3>
+            <Contactform />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ 区域 -->
+    <div class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            Frequently Asked Questions
+          </h2>
+          <p class="text-lg text-gray-600">
+            Quick answers to common questions about nano banana AI technology
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <h3 class="font-semibold text-gray-900 mb-3">
+              How fast is nano banana AI compared to other models?
+            </h3>
+            <p class="text-gray-600">
+              Nano banana AI generates 1024×1024 images in just 2.3 seconds,
+              making it approximately 10x faster than traditional AI image
+              generation models while maintaining superior quality.
+            </p>
+          </div>
+
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <h3 class="font-semibold text-gray-900 mb-3">
+              What makes element consistency special in nano banana AI?
+            </h3>
+            <p class="text-gray-600">
+              Unlike other AI models, nano banana AI acts like your personal AI
+              designer, maintaining 100% consistency of characters, objects, and
+              styles across multiple scenes, poses, and environments.
+            </p>
+          </div>
+
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <h3 class="font-semibold text-gray-900 mb-3">
+              Can I use nano banana AI images for commercial purposes?
+            </h3>
+            <p class="text-gray-600">
+              Yes! Images generated with nano banana AI are commercial-ready and
+              optimized for e-commerce, advertising, social media, and marketing
+              materials with accurate text rendering.
+            </p>
+          </div>
+
+          <div class="bg-gray-50 rounded-2xl p-6">
+            <h3 class="font-semibold text-gray-900 mb-3">
+              Is there a limit on how many images I can generate?
+            </h3>
+            <p class="text-gray-600">
+              BananaEditor offers generous free usage limits. For high-volume
+              commercial use, we offer premium plans with increased limits and
+              priority processing.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA 区域 -->
+    <div
+      class="py-20 bg-gradient-to-br from-banana-primary to-banana-secondary">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+          Ready to Try Nano Banana AI?
+        </h2>
+        <p class="text-xl text-white/90 mb-8">
+          Experience the power of ultra-fast AI image generation with perfect
+          element consistency.
+        </p>
+        <a
+          href="/editor"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-white text-banana-primary font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Icon name="heroicons:rocket-launch" class="w-5 h-5" />
+          <span>Start Creating Now</span>
+          <Icon name="heroicons:arrow-right" class="w-5 h-5" />
+        </a>
       </div>
     </div>
   </Container>
 </Layout>
+
+<style>
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(5deg);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) rotate(-5deg);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 4s ease-in-out infinite 1s;
+  }
+</style>

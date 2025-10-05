@@ -1,0 +1,75 @@
+{
+    "title": "Prompt Library",
+    "subtitle": "Discover and manage high-quality AI prompts",
+    "search": {
+        "placeholder": "Search prompts...",
+        "noResults": "No prompts found",
+        "resultsCount": "Found {count} results"
+    },
+    "categories": {
+        "all": "All",
+        "portrait": "Portrait",
+        "landscape": "Landscape",
+        "abstract": "Abstract Art",
+        "anime": "Anime Style"
+    },
+    "filters": {
+        "category": "Category",
+        "rating": "Rating",
+        "usage": "Usage Count",
+        "date": "Created Date"
+    },
+    "sort": {
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "rating": "Rating",
+        "usage": "Usage Count",
+        "alphabetical": "Alphabetical"
+    },
+    "card": {
+        "useInEditor": "Use in Editor",
+        "copy": "Copy",
+        "favorite": "Favorite",
+        "unfavorite": "Unfavorite",
+        "rating": "Rating",
+        "usageCount": "Usage Count",
+        "tags": "Tags",
+        "description": "Description",
+        "createdAt": "Created",
+        "updatedAt": "Updated"
+    },
+    "actions": {
+        "createNew": "Create New Prompt",
+        "edit": "Edit",
+        "delete": "Delete",
+        "duplicate": "Duplicate",
+        "export": "Export",
+        "import": "Import"
+    },
+    "modal": {
+        "title": "Prompt Details",
+        "editTitle": "Edit Prompt",
+        "createTitle": "Create New Prompt",
+        "fields": {
+            "title": "Title",
+            "content": "Content",
+            "category": "Category",
+            "tags": "Tags",
+            "description": "Description"
+        },
+        "placeholders": {
+            "title": "Enter prompt title",
+            "content": "Enter prompt content",
+            "tags": "Enter tags, separated by commas",
+            "description": "Enter prompt description"
+        }
+    },
+    "messages": {
+        "copied": "Copied to clipboard",
+        "favorited": "Added to favorites",
+        "unfavorited": "Removed from favorites",
+        "deleted": "Prompt deleted",
+        "saved": "Prompt saved",
+        "redirectingToEditor": "Redirecting to editor..."
+    }
+}

@@ -1,0 +1,1086 @@
+---
+// BananaEditor结果展示组件
+// 专门用于展示AI生成的图片结果和相关操作
+
+export interface Props {
+  id?: string;
+  className?: string;
+  showComparison?: boolean;
+  showMetadata?: boolean;
+  showActions?: boolean;
+}
+
+const { 
+  id = "result-display",
+  className = "",
+  showComparison = true,
+  showMetadata = true,
+  showActions = true
+} = Astro.props;
+---
+
+<div class={`banana-result-display ${className}`} id={id}>
+  <!-- 结果头部 -->
+  <div class="result-header">
+    <div class="header-content">
+      <div class="header-icon">✨</div>
+      <div class="header-text">
+        <h3 class="result-title">生成结果</h3>
+        <p class="result-subtitle" id={`${id}-subtitle`}>AI创作完成</p>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" id={`${id}-fullscreen`} title="全屏查看">
+          <span class="icon">⛶</span>
+        </button>
+        <button class="header-btn" id={`${id}-close`} title="关闭">
+          <span class="icon">×</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 结果内容区域 -->
+  <div class="result-content">
+    <!-- 图片展示区域 -->
+    <div class="image-display-area">
+      {showComparison ? (
+        <!-- 对比模式 -->
+        <div class="comparison-view" id={`${id}-comparison`}>
+          <div class="comparison-side original">
+            <div class="side-label">原图</div>
+            <div class="image-container">
+              <img id={`${id}-original-img`} alt="原图" style="display: none;" />
+              <div class="placeholder" id={`${id}-original-placeholder`}>
+                <div class="placeholder-icon">📷</div>
+                <p>原图</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="comparison-divider">
+            <div class="divider-icon">→</div>
+          </div>
+          
+          <div class="comparison-side result">
+            <div class="side-label">生成结果</div>
+            <div class="image-container">
+              <img id={`${id}-result-img`} alt="生成结果" style="display: none;" />
+              <div class="placeholder" id={`${id}-result-placeholder`}>
+                <div class="placeholder-icon">✨</div>
+                <p>生成结果</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <!-- 单图模式 -->
+        <div class="single-view" id={`${id}-single`}>
+          <div class="image-container">
+            <img id={`${id}-single-img`} alt="生成结果" style="display: none;" />
+            <div class="placeholder" id={`${id}-single-placeholder`}>
+              <div class="placeholder-icon">🎨</div>
+              <p>生成结果将在这里显示</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</div>  <!--
+ 元数据和操作区域 -->
+  <div class="result-footer">
+    {showMetadata && (
+      <div class="metadata-section" id={`${id}-metadata`} style="display: none;">
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <span class="metadata-label">处理时间:</span>
+            <span class="metadata-value" id={`${id}-processing-time`}>--</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">图片尺寸:</span>
+            <span class="metadata-value" id={`${id}-dimensions`}>--</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">文件大小:</span>
+            <span class="metadata-value" id={`${id}-file-size`}>--</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">使用模型:</span>
+            <span class="metadata-value" id={`${id}-model`}>--</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {showActions && (
+      <div class="actions-section">
+        <div class="primary-actions">
+          <button class="action-btn primary" id={`${id}-download`}>
+            <span class="icon">💾</span>
+            <span class="text">下载图片</span>
+          </button>
+          <button class="action-btn secondary" id={`${id}-regenerate`}>
+            <span class="icon">🔄</span>
+            <span class="text">重新生成</span>
+          </button>
+        </div>
+        
+        <div class="secondary-actions">
+          <button class="action-btn tertiary" id={`${id}-save-prompt`}>
+            <span class="icon">📝</span>
+            <span class="text">保存提示词</span>
+          </button>
+          <button class="action-btn tertiary" id={`${id}-share`}>
+            <span class="icon">🔗</span>
+            <span class="text">分享</span>
+          </button>
+          <button class="action-btn tertiary" id={`${id}-edit`}>
+            <span class="icon">✏️</span>
+            <span class="text">继续编辑</span>
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- 加载状态覆盖层 -->
+  <div class="loading-overlay" id={`${id}-loading`} style="display: none;">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">正在处理结果...</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .banana-result-display {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* 结果头部 */
+  .result-header {
+    background: var(--banana-gradient, linear-gradient(135deg, #ffd700 0%, #ffa500 100%));
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--banana-border, #ffe55c);
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .result-title {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .result-subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: var(--banana-dark, #2d1810);
+    opacity: 0.8;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .header-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(45, 24, 16, 0.1);
+    color: var(--banana-dark, #2d1810);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .header-btn:hover {
+    background: rgba(45, 24, 16, 0.2);
+    transform: scale(1.05);
+  }
+
+  /* 结果内容区域 */
+  .result-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .image-display-area {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 对比视图 */
+  .comparison-view {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .comparison-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .side-label {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    padding: 8px 16px;
+    background: rgba(255, 248, 220, 0.5);
+    border-radius: 20px;
+  }
+
+  .image-container {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fafafa;
+    border: 2px solid #e5e7eb;
+    transition: border-color 0.3s ease;
+  }
+
+  .image-container:hover {
+    border-color: var(--banana-primary, #ffd700);
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-container:hover img {
+    transform: scale(1.02);
+  }
+
+  .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    text-align: center;
+  }
+
+  .placeholder-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+
+  .placeholder p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .comparison-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .divider-icon {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  /* 单图视图 */
+  .single-view {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .single-view .image-container {
+    aspect-ratio: 4/3;
+  }
+
+  /* 结果底部 */
+  .result-footer {
+    border-top: 1px solid #e5e7eb;
+    background: #fafafa;
+  }
+
+  /* 元数据区域 */
+  .metadata-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .metadata-label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .metadata-value {
+    font-size: 14px;
+    color: var(--banana-dark, #2d1810);
+    font-weight: 600;
+  }
+
+  /* 操作区域 */
+  .actions-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .primary-actions,
+  .secondary-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .action-btn.primary {
+    background: var(--banana-gradient, linear-gradient(135deg, #ffd700 0%, #ffa500 100%));
+    color: var(--banana-dark, #2d1810);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .action-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+  }
+
+  .action-btn.secondary {
+    background: white;
+    color: var(--banana-dark, #2d1810);
+    border: 2px solid var(--banana-primary, #ffd700);
+  }
+
+  .action-btn.secondary:hover {
+    background: rgba(255, 248, 220, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .action-btn.tertiary {
+    background: transparent;
+    color: #666;
+    border: 1px solid #e5e7eb;
+  }
+
+  .action-btn.tertiary:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .action-btn .icon {
+    font-size: 16px;
+  }
+
+  /* 加载状态 */
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+  }
+
+  .loading-content {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f0f0f0;
+    border-top: 4px solid var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .comparison-view {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .comparison-divider {
+      transform: rotate(90deg);
+    }
+
+    .metadata-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .primary-actions,
+    .secondary-actions {
+      flex-direction: column;
+    }
+
+    .action-btn {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .image-display-area {
+      padding: 12px;
+    }
+
+    .result-header {
+      padding: 12px 16px;
+    }
+
+    .actions-section {
+      padding: 16px;
+    }
+
+    .metadata-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .placeholder-icon {
+      font-size: 36px;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .image-container {
+      border-color: #000;
+    }
+
+    .action-btn.tertiary {
+      border-color: #000;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style><scri
+pt>
+  // BananaEditor结果展示器
+  class BananaResultDisplay {
+    private displayId: string;
+    private container: HTMLElement | null = null;
+    private showComparison: boolean = true;
+    private currentResult: any = null;
+    private isFullscreen: boolean = false;
+
+    constructor(displayId: string) {
+      this.displayId = displayId;
+      this.container = document.getElementById(displayId);
+      this.showComparison = this.container?.querySelector('.comparison-view') !== null;
+      
+      this.init();
+    }
+
+    private init(): void {
+      this.setupEventListeners();
+      this.setupKeyboardShortcuts();
+    }
+
+    private setupEventListeners(): void {
+      // 头部按钮事件
+      const fullscreenBtn = document.getElementById(`${this.displayId}-fullscreen`);
+      const closeBtn = document.getElementById(`${this.displayId}-close`);
+
+      fullscreenBtn?.addEventListener('click', () => this.toggleFullscreen());
+      closeBtn?.addEventListener('click', () => this.close());
+
+      // 操作按钮事件
+      const downloadBtn = document.getElementById(`${this.displayId}-download`);
+      const regenerateBtn = document.getElementById(`${this.displayId}-regenerate`);
+      const savePromptBtn = document.getElementById(`${this.displayId}-save-prompt`);
+      const shareBtn = document.getElementById(`${this.displayId}-share`);
+      const editBtn = document.getElementById(`${this.displayId}-edit`);
+
+      downloadBtn?.addEventListener('click', () => this.downloadResult());
+      regenerateBtn?.addEventListener('click', () => this.regenerateImage());
+      savePromptBtn?.addEventListener('click', () => this.savePrompt());
+      shareBtn?.addEventListener('click', () => this.shareResult());
+      editBtn?.addEventListener('click', () => this.editResult());
+
+      // 图片点击事件（放大查看）
+      const images = this.container?.querySelectorAll('img');
+      images?.forEach(img => {
+        img.addEventListener('click', () => this.showImageModal(img.src));
+      });
+    }
+
+    private setupKeyboardShortcuts(): void {
+      document.addEventListener('keydown', (e) => {
+        if (!this.container || this.container.style.display === 'none') return;
+
+        switch (e.key) {
+          case 'Escape':
+            if (this.isFullscreen) {
+              this.toggleFullscreen();
+            } else {
+              this.close();
+            }
+            break;
+          case 'f':
+          case 'F':
+            if (e.ctrlKey || e.metaKey) {
+              e.preventDefault();
+              this.toggleFullscreen();
+            }
+            break;
+          case 'd':
+          case 'D':
+            if (e.ctrlKey || e.metaKey) {
+              e.preventDefault();
+              this.downloadResult();
+            }
+            break;
+          case 'r':
+          case 'R':
+            if (e.ctrlKey || e.metaKey) {
+              e.preventDefault();
+              this.regenerateImage();
+            }
+            break;
+        }
+      });
+    }
+
+    // 显示生成结果
+    public showResult(result: any): void {
+      this.currentResult = result;
+      this.showLoading();
+
+      // 更新标题
+      const subtitle = document.getElementById(`${this.displayId}-subtitle`);
+      if (subtitle) {
+        subtitle.textContent = '生成完成';
+      }
+
+      // 显示图片
+      if (this.showComparison && result.originalImage) {
+        this.showComparisonImages(result.originalImage, result.imageUrl);
+      } else {
+        this.showSingleImage(result.imageUrl);
+      }
+
+      // 显示元数据
+      this.showMetadata(result.metadata);
+
+      // 显示容器
+      if (this.container) {
+        this.container.style.display = 'flex';
+      }
+
+      this.hideLoading();
+    }
+
+    private showComparisonImages(originalUrl: string, resultUrl: string): void {
+      // 显示原图
+      const originalImg = document.getElementById(`${this.displayId}-original-img`) as HTMLImageElement;
+      const originalPlaceholder = document.getElementById(`${this.displayId}-original-placeholder`);
+
+      if (originalImg && originalPlaceholder) {
+        originalImg.src = originalUrl;
+        originalImg.style.display = 'block';
+        originalPlaceholder.style.display = 'none';
+      }
+
+      // 显示结果图
+      const resultImg = document.getElementById(`${this.displayId}-result-img`) as HTMLImageElement;
+      const resultPlaceholder = document.getElementById(`${this.displayId}-result-placeholder`);
+
+      if (resultImg && resultPlaceholder) {
+        resultImg.src = resultUrl;
+        resultImg.style.display = 'block';
+        resultPlaceholder.style.display = 'none';
+      }
+    }
+
+    private showSingleImage(imageUrl: string): void {
+      const singleImg = document.getElementById(`${this.displayId}-single-img`) as HTMLImageElement;
+      const singlePlaceholder = document.getElementById(`${this.displayId}-single-placeholder`);
+
+      if (singleImg && singlePlaceholder) {
+        singleImg.src = imageUrl;
+        singleImg.style.display = 'block';
+        singlePlaceholder.style.display = 'none';
+      }
+    }
+
+    private showMetadata(metadata: any): void {
+      const metadataSection = document.getElementById(`${this.displayId}-metadata`);
+      if (metadataSection) {
+        metadataSection.style.display = 'block';
+      }
+
+      // 更新各个元数据字段
+      const processingTime = document.getElementById(`${this.displayId}-processing-time`);
+      const dimensions = document.getElementById(`${this.displayId}-dimensions`);
+      const fileSize = document.getElementById(`${this.displayId}-file-size`);
+      const model = document.getElementById(`${this.displayId}-model`);
+
+      if (processingTime && metadata.processingTime) {
+        processingTime.textContent = `${(metadata.processingTime / 1000).toFixed(1)}秒`;
+      }
+
+      if (dimensions && metadata.dimensions) {
+        dimensions.textContent = `${metadata.dimensions.width} × ${metadata.dimensions.height}`;
+      }
+
+      if (fileSize && metadata.fileSize) {
+        const sizeInMB = (metadata.fileSize / (1024 * 1024)).toFixed(2);
+        fileSize.textContent = `${sizeInMB} MB`;
+      }
+
+      if (model && metadata.model) {
+        model.textContent = metadata.model;
+      }
+    }
+
+    // 操作方法
+    private downloadResult(): void {
+      if (!this.currentResult) return;
+
+      const link = document.createElement('a');
+      link.href = this.currentResult.imageUrl;
+      link.download = `banana-editor-result-${Date.now()}.${this.currentResult.metadata.format || 'jpg'}`;
+      link.click();
+
+      // 显示下载提示
+      this.showNotification('图片下载已开始', 'success');
+    }
+
+    private regenerateImage(): void {
+      // 发送重新生成事件
+      document.dispatchEvent(new CustomEvent('banana-editor:regenerate-request', {
+        detail: {
+          displayId: this.displayId,
+          originalPrompt: this.currentResult?.generatedPrompt
+        }
+      }));
+
+      this.showNotification('正在重新生成...', 'info');
+    }
+
+    private savePrompt(): void {
+      if (!this.currentResult?.generatedPrompt) return;
+
+      // 复制到剪贴板
+      navigator.clipboard.writeText(this.currentResult.generatedPrompt).then(() => {
+        this.showNotification('提示词已复制到剪贴板', 'success');
+      }).catch(() => {
+        // 降级方案：显示提示词文本
+        this.showPromptModal(this.currentResult.generatedPrompt);
+      });
+    }
+
+    private shareResult(): void {
+      if (!this.currentResult) return;
+
+      const shareData = {
+        title: 'BananaEditor AI生成结果',
+        text: '查看我用nano banana AI创作的图片',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(console.error);
+      } else {
+        // 降级方案：复制链接
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          this.showNotification('链接已复制到剪贴板', 'success');
+        });
+      }
+    }
+
+    private editResult(): void {
+      // 发送编辑请求事件
+      document.dispatchEvent(new CustomEvent('banana-editor:edit-request', {
+        detail: {
+          displayId: this.displayId,
+          result: this.currentResult
+        }
+      }));
+    }
+
+    private toggleFullscreen(): void {
+      if (!this.container) return;
+
+      this.isFullscreen = !this.isFullscreen;
+
+      if (this.isFullscreen) {
+        this.container.classList.add('fullscreen');
+        document.body.style.overflow = 'hidden';
+      } else {
+        this.container.classList.remove('fullscreen');
+        document.body.style.overflow = '';
+      }
+
+      // 更新按钮图标
+      const fullscreenBtn = document.getElementById(`${this.displayId}-fullscreen`);
+      if (fullscreenBtn) {
+        const icon = fullscreenBtn.querySelector('.icon');
+        if (icon) {
+          icon.textContent = this.isFullscreen ? '⛶' : '⛶';
+        }
+      }
+    }
+
+    private close(): void {
+      if (this.container) {
+        this.container.style.display = 'none';
+      }
+
+      if (this.isFullscreen) {
+        this.isFullscreen = false;
+        document.body.style.overflow = '';
+      }
+
+      // 发送关闭事件
+      document.dispatchEvent(new CustomEvent('banana-editor:result-closed', {
+        detail: { displayId: this.displayId }
+      }));
+    }
+
+    private showImageModal(imageSrc: string): void {
+      // 创建图片模态框
+      const modal = document.createElement('div');
+      modal.className = 'image-modal';
+      modal.innerHTML = `
+        <div class="modal-backdrop">
+          <div class="modal-content">
+            <img src="${imageSrc}" alt="查看大图" />
+            <button class="modal-close">×</button>
+          </div>
+        </div>
+      `;
+
+      // 添加样式
+      const style = document.createElement('style');
+      style.textContent = `
+        .image-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .modal-backdrop {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+        .modal-content {
+          position: relative;
+          max-width: 90vw;
+          max-height: 90vh;
+        }
+        .modal-content img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+          border-radius: 8px;
+        }
+        .modal-close {
+          position: absolute;
+          top: -40px;
+          right: 0;
+          width: 32px;
+          height: 32px;
+          border: none;
+          background: rgba(255, 255, 255, 0.9);
+          color: #000;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 18px;
+          font-weight: bold;
+        }
+      `;
+
+      document.head.appendChild(style);
+      document.body.appendChild(modal);
+
+      // 绑定关闭事件
+      const closeModal = () => {
+        document.body.removeChild(modal);
+        document.head.removeChild(style);
+      };
+
+      modal.querySelector('.modal-close')?.addEventListener('click', closeModal);
+      modal.querySelector('.modal-backdrop')?.addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          closeModal();
+        }
+      });
+
+      // ESC键关闭
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          closeModal();
+          document.removeEventListener('keydown', handleEsc);
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
+    }
+
+    private showPromptModal(prompt: string): void {
+      // 显示提示词模态框
+      const modal = document.createElement('div');
+      modal.className = 'prompt-modal';
+      modal.innerHTML = `
+        <div class="modal-backdrop">
+          <div class="modal-content">
+            <h3>生成提示词</h3>
+            <textarea readonly>${prompt}</textarea>
+            <div class="modal-actions">
+              <button class="copy-btn">复制</button>
+              <button class="close-btn">关闭</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // 绑定事件
+      const closeModal = () => document.body.removeChild(modal);
+      
+      modal.querySelector('.close-btn')?.addEventListener('click', closeModal);
+      modal.querySelector('.copy-btn')?.addEventListener('click', () => {
+        const textarea = modal.querySelector('textarea') as HTMLTextAreaElement;
+        textarea.select();
+        document.execCommand('copy');
+        this.showNotification('提示词已复制', 'success');
+        closeModal();
+      });
+    }
+
+    private showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
+      // 创建通知元素
+      const notification = document.createElement('div');
+      notification.className = `banana-notification ${type}`;
+      notification.textContent = message;
+
+      // 添加样式
+      Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '12px 20px',
+        borderRadius: '8px',
+        color: 'white',
+        fontWeight: '500',
+        zIndex: '1001',
+        transform: 'translateX(100%)',
+        transition: 'transform 0.3s ease'
+      });
+
+      // 设置背景色
+      const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        info: '#3b82f6'
+      };
+      notification.style.background = colors[type];
+
+      document.body.appendChild(notification);
+
+      // 显示动画
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+      }, 100);
+
+      // 自动隐藏
+      setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // 状态管理方法
+    private showLoading(): void {
+      const loading = document.getElementById(`${this.displayId}-loading`);
+      if (loading) {
+        loading.style.display = 'flex';
+      }
+    }
+
+    private hideLoading(): void {
+      const loading = document.getElementById(`${this.displayId}-loading`);
+      if (loading) {
+        loading.style.display = 'none';
+      }
+    }
+
+    // 公共方法
+    public reset(): void {
+      // 隐藏所有图片，显示占位符
+      const images = this.container?.querySelectorAll('img');
+      const placeholders = this.container?.querySelectorAll('.placeholder');
+
+      images?.forEach(img => {
+        img.style.display = 'none';
+        (img as HTMLImageElement).src = '';
+      });
+
+      placeholders?.forEach(placeholder => {
+        (placeholder as HTMLElement).style.display = 'flex';
+      });
+
+      // 隐藏元数据
+      const metadataSection = document.getElementById(`${this.displayId}-metadata`);
+      if (metadataSection) {
+        metadataSection.style.display = 'none';
+      }
+
+      // 重置状态
+      this.currentResult = null;
+      this.hideLoading();
+
+      // 更新标题
+      const subtitle = document.getElementById(`${this.displayId}-subtitle`);
+      if (subtitle) {
+        subtitle.textContent = '等待生成结果';
+      }
+    }
+
+    public show(): void {
+      if (this.container) {
+        this.container.style.display = 'flex';
+      }
+    }
+
+    public hide(): void {
+      if (this.container) {
+        this.container.style.display = 'none';
+      }
+    }
+  }
+
+  // 自动初始化所有结果展示器
+  document.addEventListener('DOMContentLoaded', () => {
+    const displays = document.querySelectorAll('.banana-result-display');
+    
+    displays.forEach(display => {
+      const displayId = display.id;
+      if (displayId) {
+        new BananaResultDisplay(displayId);
+      }
+    });
+  });
+
+  // 导出到全局作用域
+  (window as any).BananaResultDisplay = BananaResultDisplay;
+</script>

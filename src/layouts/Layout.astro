@@ -1,70 +1,143 @@
 ---
-import { SEO } from "astro-seo";
+/**
+ * BananaEditor主布局组件
+ * 支持多语言和SEO优化
+ */
+
 import Footer from "@components/footer.astro";
 import Navbar from "@components/navbar/navbar.astro";
+import LanguageSwitcher from "@components/ui/LanguageSwitcher.astro";
+import NotificationSystem from "@components/ui/NotificationSystem.astro";
+import OperationStatus from "@components/ui/OperationStatus.astro";
 import "@fontsource-variable/inter/index.css";
-import '@fontsource-variable/bricolage-grotesque';
-
-
+import "../styles/globals.css";
 
 export interface Props {
   title: string;
+  description?: string;
+  noIndex?: boolean;
 }
 
+const { title, description, noIndex = false } = Astro.props;
+
+// 获取当前语言
+import { detectLanguageFromRequest } from "../utils/language-detector";
+const currentLang = detectLanguageFromRequest(Astro.request);
+
+// 构建标题 - 如果已经包含BananaEditor就不重复添加
+const makeTitle = title.includes("BananaEditor")
+  ? title
+  : title
+    ? `${title} | BananaEditor`
+    : "BananaEditor - Professional AI Image Editor powered by Nano Banana Technology";
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
-
-const resolvedImageWithDomain = new URL(
-  "/opengraph.jpg",
-  Astro.site
-).toString();
-
-const { title } = Astro.props;
-
-const makeTitle = title
-  ? title + " | " + "Astroship"
-  : "Astroship - Starter Template for Astro with Tailwind CSS";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang={currentLang} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
-    <SEO
-      title={makeTitle}
-      description="Astroship is a starter website template for Astro built with TailwindCSS."
-      canonical={canonicalURL}
-      twitter={{
-        creator: "@surjithctly",
-        site: "@web3templates",
-        card: "summary_large_image",
-      }}
-      openGraph={{
-        basic: {
-          url: canonicalURL,
-          type: "website",
-          title: `Astroship - Starter Template for Astro`,
-          image: resolvedImageWithDomain,
-        },
-        image: {
-          alt: "Astroship Homepage Screenshot",
-        },
-      }}
+    <!-- 基础SEO标签 - 如果页面没有自定义SEO组件 -->
+    <title>{makeTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalURL} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- 预加载关键资源 -->
+    <link
+      rel="preload"
+      href="/fonts/inter-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- 主题色彩 -->
+    <meta name="theme-color" content="#FFD700" />
+    <meta name="msapplication-TileColor" content="#FFD700" />
+
+    <!-- 性能优化 -->
+    <meta name="format-detection" content="telephone=no" />
   </head>
-  <body>
+  <body class="bg-white text-gray-900 antialiased">
+    <!-- 导航栏 -->
     <Navbar />
+
+    <!-- 主要内容 -->
     <slot />
+
+    <!-- 页脚 -->
     <Footer />
+
+    <!-- 全局通知系统 -->
+    <NotificationSystem />
+
+    <!-- 操作状态指示器 -->
+    <OperationStatus />
+
+    <!-- 全局样式 -->
     <style is:global>
-      /* Improve Page speed */
-      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
+      /* 性能优化 */
       img {
         content-visibility: auto;
+      }
+
+      /* BananaEditor主题CSS变量 */
+      :root {
+        --banana-primary: #ffd700;
+        --banana-secondary: #ffa500;
+        --banana-accent: #ff6b35;
+        --banana-dark: #2d1810;
+        --banana-light: #fff8dc;
+        --banana-gradient: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+      }
+
+      /* 滚动条样式 */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--banana-primary);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--banana-secondary);
+      }
+
+      /* 选择文本样式 */
+      ::selection {
+        background-color: var(--banana-primary);
+        color: white;
+      }
+
+      /* 焦点样式 */
+      :focus-visible {
+        outline: 2px solid var(--banana-primary);
+        outline-offset: 2px;
+      }
+
+      /* 减少动画（用户偏好） */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </body>

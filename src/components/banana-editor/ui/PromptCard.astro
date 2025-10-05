@@ -1,0 +1,982 @@
+---
+// 提示词卡片组件 - 显示单个提示词的信息和操作
+export interface Props {
+    prompt: {
+        id: string;
+        title: string;
+        content: string;
+        category: string;
+        tags: string[];
+        description: string;
+        createdAt: string;
+        updatedAt: string;
+        usageCount: number;
+        rating: number;
+    };
+    viewMode?: 'grid' | 'list';
+    showActions?: boolean;
+}
+
+const { prompt, viewMode = 'grid', showActions = true } = Astro.props;
+
+// 格式化日期
+function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-CN', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+// 获取分类名称
+function getCategoryName(category: string): string {
+    const categoryNames: Record<string, string> = {
+        portrait: '人物肖像',
+        landscape: '风景自然',
+        abstract: '抽象艺术',
+        anime: '动漫风格'
+    };
+    return categoryNames[category] || category;
+}
+
+// 获取分类图标
+function getCategoryIcon(category: string): string {
+    const categoryIcons: Record<string, string> = {
+        portrait: '👤',
+        landscape: '🌄',
+        abstract: '🎨',
+        anime: '🎭'
+    };
+    return categoryIcons[category] || '📝';
+}
+---
+
+<div class={`prompt-card ${viewMode}-mode`} data-prompt-id={prompt.id}>
+    <!-- 卡片头部 -->
+    <div class="card-header">
+        <div class="card-title-section">
+            <h3 class="card-title">{prompt.title}</h3>
+            <div class="card-category">
+                <span class="category-icon">{getCategoryIcon(prompt.category)}</span>
+                <span class="category-name">{getCategoryName(prompt.category)}</span>
+            </div>
+        </div>
+        
+        {showActions && (
+            <div class="card-actions-menu">
+                <button class="menu-button" data-action="menu" title="更多操作">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                    </svg>
+                </button>
+                
+                <!-- 下拉菜单 -->
+                <div class="dropdown-menu" style="display: none;">
+                    <button class="menu-item" data-action="edit" data-prompt-id={prompt.id}>
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                        编辑
+                    </button>
+                    <button class="menu-item" data-action="duplicate" data-prompt-id={prompt.id}>
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                        </svg>
+                        复制
+                    </button>
+                    <button class="menu-item danger" data-action="delete" data-prompt-id={prompt.id}>
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        删除
+                    </button>
+                </div>
+            </div>
+        )}
+    </div>
+
+    <!-- 卡片内容 -->
+    <div class="card-content">
+        <p class="card-description">{prompt.description}</p>
+        
+        <div class="prompt-preview">
+            <div class="preview-label">提示词内容：</div>
+            <div class="preview-text">{prompt.content}</div>
+        </div>
+    </div>
+
+    <!-- 卡片标签 -->
+    <div class="card-tags">
+        {prompt.tags.map(tag => (
+            <span class="tag">{tag}</span>
+        ))}
+    </div>
+
+    <!-- 卡片元数据 -->
+    <div class="card-meta">
+        <div class="meta-item rating">
+            <div class="stars">
+                {Array.from({ length: 5 }, (_, i) => (
+                    <span class={`star ${i < Math.floor(prompt.rating) ? 'filled' : 'empty'}`}>★</span>
+                ))}
+            </div>
+            <span class="rating-value">{prompt.rating}</span>
+        </div>
+        
+        <div class="meta-item usage">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{prompt.usageCount}</span>
+        </div>
+        
+        <div class="meta-item date">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+            <span>{formatDate(prompt.createdAt)}</span>
+        </div>
+    </div>
+
+    <!-- 卡片操作按钮 -->
+    {showActions && (
+        <div class="card-actions">
+            <button class="action-btn secondary" data-action="copy" data-prompt-id={prompt.id} title="复制提示词">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                </svg>
+                复制
+            </button>
+            
+            <button class="action-btn secondary favorite-btn" data-action="favorite" data-prompt-id={prompt.id} title="收藏">
+                <svg class="heart-empty" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                </svg>
+                <svg class="heart-filled" viewBox="0 0 20 20" fill="currentColor" style="display: none;">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                </svg>
+                <span class="favorite-text">收藏</span>
+            </button>
+            
+            <button class="action-btn primary" data-action="use" data-prompt-id={prompt.id}>
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+                在编辑器中使用
+            </button>
+        </div>
+    )}
+
+    <!-- 评分组件 -->
+    <div class="rating-component" style="display: none;">
+        <div class="rating-header">
+            <h4>为这个提示词评分</h4>
+            <button class="close-rating">✕</button>
+        </div>
+        <div class="rating-stars">
+            {Array.from({ length: 5 }, (_, i) => (
+                <button class="rating-star" data-rating={i + 1}>★</button>
+            ))}
+        </div>
+        <div class="rating-actions">
+            <button class="submit-rating">提交评分</button>
+            <button class="cancel-rating">取消</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .prompt-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .prompt-card:hover {
+        border-color: #FFD700;
+        box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+        transform: translateY(-2px);
+    }
+
+    /* 网格模式 */
+    .prompt-card.grid-mode {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* 列表模式 */
+    .prompt-card.list-mode {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        height: auto;
+    }
+
+    .prompt-card.list-mode .card-header {
+        flex: 0 0 200px;
+        margin-bottom: 0;
+    }
+
+    .prompt-card.list-mode .card-content {
+        flex: 1;
+        margin: 0 1rem;
+    }
+
+    .prompt-card.list-mode .card-actions {
+        flex: 0 0 auto;
+        margin-top: 0;
+    }
+
+    /* 卡片头部 */
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .card-title-section {
+        flex: 1;
+    }
+
+    .card-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2D1810;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .card-category {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        background: #FFD700;
+        color: #2D1810;
+        border-radius: 16px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        width: fit-content;
+    }
+
+    .category-icon {
+        font-size: 0.875rem;
+    }
+
+    /* 操作菜单 */
+    .card-actions-menu {
+        position: relative;
+    }
+
+    .menu-button {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: transparent;
+        color: #666;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .menu-button:hover {
+        background: #f3f4f6;
+        color: #333;
+    }
+
+    .menu-button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        min-width: 120px;
+        padding: 0.5rem 0;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        background: none;
+        color: #374151;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .menu-item:hover {
+        background: #f9fafb;
+    }
+
+    .menu-item.danger {
+        color: #dc2626;
+    }
+
+    .menu-item.danger:hover {
+        background: #fef2f2;
+    }
+
+    .menu-item svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* 卡片内容 */
+    .card-content {
+        flex: 1;
+        margin-bottom: 1rem;
+    }
+
+    .card-description {
+        color: #6b7280;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 0 0 1rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .prompt-preview {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.75rem;
+    }
+
+    .preview-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .preview-text {
+        color: #374151;
+        font-size: 0.875rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* 标签 */
+    .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .tag {
+        background: #f3f4f6;
+        color: #6b7280;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* 元数据 */
+    .card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.8rem;
+        color: #6b7280;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .meta-item svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .stars {
+        display: flex;
+        gap: 1px;
+    }
+
+    .star {
+        color: #FFD700;
+        font-size: 0.875rem;
+    }
+
+    .star.empty {
+        color: #e5e7eb;
+    }
+
+    .rating-value {
+        margin-left: 0.25rem;
+        font-weight: 500;
+    }
+
+    /* 操作按钮 */
+    .card-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: auto;
+    }
+
+    .action-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        color: #6b7280;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .action-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .action-btn:hover {
+        border-color: #FFD700;
+        color: #FFA500;
+    }
+
+    .action-btn.primary {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: white;
+        border-color: #FFD700;
+    }
+
+    .action-btn.primary:hover {
+        background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+    }
+
+    .action-btn.secondary:hover {
+        background: #FFF8DC;
+    }
+
+    /* 收藏按钮状态 */
+    .favorite-btn.favorited {
+        color: #dc2626;
+        border-color: #dc2626;
+    }
+
+    .favorite-btn.favorited .heart-empty {
+        display: none;
+    }
+
+    .favorite-btn.favorited .heart-filled {
+        display: block !important;
+    }
+
+    .favorite-btn.favorited .favorite-text::after {
+        content: '已收藏';
+    }
+
+    /* 评分组件 */
+    .rating-component {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        border-radius: 12px;
+    }
+
+    .rating-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .rating-header h4 {
+        margin: 0;
+        font-size: 1rem;
+        color: #2D1810;
+    }
+
+    .close-rating {
+        width: 24px;
+        height: 24px;
+        border: none;
+        background: #f3f4f6;
+        color: #666;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .rating-stars {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .rating-star {
+        font-size: 2rem;
+        color: #e5e7eb;
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .rating-star:hover,
+    .rating-star.active {
+        color: #FFD700;
+    }
+
+    .rating-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .submit-rating,
+    .cancel-rating {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: white;
+        color: #374151;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+
+    .submit-rating {
+        background: #FFD700;
+        border-color: #FFD700;
+        color: #2D1810;
+    }
+
+    .submit-rating:hover {
+        background: #FFA500;
+    }
+
+    .cancel-rating:hover {
+        background: #f9fafb;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .prompt-card.list-mode {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .prompt-card.list-mode .card-header,
+        .prompt-card.list-mode .card-content {
+            flex: none;
+            margin: 0 0 1rem 0;
+        }
+
+        .card-actions {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            justify-content: center;
+        }
+    }
+</style>
+
+<script>
+    // 提示词卡片交互功能
+    class PromptCard {
+        constructor(cardElement) {
+            this.card = cardElement;
+            this.promptId = cardElement.dataset.promptId;
+            this.isFavorited = false;
+            this.currentRating = 0;
+            
+            this.init();
+        }
+
+        init() {
+            this.bindEvents();
+            this.loadFavoriteStatus();
+        }
+
+        bindEvents() {
+            // 操作按钮事件
+            this.card.querySelectorAll('[data-action]').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const action = button.dataset.action;
+                    this.handleAction(action, button);
+                });
+            });
+
+            // 菜单按钮事件
+            const menuButton = this.card.querySelector('.menu-button');
+            const dropdownMenu = this.card.querySelector('.dropdown-menu');
+            
+            if (menuButton && dropdownMenu) {
+                menuButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleDropdownMenu();
+                });
+            }
+
+            // 评分组件事件
+            this.bindRatingEvents();
+
+            // 点击卡片外部关闭菜单
+            document.addEventListener('click', () => {
+                this.closeDropdownMenu();
+            });
+        }
+
+        bindRatingEvents() {
+            const ratingComponent = this.card.querySelector('.rating-component');
+            const ratingStars = this.card.querySelectorAll('.rating-star');
+            const submitButton = this.card.querySelector('.submit-rating');
+            const cancelButton = this.card.querySelector('.cancel-rating');
+            const closeButton = this.card.querySelector('.close-rating');
+
+            // 星级评分交互
+            ratingStars.forEach((star, index) => {
+                star.addEventListener('mouseenter', () => {
+                    this.highlightStars(index + 1);
+                });
+
+                star.addEventListener('click', () => {
+                    this.currentRating = index + 1;
+                    this.setActiveStars(this.currentRating);
+                });
+            });
+
+            // 提交评分
+            submitButton?.addEventListener('click', () => {
+                this.submitRating();
+            });
+
+            // 取消评分
+            cancelButton?.addEventListener('click', () => {
+                this.closeRatingComponent();
+            });
+
+            closeButton?.addEventListener('click', () => {
+                this.closeRatingComponent();
+            });
+
+            // 鼠标离开重置高亮
+            ratingComponent?.addEventListener('mouseleave', () => {
+                this.setActiveStars(this.currentRating);
+            });
+        }
+
+        async handleAction(action, button) {
+            switch (action) {
+                case 'use':
+                    await this.useInEditor();
+                    break;
+                case 'copy':
+                    await this.copyPrompt();
+                    break;
+                case 'favorite':
+                    await this.toggleFavorite();
+                    break;
+                case 'edit':
+                    this.editPrompt();
+                    break;
+                case 'duplicate':
+                    this.duplicatePrompt();
+                    break;
+                case 'delete':
+                    this.deletePrompt();
+                    break;
+                case 'rate':
+                    this.showRatingComponent();
+                    break;
+                case 'menu':
+                    this.toggleDropdownMenu();
+                    break;
+            }
+        }
+
+        async useInEditor() {
+            try {
+                // 记录使用次数
+                await fetch(`/api/prompts/${this.promptId}/use`, {
+                    method: 'POST'
+                });
+
+                // 获取提示词内容
+                const promptContent = this.card.querySelector('.preview-text').textContent;
+                
+                // 跳转到编辑器
+                const editorUrl = `/editor?prompt=${encodeURIComponent(promptContent)}`;
+                window.open(editorUrl, '_blank');
+
+                // 更新使用次数显示
+                const usageElement = this.card.querySelector('.meta-item.usage span');
+                if (usageElement) {
+                    const currentUsage = parseInt(usageElement.textContent) || 0;
+                    usageElement.textContent = currentUsage + 1;
+                }
+
+                this.showNotification('正在跳转到编辑器...', 'success');
+
+            } catch (error) {
+                console.error('使用提示词失败:', error);
+                this.showNotification('跳转失败，请重试', 'error');
+            }
+        }
+
+        async copyPrompt() {
+            try {
+                const promptContent = this.card.querySelector('.preview-text').textContent;
+                await navigator.clipboard.writeText(promptContent);
+                this.showNotification('已复制到剪贴板', 'success');
+            } catch (error) {
+                console.error('复制失败:', error);
+                this.showNotification('复制失败，请重试', 'error');
+            }
+        }
+
+        async toggleFavorite() {
+            try {
+                const response = await fetch(`/api/prompts/${this.promptId}/favorite`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.isFavorited = result.data.isFavorite;
+                    this.updateFavoriteButton();
+                    this.showNotification(result.data.message, 'success');
+                } else {
+                    throw new Error(result.error?.message || '操作失败');
+                }
+
+            } catch (error) {
+                console.error('切换收藏状态失败:', error);
+                this.showNotification('操作失败，请重试', 'error');
+            }
+        }
+
+        async loadFavoriteStatus() {
+            try {
+                const response = await fetch(`/api/prompts/${this.promptId}/favorite`);
+                const result = await response.json();
+
+                if (result.success) {
+                    this.isFavorited = result.data.isFavorite;
+                    this.updateFavoriteButton();
+                }
+            } catch (error) {
+                console.error('加载收藏状态失败:', error);
+            }
+        }
+
+        updateFavoriteButton() {
+            const favoriteButton = this.card.querySelector('.favorite-btn');
+            if (favoriteButton) {
+                if (this.isFavorited) {
+                    favoriteButton.classList.add('favorited');
+                } else {
+                    favoriteButton.classList.remove('favorited');
+                }
+            }
+        }
+
+        editPrompt() {
+            // 触发编辑事件
+            const editEvent = new CustomEvent('editPrompt', {
+                detail: { promptId: this.promptId }
+            });
+            document.dispatchEvent(editEvent);
+        }
+
+        duplicatePrompt() {
+            // 触发复制事件
+            const duplicateEvent = new CustomEvent('duplicatePrompt', {
+                detail: { promptId: this.promptId }
+            });
+            document.dispatchEvent(duplicateEvent);
+        }
+
+        deletePrompt() {
+            if (confirm('确定要删除这个提示词吗？此操作不可撤销。')) {
+                // 触发删除事件
+                const deleteEvent = new CustomEvent('deletePrompt', {
+                    detail: { promptId: this.promptId }
+                });
+                document.dispatchEvent(deleteEvent);
+            }
+        }
+
+        showRatingComponent() {
+            const ratingComponent = this.card.querySelector('.rating-component');
+            if (ratingComponent) {
+                ratingComponent.style.display = 'flex';
+            }
+        }
+
+        closeRatingComponent() {
+            const ratingComponent = this.card.querySelector('.rating-component');
+            if (ratingComponent) {
+                ratingComponent.style.display = 'none';
+            }
+            this.currentRating = 0;
+            this.setActiveStars(0);
+        }
+
+        highlightStars(count) {
+            const stars = this.card.querySelectorAll('.rating-star');
+            stars.forEach((star, index) => {
+                if (index < count) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        setActiveStars(count) {
+            const stars = this.card.querySelectorAll('.rating-star');
+            stars.forEach((star, index) => {
+                star.classList.remove('active');
+                if (index < count) {
+                    star.classList.add('active');
+                }
+            });
+        }
+
+        async submitRating() {
+            if (this.currentRating === 0) {
+                this.showNotification('请选择评分', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/prompts/${this.promptId}/rating`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        rating: this.currentRating
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // 更新显示的评分
+                    const ratingElement = this.card.querySelector('.rating-value');
+                    if (ratingElement) {
+                        ratingElement.textContent = result.data.newRating;
+                    }
+
+                    // 更新星级显示
+                    const stars = this.card.querySelectorAll('.meta-item.rating .star');
+                    stars.forEach((star, index) => {
+                        if (index < Math.floor(result.data.newRating)) {
+                            star.classList.remove('empty');
+                            star.classList.add('filled');
+                        } else {
+                            star.classList.remove('filled');
+                            star.classList.add('empty');
+                        }
+                    });
+
+                    this.closeRatingComponent();
+                    this.showNotification('评分提交成功', 'success');
+                } else {
+                    throw new Error(result.error?.message || '评分失败');
+                }
+
+            } catch (error) {
+                console.error('提交评分失败:', error);
+                this.showNotification('评分失败，请重试', 'error');
+            }
+        }
+
+        toggleDropdownMenu() {
+            const dropdownMenu = this.card.querySelector('.dropdown-menu');
+            if (dropdownMenu) {
+                const isVisible = dropdownMenu.style.display !== 'none';
+                dropdownMenu.style.display = isVisible ? 'none' : 'block';
+            }
+        }
+
+        closeDropdownMenu() {
+            const dropdownMenu = this.card.querySelector('.dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.style.display = 'none';
+            }
+        }
+
+        showNotification(message, type = 'info') {
+            // 触发通知事件
+            const notificationEvent = new CustomEvent('showNotification', {
+                detail: { message, type }
+            });
+            document.dispatchEvent(notificationEvent);
+        }
+    }
+
+    // 初始化所有提示词卡片
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.prompt-card');
+        cards.forEach(card => {
+            new PromptCard(card);
+        });
+    });
+</script>

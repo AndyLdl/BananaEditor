@@ -1,0 +1,133 @@
+{
+    "hero": {
+        "title": "Professional AI Image Editor",
+        "subtitle": "Powered by Nano Banana Technology",
+        "description": "Create stunning images with nano banana AI technology in just 2.3 seconds. Generate, fuse, and edit images with perfect element consistency across all scenes. Your personal AI designer powered by Google's Gemini 2.5 Flash Image model.",
+        "cta": {
+            "primary": "Start Editing Now",
+            "secondary": "View Prompt Library"
+        },
+        "features": [
+            "⚡ Ultra-Fast Generation (2.3s)",
+            "🎯 Perfect Element Consistency",
+            "✨ Smart Image Fusion",
+            "🎨 Professional Quality Output"
+        ],
+        "stats": {
+            "speed": "2.3s",
+            "quality": "1024×1024",
+            "consistency": "100%",
+            "users": "10,000+"
+        }
+    },
+    "features": {
+        "title": "Why Choose BananaEditor?",
+        "subtitle": "Powered by Google's Gemini 2.5 Flash Image - The fastest nano banana AI model",
+        "items": [
+            {
+                "title": "Lightning-Fast Generation",
+                "description": "Generate 1024×1024 high-quality images in just 2.3 seconds with nano banana AI technology. 10x faster than traditional AI models, perfect for time-sensitive projects and high-volume content creation.",
+                "icon": "magic",
+                "specs": "2.3s generation time | 1024×1024 resolution | High FID score"
+            },
+            {
+                "title": "Perfect Element Consistency",
+                "description": "Like having your personal AI designer - nano banana ensures 100% consistency of characters, objects, and styles across multiple scenes. Generate seasonal variations, different poses, or scene changes while maintaining perfect visual coherence.",
+                "icon": "layers",
+                "specs": "100% consistency | Multi-scene support | Character preservation"
+            },
+            {
+                "title": "Smart Image Fusion",
+                "description": "Seamlessly blend two images with intelligent nano banana AI fusion technology. Create unique compositions with precise control over style transfer, object placement, and artistic effects.",
+                "icon": "sparkles",
+                "specs": "Intelligent blending | Style transfer | Precision control"
+            },
+            {
+                "title": "Commercial-Ready Quality",
+                "description": "Professional-grade output optimized for e-commerce, advertising, and social media. Accurate text rendering, high visual fidelity, and nano banana AI's advanced understanding of commercial requirements.",
+                "icon": "tools",
+                "specs": "Commercial license | Text rendering | Marketing-optimized"
+            }
+        ]
+    },
+    "demo": {
+        "title": "See BananaEditor in Action",
+        "subtitle": "Experience the power of nano banana AI technology",
+        "tabs": [
+            {
+                "id": "generate",
+                "title": "AI Generation",
+                "description": "Transform your ideas into stunning visuals"
+            },
+            {
+                "id": "fusion",
+                "title": "Image Fusion",
+                "description": "Blend images with intelligent AI"
+            },
+            {
+                "id": "optimize",
+                "title": "Prompt Optimization",
+                "description": "Perfect your prompts automatically"
+            }
+        ]
+    },
+    "cta": {
+        "title": "Ready to Create Amazing Images?",
+        "subtitle": "Join thousands of creators using nano banana AI technology",
+        "description": "Start creating professional-quality images today with BananaEditor's powerful nano banana AI tools.",
+        "button": "Get Started Free",
+        "note": "No registration required • Instant access"
+    },
+    "useCases": {
+        "title": "Nano Banana AI for Every Industry",
+        "subtitle": "Fast, consistent, professional - perfect for your business needs",
+        "items": [
+            {
+                "title": "E-commerce Product Images",
+                "description": "Generate consistent product photos across multiple scenes in 2.3 seconds. Perfect for seasonal campaigns, lifestyle shots, and A/B testing with nano banana AI speed.",
+                "icon": "shopping-bag"
+            },
+            {
+                "title": "Social Media Content",
+                "description": "Create on-brand visual content at scale. Maintain character consistency across posts and campaigns with nano banana AI precision.",
+                "icon": "photo"
+            },
+            {
+                "title": "Advertising Creatives",
+                "description": "Produce high-quality ad variations instantly. Test multiple concepts with nano banana AI's fast generation and consistent output.",
+                "icon": "megaphone"
+            },
+            {
+                "title": "Content Creation",
+                "description": "Empower your creative workflow with AI-generated imagery. From blog posts to presentations, nano banana AI delivers professional results.",
+                "icon": "pencil"
+            }
+        ]
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Everything you need to know about nano banana AI technology",
+        "items": [
+            {
+                "question": "What is Nano Banana AI?",
+                "answer": "Nano Banana is Google's Gemini 2.5 Flash Image model - a lightweight, ultra-fast AI image generation technology that creates high-quality 1024×1024 images in just 2.3 seconds while maintaining perfect element consistency across multiple scenes."
+            },
+            {
+                "question": "How fast is nano banana compared to other AI models?",
+                "answer": "Nano banana AI generates images in 2.3 seconds, making it approximately 10x faster than traditional AI image generation models, while maintaining comparable or superior quality. This makes it ideal for time-sensitive projects and high-volume content creation."
+            },
+            {
+                "question": "What makes nano banana's element consistency special?",
+                "answer": "Unlike other AI models that struggle with character consistency, nano banana AI acts like your personal AI designer - maintaining 100% consistency of characters, objects, and styles across different scenes, poses, and environments. Generate spring, summer, fall, and winter versions with perfect visual coherence."
+            },
+            {
+                "question": "Can I use nano banana AI images for commercial purposes?",
+                "answer": "Yes! Images generated with nano banana AI through BananaEditor are commercial-ready and optimized for e-commerce, advertising, social media, and marketing materials. The technology includes accurate text rendering and understands commercial visual requirements."
+            },
+            {
+                "question": "Is nano banana AI suitable for professional work?",
+                "answer": "Absolutely. Nano banana AI (Gemini 2.5 Flash Image) delivers professional-grade quality with high FID scores, accurate text rendering, and exceptional visual fidelity. It's trusted by businesses for e-commerce, advertising agencies, and content creators worldwide."
+            }
+        ]
+    }
+}

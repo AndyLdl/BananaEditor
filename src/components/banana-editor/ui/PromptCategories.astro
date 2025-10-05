@@ -1,0 +1,267 @@
+---
+// 分类导航组件 - 提供提示词分类筛选功能
+---
+
+<div class="prompt-categories">
+  <div class="categories-container">
+    <button class="category-button active" data-category="all">
+      <span class="category-icon">🌟</span>
+      <span class="category-name">全部</span>
+      <span class="category-count" id="count-all">0</span>
+    </button>
+
+    <button class="category-button" data-category="portrait">
+      <span class="category-icon">👤</span>
+      <span class="category-name">人物肖像</span>
+      <span class="category-count" id="count-portrait">0</span>
+    </button>
+
+    <button class="category-button" data-category="landscape">
+      <span class="category-icon">🌄</span>
+      <span class="category-name">风景自然</span>
+      <span class="category-count" id="count-landscape">0</span>
+    </button>
+
+    <button class="category-button" data-category="abstract">
+      <span class="category-icon">🎨</span>
+      <span class="category-name">抽象艺术</span>
+      <span class="category-count" id="count-abstract">0</span>
+    </button>
+
+    <button class="category-button" data-category="anime">
+      <span class="category-icon">🎭</span>
+      <span class="category-name">动漫风格</span>
+      <span class="category-count" id="count-anime">0</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .prompt-categories {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .categories-container {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: #ffd700 transparent;
+  }
+
+  .categories-container::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .categories-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .categories-container::-webkit-scrollbar-thumb {
+    background: #ffd700;
+    border-radius: 2px;
+  }
+
+  .category-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: white;
+    border: 2px solid #ffd700;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d1810;
+    min-width: fit-content;
+  }
+
+  .category-button:hover {
+    background: #fff8dc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+  }
+
+  .category-button.active {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(255, 165, 0, 0.3);
+  }
+
+  .category-button.active:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  }
+
+  .category-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .category-name {
+    font-weight: 500;
+  }
+
+  .category-count {
+    background: rgba(255, 255, 255, 0.3);
+    color: inherit;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .category-button.active .category-count {
+    background: rgba(255, 255, 255, 0.4);
+    color: white;
+  }
+
+  .category-button:not(.active) .category-count {
+    background: #ffd700;
+    color: #2d1810;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .categories-container {
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      margin: 0 -1rem;
+    }
+
+    .category-button {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .category-icon {
+      font-size: 1rem;
+    }
+
+    .category-name {
+      display: none; /* 在移动端只显示图标和数量 */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .category-button {
+      padding: 0.5rem;
+      min-width: 60px;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .category-count {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+    }
+  }
+</style>
+
+<script>
+  // 分类导航功能实现
+  class PromptCategories {
+    constructor() {
+      this.categoryButtons = document.querySelectorAll(".category-button");
+      this.activeCategory = "all";
+      this.categoryCounts = {};
+
+      this.init();
+    }
+
+    init() {
+      // 绑定分类按钮点击事件
+      this.categoryButtons.forEach((button) => {
+        button.addEventListener("click", this.handleCategoryClick.bind(this));
+      });
+
+      // 监听提示词数据更新事件
+      document.addEventListener(
+        "promptsDataUpdated",
+        this.updateCategoryCounts.bind(this),
+      );
+
+      // 监听搜索事件
+      document.addEventListener("promptSearch", this.handleSearch.bind(this));
+    }
+
+    handleCategoryClick(e) {
+      const button = e.currentTarget;
+      const category = button.dataset.category;
+
+      // 更新活动分类
+      this.setActiveCategory(category);
+
+      // 触发分类筛选事件
+      const filterEvent = new CustomEvent("promptCategoryFilter", {
+        detail: { category: category },
+      });
+      document.dispatchEvent(filterEvent);
+    }
+
+    setActiveCategory(category) {
+      this.activeCategory = category;
+
+      // 更新按钮状态
+      this.categoryButtons.forEach((button) => {
+        if (button.dataset.category === category) {
+          button.classList.add("active");
+        } else {
+          button.classList.remove("active");
+        }
+      });
+    }
+
+    updateCategoryCounts(e) {
+      const { counts, total } = e.detail;
+
+      // 更新分类计数
+      this.categoryCounts = counts;
+
+      // 更新UI显示
+      document.getElementById("count-all").textContent = total;
+
+      Object.keys(counts).forEach((category) => {
+        const countElement = document.getElementById(`count-${category}`);
+        if (countElement) {
+          countElement.textContent = counts[category];
+        }
+      });
+
+      // 如果当前分类没有结果，自动切换到"全部"
+      if (this.activeCategory !== "all" && counts[this.activeCategory] === 0) {
+        this.setActiveCategory("all");
+
+        // 触发分类筛选事件
+        const filterEvent = new CustomEvent("promptCategoryFilter", {
+          detail: { category: "all" },
+        });
+        document.dispatchEvent(filterEvent);
+      }
+    }
+
+    handleSearch(e) {
+      const { query } = e.detail;
+
+      // 如果有搜索查询，自动切换到"全部"分类以显示所有匹配结果
+      if (query && this.activeCategory !== "all") {
+        this.setActiveCategory("all");
+      }
+    }
+
+    getActiveCategory() {
+      return this.activeCategory;
+    }
+  }
+
+  // 初始化分类导航组件
+  document.addEventListener("DOMContentLoaded", () => {
+    window.promptCategories = new PromptCategories();
+  });
+</script>

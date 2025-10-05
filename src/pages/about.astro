@@ -1,57 +1,328 @@
 ---
-import { getCollection } from "astro:content";
-import { Picture } from "astro:assets";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import Sectionhead from "@components/sectionhead.astro";
+import { Icon } from "astro-icon/components";
+import { loadTranslations } from "../i18n/utils";
+import { detectLanguageFromRequest } from "../utils/language-detector";
 
-// Filter team entries with 'draft: false' & date before current date
-const publishedTeamMembers = await getCollection("team", ({ data }) => {
-  return !data.draft && data.publishDate < new Date();
-});
+// 获取当前语言
+const currentLang = detectLanguageFromRequest(Astro.request);
+const seoTranslations = await loadTranslations(currentLang, "seo");
 ---
 
-<Layout title="About">
+<Layout
+  title={seoTranslations.about?.title ||
+    "About BananaEditor - Nano Banana AI Technology"}>
   <Container>
-    <Sectionhead>
-      <Fragment slot="title">About</Fragment>
-      <Fragment slot="desc">We are a small passionate team.</Fragment>
-    </Sectionhead>
+    <!-- Hero 区域 -->
+    <div class="relative py-20 sm:py-32 overflow-hidden">
+      <!-- 背景装饰 -->
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-banana-light/20 via-white to-banana-secondary/10">
+      </div>
+      <div
+        class="absolute top-20 left-10 w-16 h-16 bg-banana-primary/10 rounded-full animate-float">
+      </div>
+      <div
+        class="absolute bottom-20 right-10 w-12 h-12 bg-banana-secondary/10 rounded-full animate-float-delayed">
+      </div>
 
-    <div class="flex flex-col gap-3 mx-auto max-w-4xl mt-16">
-      <h2 class="font-bold text-3xl text-gray-800">
-        Empowering the world with Astro.
-      </h2>
-      <p class="text-lg leading-relaxed text-slate-500">
-        We're a multi-cultural team from around the world! We come from diverse
-        backgrounds, bringing different personalities, experiences and skills to
-        the job. This is what makes our team so special.
-      </p>
+      <div class="relative text-center max-w-4xl mx-auto">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 bg-banana-gradient/10 rounded-full text-banana-primary font-medium text-sm mb-6">
+          <Icon name="heroicons:information-circle" class="w-4 h-4" />
+          <span>About BananaEditor</span>
+        </div>
+
+        <h1
+          class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+          <span class="block">Revolutionizing AI Image Creation</span>
+          <span
+            class="block text-transparent bg-clip-text bg-banana-gradient mt-2">
+            with Nano Banana Technology
+          </span>
+        </h1>
+
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          BananaEditor is building the future of AI-powered image generation,
+          making professional-quality visual content accessible to everyone
+          through Google's cutting-edge Gemini 2.5 Flash Image technology.
+        </p>
+      </div>
     </div>
-    <div class="grid md:grid-cols-3 gap-10 mx-auto max-w-4xl mt-12">
-      {
-        publishedTeamMembers.map((teamMemberEntry) => (
-          <div class="group">
-            <div class="w-full aspect-square">
-              <Picture
-                src={teamMemberEntry.data.avatar.src}
-                alt={teamMemberEntry.data.avatar.alt}
-                sizes="(max-width: 800px) 100vw, 400px"
-                width={400}
-                height={400}
-                class="w-full rounded-md rounded transition group-hover:-translate-y-1 group-hover:shadow-xl bg-white object-cover object-center aspect-square"
-              />
-            </div>
 
-            <div class="mt-4 text-center">
-              <h2 class="text-lg text-gray-800">{teamMemberEntry.data.name}</h2>
-              <h3 class="text-sm text-slate-500">
-                {teamMemberEntry.data.title}
-              </h3>
+    <!-- 我们的使命 -->
+    <div class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+          Our Mission
+        </h2>
+        <p class="text-lg text-gray-600 leading-relaxed mb-12">
+          BananaEditor's mission is to democratize professional image creation
+          by making nano banana AI technology accessible to creators,
+          businesses, and individuals worldwide. We believe everyone deserves
+          access to cutting-edge AI tools that can bring their creative visions
+          to life.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center p-6">
+            <div
+              class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Icon name="heroicons:bolt" class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              Lightning Fast
+            </h3>
+            <p class="text-gray-600">
+              Generate 1024×1024 images in just 2.3 seconds with nano banana AI
+            </p>
+          </div>
+
+          <div class="text-center p-6">
+            <div
+              class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Icon name="heroicons:check-circle" class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              Perfect Consistency
+            </h3>
+            <p class="text-gray-600">
+              Maintain 100% element consistency across multiple scenes and
+              variations
+            </p>
+          </div>
+
+          <div class="text-center p-6">
+            <div
+              class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <Icon name="heroicons:globe-alt" class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              Global Access
+            </h3>
+            <p class="text-gray-600">
+              Free, accessible AI tools for creators worldwide
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技术优势 -->
+    <div class="py-20 bg-gradient-to-br from-banana-light/10 to-white">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+            Powered by Google's Gemini 2.5 Flash Image
+          </h2>
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+            BananaEditor's nano banana AI technology is built on Google's most
+            advanced image generation model, delivering unprecedented speed and
+            quality.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">
+              Why Nano Banana AI?
+            </h3>
+            <div class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-8 h-8 bg-banana-primary rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <Icon name="heroicons:clock" class="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-2">
+                    Ultra-Fast Generation
+                  </h4>
+                  <p class="text-gray-600">
+                    10x faster than traditional AI models, perfect for
+                    high-volume content creation
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-8 h-8 bg-banana-primary rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <Icon name="heroicons:sparkles" class="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-2">
+                    Element Consistency
+                  </h4>
+                  <p class="text-gray-600">
+                    Like having your personal AI designer - maintain perfect
+                    character and object consistency
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-8 h-8 bg-banana-primary rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <Icon
+                    name="heroicons:shield-check"
+                    class="w-4 h-4 text-white"
+                  />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-2">
+                    Commercial Ready
+                  </h4>
+                  <p class="text-gray-600">
+                    Professional-grade output optimized for e-commerce,
+                    advertising, and marketing
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        ))
-      }
+
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl border border-gray-200">
+            <div class="text-center">
+              <div
+                class="w-20 h-20 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-3xl">🍌</span>
+              </div>
+              <h4 class="text-xl font-bold text-gray-900 mb-4">
+                Nano Banana AI Stats
+              </h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
+                  <div class="text-2xl font-bold text-banana-primary">2.3s</div>
+                  <div class="text-sm text-gray-600">Generation Time</div>
+                </div>
+                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
+                  <div class="text-2xl font-bold text-banana-primary">
+                    1024×1024
+                  </div>
+                  <div class="text-sm text-gray-600">Resolution</div>
+                </div>
+                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
+                  <div class="text-2xl font-bold text-banana-primary">100%</div>
+                  <div class="text-sm text-gray-600">Consistency</div>
+                </div>
+                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
+                  <div class="text-2xl font-bold text-banana-primary">10K+</div>
+                  <div class="text-sm text-gray-600">Active Users</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 团队介绍 -->
+    <div class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+          Meet Our Team
+        </h2>
+        <p class="text-lg text-gray-600 mb-12">
+          The BananaEditor team consists of passionate AI researchers,
+          developers, and designers working to make professional image creation
+          accessible to everyone.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div
+              class="w-24 h-24 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">👨‍💻</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              AI Research Team
+            </h3>
+            <p class="text-gray-600">
+              Leading experts in machine learning and computer vision
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div
+              class="w-24 h-24 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">👩‍🎨</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              Design Team
+            </h3>
+            <p class="text-gray-600">
+              Creative professionals focused on user experience
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div
+              class="w-24 h-24 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">🚀</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+              Engineering Team
+            </h3>
+            <p class="text-gray-600">
+              Building scalable, reliable AI infrastructure
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA 区域 -->
+    <div
+      class="py-20 bg-gradient-to-br from-banana-primary to-banana-secondary">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+          Ready to Experience Nano Banana AI?
+        </h2>
+        <p class="text-xl text-white/90 mb-8">
+          Join thousands of creators already using BananaEditor's nano banana AI
+          technology to bring their ideas to life.
+        </p>
+        <a
+          href="/editor"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-white text-banana-primary font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Icon name="heroicons:rocket-launch" class="w-5 h-5" />
+          <span>Start Creating Now</span>
+          <Icon name="heroicons:arrow-right" class="w-5 h-5" />
+        </a>
+      </div>
     </div>
   </Container>
 </Layout>
+
+<style>
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(5deg);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) rotate(-5deg);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 4s ease-in-out infinite 1s;
+  }
+</style>

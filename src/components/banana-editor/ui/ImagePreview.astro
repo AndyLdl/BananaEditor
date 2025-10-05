@@ -1,0 +1,1166 @@
+---
+// BananaEditor图片预览组件
+// 支持单图片和对比预览模式
+
+export interface Props {
+  id?: string;
+  mode?: "single" | "compare" | "result";
+  className?: string;
+  showInfo?: boolean;
+  showControls?: boolean;
+}
+
+const {
+  id = "image-preview",
+  mode = "single",
+  className = "",
+  showInfo = true,
+  showControls = true,
+} = Astro.props;
+---
+
+<div class={`banana-image-preview ${className}`} id={id} data-mode={mode}>
+  {
+    mode === "single" && (
+      <div class="single-preview">
+        <div class="preview-container">
+          <div class="image-wrapper">
+            <img id={`${id}-image`} alt="预览图片" style="display: none;" />
+            <div class="placeholder" id={`${id}-placeholder`}>
+              <div class="placeholder-icon">🖼️</div>
+              <p class="placeholder-text">暂无图片</p>
+            </div>
+          </div>
+
+          {showControls && (
+            <div class="image-controls" id={`${id}-controls`}>
+              <button class="control-btn" id={`${id}-zoom-out`} title="缩小">
+                <span class="icon">-</span>
+              </button>
+              <span class="zoom-level" id={`${id}-zoom`}>
+                100%
+              </span>
+              <button class="control-btn" id={`${id}-zoom-in`} title="放大">
+                <span class="icon">+</span>
+              </button>
+              <div class="control-divider" />
+              <button class="control-btn" id={`${id}-fit`} title="适应窗口">
+                <span class="icon">⊞</span>
+              </button>
+              <button class="control-btn" id={`${id}-actual`} title="实际大小">
+                <span class="icon">1:1</span>
+              </button>
+              <button class="control-btn" id={`${id}-rotate`} title="旋转">
+                <span class="icon">↻</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {showInfo && (
+          <div class="image-info" id={`${id}-info`} style="display: none;">
+            <div class="info-item">
+              <span class="info-label">文件名:</span>
+              <span class="info-value" id={`${id}-filename`}>
+                --
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">尺寸:</span>
+              <span class="info-value" id={`${id}-dimensions`}>
+                --
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">大小:</span>
+              <span class="info-value" id={`${id}-filesize`}>
+                --
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  {
+    mode === "compare" && (
+      <div class="compare-preview">
+        <div class="compare-container">
+          <div class="compare-side original">
+            <div class="side-header">
+              <h4 class="side-title">原图</h4>
+            </div>
+            <div class="side-content">
+              <img id={`${id}-original`} alt="原图" style="display: none;" />
+              <div class="placeholder" id={`${id}-original-placeholder`}>
+                <div class="placeholder-icon">📷</div>
+                <p class="placeholder-text">原图</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-divider">
+            <div class="divider-line" />
+            <div class="divider-icon">⚡</div>
+          </div>
+
+          <div class="compare-side result">
+            <div class="side-header">
+              <h4 class="side-title">生成结果</h4>
+            </div>
+            <div class="side-content">
+              <img id={`${id}-result`} alt="生成结果" style="display: none;" />
+              <div class="placeholder" id={`${id}-result-placeholder`}>
+                <div class="placeholder-icon">✨</div>
+                <p class="placeholder-text">生成结果</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {showControls && (
+          <div class="compare-controls" id={`${id}-compare-controls`}>
+            <button class="control-btn" id={`${id}-sync-zoom`} title="同步缩放">
+              <span class="icon">🔗</span>
+              <span class="label">同步</span>
+            </button>
+            <button class="control-btn" id={`${id}-swap`} title="交换位置">
+              <span class="icon">⇄</span>
+              <span class="label">交换</span>
+            </button>
+            <button class="control-btn" id={`${id}-overlay`} title="叠加对比">
+              <span class="icon">👁️</span>
+              <span class="label">叠加</span>
+            </button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  {
+    mode === "result" && (
+      <div class="result-preview">
+        <div class="result-container">
+          <div class="result-wrapper">
+            <img
+              id={`${id}-result-image`}
+              alt="生成结果"
+              style="display: none;"
+            />
+            <div class="placeholder" id={`${id}-result-placeholder`}>
+              <div class="placeholder-icon">🎨</div>
+              <p class="placeholder-text">生成结果将在这里显示</p>
+            </div>
+
+            <div class="result-overlay" id={`${id}-result-overlay`}>
+              <div class="overlay-content">
+                <div class="result-status">
+                  <span class="status-icon">✅</span>
+                  <span class="status-text">生成完成</span>
+                </div>
+                <div class="result-actions">
+                  <button class="action-btn primary" id={`${id}-download`}>
+                    <span class="icon">💾</span>
+                    下载
+                  </button>
+                  <button class="action-btn secondary" id={`${id}-regenerate`}>
+                    <span class="icon">🔄</span>
+                    重新生成
+                  </button>
+                  <button class="action-btn secondary" id={`${id}-edit`}>
+                    <span class="icon">✏️</span>
+                    编辑
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {showInfo && (
+          <div class="result-info" id={`${id}-result-info`}>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">生成时间:</span>
+                <span class="info-value" id={`${id}-generation-time`}>
+                  --
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">使用提示词:</span>
+                <span class="info-value" id={`${id}-used-prompt`}>
+                  --
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">图片尺寸:</span>
+                <span class="info-value" id={`${id}-result-dimensions`}>
+                  --
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">文件大小:</span>
+                <span class="info-value" id={`${id}-result-size`}>
+                  --
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  <!-- 加载状态 -->
+  <div class="loading-overlay" id={`${id}-loading`} style="display: none;">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">正在加载图片...</p>
+    </div>
+  </div>
+
+  <!-- 错误状态 -->
+  <div class="error-overlay" id={`${id}-error`} style="display: none;">
+    <div class="error-content">
+      <div class="error-icon">⚠️</div>
+      <h4 class="error-title">加载失败</h4>
+      <p class="error-message" id={`${id}-error-message`}>
+        图片加载失败，请重试
+      </p>
+      <button class="retry-btn" id={`${id}-retry`}>重试</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .banana-image-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #fafafa;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* 通用样式 */
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+    text-align: center;
+  }
+
+  .placeholder-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+
+  .placeholder-text {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* 单图片预览模式 */
+  .single-preview {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preview-container {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .image-wrapper {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .image-wrapper img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  .image-controls {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .preview-container:hover .image-controls {
+    opacity: 1;
+  }
+
+  .control-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .zoom-level {
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  .control-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 4px;
+  }
+
+  .image-info {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 12px;
+  }
+
+  .info-label {
+    color: #666;
+    font-weight: 500;
+  }
+
+  .info-value {
+    color: var(--banana-dark, #2d1810);
+    font-weight: 600;
+  }
+
+  /* 对比预览模式 */
+  .compare-preview {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .compare-container {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .compare-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+  }
+
+  .side-header {
+    padding: 12px 16px;
+    background: rgba(255, 248, 220, 0.5);
+    border-bottom: 1px solid var(--banana-border, #ffe55c);
+  }
+
+  .side-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .side-content {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .side-content img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+  }
+
+  .compare-divider {
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    position: relative;
+  }
+
+  .divider-line {
+    width: 2px;
+    height: 60px;
+    background: var(--banana-dark, #2d1810);
+    opacity: 0.3;
+  }
+
+  .divider-icon {
+    position: absolute;
+    font-size: 20px;
+    color: var(--banana-dark, #2d1810);
+    background: var(--banana-primary, #ffd700);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .compare-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .compare-controls .control-btn {
+    width: auto;
+    height: 36px;
+    padding: 0 12px;
+    background: white;
+    color: var(--banana-dark, #2d1810);
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    gap: 6px;
+  }
+
+  .compare-controls .control-btn:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 248, 220, 0.5);
+  }
+
+  .compare-controls .label {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* 结果预览模式 */
+  .result-preview {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .result-container {
+    flex: 1;
+    position: relative;
+  }
+
+  .result-wrapper {
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .result-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .result-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.7) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .result-wrapper:hover .result-overlay {
+    opacity: 1;
+  }
+
+  .overlay-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .result-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+  }
+
+  .status-icon {
+    font-size: 18px;
+  }
+
+  .status-text {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .action-btn.primary {
+    background: var(
+      --banana-gradient,
+      linear-gradient(135deg, #ffd700 0%, #ffa500 100%)
+    );
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .action-btn.secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    backdrop-filter: blur(4px);
+  }
+
+  .action-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .result-info {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  /* 加载和错误状态 */
+  .loading-overlay,
+  .error-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(250, 250, 250, 0.95);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+  }
+
+  .loading-content,
+  .error-content {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #f0f0f0;
+    border-top: 3px solid var(--banana-primary, #ffd700);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading-text {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .error-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .error-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #dc2626;
+  }
+
+  .error-message {
+    margin: 0 0 16px 0;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .retry-btn {
+    padding: 8px 16px;
+    border: none;
+    background: #dc2626;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+
+  .retry-btn:hover {
+    background: #b91c1c;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .compare-container {
+      flex-direction: column;
+    }
+
+    .compare-divider {
+      width: 100%;
+      height: 40px;
+      flex-direction: row;
+    }
+
+    .divider-line {
+      width: 60px;
+      height: 2px;
+    }
+
+    .compare-controls {
+      flex-wrap: wrap;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .result-actions {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .action-btn {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .preview-container,
+    .result-wrapper {
+      padding: 12px;
+    }
+
+    .placeholder-icon {
+      font-size: 36px;
+    }
+
+    .image-controls {
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .control-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .image-wrapper {
+      border: 2px solid #000;
+    }
+
+    .compare-side {
+      border: 1px solid #000;
+    }
+  }
+
+  /* 减少动画偏好支持 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  // BananaEditor图片预览器
+  class BananaImagePreview {
+    private previewId: string;
+    private mode: "single" | "compare" | "result";
+    private container: HTMLElement | null = null;
+    private currentZoom: number = 100;
+    private rotation: number = 0;
+    private syncZoom: boolean = true;
+
+    constructor(previewId: string) {
+      this.previewId = previewId;
+      this.container = document.getElementById(previewId);
+      this.mode = (this.container?.dataset.mode as any) || "single";
+
+      this.init();
+    }
+
+    private init(): void {
+      this.setupEventListeners();
+    }
+
+    private setupEventListeners(): void {
+      if (this.mode === "single") {
+        this.setupSingleModeEvents();
+      } else if (this.mode === "compare") {
+        this.setupCompareModeEvents();
+      } else if (this.mode === "result") {
+        this.setupResultModeEvents();
+      }
+
+      // 通用事件
+      this.setupCommonEvents();
+    }
+
+    private setupSingleModeEvents(): void {
+      // 缩放控制
+      const zoomIn = document.getElementById(`${this.previewId}-zoom-in`);
+      const zoomOut = document.getElementById(`${this.previewId}-zoom-out`);
+      const fit = document.getElementById(`${this.previewId}-fit`);
+      const actual = document.getElementById(`${this.previewId}-actual`);
+      const rotate = document.getElementById(`${this.previewId}-rotate`);
+
+      zoomIn?.addEventListener("click", () => this.zoomIn());
+      zoomOut?.addEventListener("click", () => this.zoomOut());
+      fit?.addEventListener("click", () => this.fitToWindow());
+      actual?.addEventListener("click", () => this.actualSize());
+      rotate?.addEventListener("click", () => this.rotateImage());
+
+      // 鼠标滚轮缩放
+      const imageWrapper = this.container?.querySelector(".image-wrapper");
+      imageWrapper?.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        if (e.deltaY < 0) {
+          this.zoomIn();
+        } else {
+          this.zoomOut();
+        }
+      });
+    }
+
+    private setupCompareModeEvents(): void {
+      const syncZoomBtn = document.getElementById(
+        `${this.previewId}-sync-zoom`,
+      );
+      const swapBtn = document.getElementById(`${this.previewId}-swap`);
+      const overlayBtn = document.getElementById(`${this.previewId}-overlay`);
+
+      syncZoomBtn?.addEventListener("click", () => this.toggleSyncZoom());
+      swapBtn?.addEventListener("click", () => this.swapImages());
+      overlayBtn?.addEventListener("click", () => this.toggleOverlay());
+    }
+
+    private setupResultModeEvents(): void {
+      const downloadBtn = document.getElementById(`${this.previewId}-download`);
+      const regenerateBtn = document.getElementById(
+        `${this.previewId}-regenerate`,
+      );
+      const editBtn = document.getElementById(`${this.previewId}-edit`);
+
+      downloadBtn?.addEventListener("click", () => this.downloadResult());
+      regenerateBtn?.addEventListener("click", () => this.regenerateImage());
+      editBtn?.addEventListener("click", () => this.editResult());
+    }
+
+    private setupCommonEvents(): void {
+      const retryBtn = document.getElementById(`${this.previewId}-retry`);
+      retryBtn?.addEventListener("click", () => this.retryLoad());
+    }
+
+    // 图片加载方法
+    public loadImage(
+      imageUrl: string,
+      type: "single" | "original" | "result" = "single",
+    ): void {
+      this.showLoading();
+
+      const img = new Image();
+      img.onload = () => {
+        this.displayImage(img, type);
+        this.hideLoading();
+      };
+
+      img.onerror = () => {
+        this.showError("图片加载失败");
+        this.hideLoading();
+      };
+
+      img.src = imageUrl;
+    }
+
+    private displayImage(img: HTMLImageElement, type: string): void {
+      let targetImg: HTMLImageElement | null = null;
+      let placeholder: HTMLElement | null = null;
+
+      if (this.mode === "single") {
+        targetImg = document.getElementById(
+          `${this.previewId}-image`,
+        ) as HTMLImageElement;
+        placeholder = document.getElementById(`${this.previewId}-placeholder`);
+      } else if (this.mode === "compare") {
+        if (type === "original") {
+          targetImg = document.getElementById(
+            `${this.previewId}-original`,
+          ) as HTMLImageElement;
+          placeholder = document.getElementById(
+            `${this.previewId}-original-placeholder`,
+          );
+        } else {
+          targetImg = document.getElementById(
+            `${this.previewId}-result`,
+          ) as HTMLImageElement;
+          placeholder = document.getElementById(
+            `${this.previewId}-result-placeholder`,
+          );
+        }
+      } else if (this.mode === "result") {
+        targetImg = document.getElementById(
+          `${this.previewId}-result-image`,
+        ) as HTMLImageElement;
+        placeholder = document.getElementById(
+          `${this.previewId}-result-placeholder`,
+        );
+      }
+
+      if (targetImg && placeholder) {
+        targetImg.src = img.src;
+        targetImg.style.display = "block";
+        placeholder.style.display = "none";
+
+        // 更新图片信息
+        this.updateImageInfo(img, type);
+      }
+    }
+
+    private updateImageInfo(img: HTMLImageElement, type: string): void {
+      if (this.mode === "single") {
+        const info = document.getElementById(`${this.previewId}-info`);
+        if (info) {
+          info.style.display = "block";
+        }
+
+        // 更新尺寸信息
+        const dimensions = document.getElementById(
+          `${this.previewId}-dimensions`,
+        );
+        if (dimensions) {
+          dimensions.textContent = `${img.naturalWidth} × ${img.naturalHeight}`;
+        }
+      }
+    }
+
+    // 缩放控制方法
+    private zoomIn(): void {
+      this.currentZoom = Math.min(this.currentZoom * 1.2, 500);
+      this.applyZoom();
+    }
+
+    private zoomOut(): void {
+      this.currentZoom = Math.max(this.currentZoom / 1.2, 10);
+      this.applyZoom();
+    }
+
+    private fitToWindow(): void {
+      this.currentZoom = 100;
+      this.applyZoom();
+    }
+
+    private actualSize(): void {
+      this.currentZoom = 100;
+      this.applyZoom();
+    }
+
+    private applyZoom(): void {
+      const images = this.container?.querySelectorAll("img");
+      images?.forEach((img) => {
+        if (img.style.display !== "none") {
+          img.style.transform = `scale(${this.currentZoom / 100}) rotate(${this.rotation}deg)`;
+        }
+      });
+
+      // 更新缩放显示
+      const zoomDisplay = document.getElementById(`${this.previewId}-zoom`);
+      if (zoomDisplay) {
+        zoomDisplay.textContent = `${Math.round(this.currentZoom)}%`;
+      }
+    }
+
+    private rotateImage(): void {
+      this.rotation = (this.rotation + 90) % 360;
+      this.applyZoom();
+    }
+
+    // 对比模式方法
+    private toggleSyncZoom(): void {
+      this.syncZoom = !this.syncZoom;
+      const syncBtn = document.getElementById(`${this.previewId}-sync-zoom`);
+      if (syncBtn) {
+        syncBtn.classList.toggle("active", this.syncZoom);
+      }
+    }
+
+    private swapImages(): void {
+      const originalImg = document.getElementById(
+        `${this.previewId}-original`,
+      ) as HTMLImageElement;
+      const resultImg = document.getElementById(
+        `${this.previewId}-result`,
+      ) as HTMLImageElement;
+
+      if (originalImg && resultImg) {
+        const tempSrc = originalImg.src;
+        originalImg.src = resultImg.src;
+        resultImg.src = tempSrc;
+      }
+    }
+
+    private toggleOverlay(): void {
+      // 实现叠加对比功能
+      console.log("Toggle overlay comparison");
+    }
+
+    // 结果模式方法
+    private downloadResult(): void {
+      const resultImg = document.getElementById(
+        `${this.previewId}-result-image`,
+      ) as HTMLImageElement;
+      if (resultImg && resultImg.src) {
+        const link = document.createElement("a");
+        link.href = resultImg.src;
+        link.download = `banana-editor-result-${Date.now()}.png`;
+        link.click();
+      }
+    }
+
+    private regenerateImage(): void {
+      // 发送重新生成事件
+      document.dispatchEvent(
+        new CustomEvent("banana-editor:regenerate-request", {
+          detail: { previewId: this.previewId },
+        }),
+      );
+    }
+
+    private editResult(): void {
+      // 发送编辑请求事件
+      document.dispatchEvent(
+        new CustomEvent("banana-editor:edit-request", {
+          detail: { previewId: this.previewId },
+        }),
+      );
+    }
+
+    // 状态管理方法
+    private showLoading(): void {
+      const loading = document.getElementById(`${this.previewId}-loading`);
+      if (loading) {
+        loading.style.display = "flex";
+      }
+    }
+
+    private hideLoading(): void {
+      const loading = document.getElementById(`${this.previewId}-loading`);
+      if (loading) {
+        loading.style.display = "none";
+      }
+    }
+
+    private showError(message: string): void {
+      const error = document.getElementById(`${this.previewId}-error`);
+      const errorMessage = document.getElementById(
+        `${this.previewId}-error-message`,
+      );
+
+      if (error) {
+        error.style.display = "flex";
+      }
+
+      if (errorMessage) {
+        errorMessage.textContent = message;
+      }
+    }
+
+    private hideError(): void {
+      const error = document.getElementById(`${this.previewId}-error`);
+      if (error) {
+        error.style.display = "none";
+      }
+    }
+
+    private retryLoad(): void {
+      this.hideError();
+      // 重新加载逻辑
+    }
+
+    // 公共方法
+    public reset(): void {
+      // 隐藏所有图片，显示占位符
+      const images = this.container?.querySelectorAll("img");
+      const placeholders = this.container?.querySelectorAll(".placeholder");
+
+      images?.forEach((img) => {
+        img.style.display = "none";
+        img.src = "";
+      });
+
+      placeholders?.forEach((placeholder) => {
+        (placeholder as HTMLElement).style.display = "flex";
+      });
+
+      // 重置状态
+      this.currentZoom = 100;
+      this.rotation = 0;
+      this.hideLoading();
+      this.hideError();
+    }
+
+    public setResultInfo(info: any): void {
+      if (this.mode === "result") {
+        const generationTime = document.getElementById(
+          `${this.previewId}-generation-time`,
+        );
+        const usedPrompt = document.getElementById(
+          `${this.previewId}-used-prompt`,
+        );
+        const resultDimensions = document.getElementById(
+          `${this.previewId}-result-dimensions`,
+        );
+        const resultSize = document.getElementById(
+          `${this.previewId}-result-size`,
+        );
+
+        if (generationTime && info.generationTime) {
+          generationTime.textContent = info.generationTime;
+        }
+
+        if (usedPrompt && info.prompt) {
+          usedPrompt.textContent =
+            info.prompt.length > 50
+              ? info.prompt.substring(0, 50) + "..."
+              : info.prompt;
+        }
+
+        if (resultDimensions && info.dimensions) {
+          resultDimensions.textContent = info.dimensions;
+        }
+
+        if (resultSize && info.fileSize) {
+          resultSize.textContent = info.fileSize;
+        }
+      }
+    }
+  }
+
+  // 自动初始化所有预览器
+  document.addEventListener("DOMContentLoaded", () => {
+    const previews = document.querySelectorAll(".banana-image-preview");
+
+    previews.forEach((preview) => {
+      const previewId = preview.id;
+      if (previewId) {
+        new BananaImagePreview(previewId);
+      }
+    });
+  });
+
+  // 导出到全局作用域
+  (window as any).BananaImagePreview = BananaImagePreview;
+</script>

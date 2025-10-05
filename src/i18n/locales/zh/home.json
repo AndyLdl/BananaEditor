@@ -1,0 +1,71 @@
+{
+    "hero": {
+        "title": "专业AI图片编辑器",
+        "subtitle": "基于Nano Banana技术驱动",
+        "description": "使用nano banana AI技术创建令人惊艳的图片。像专业人士一样使用我们先进的AI工具生成、融合和编辑图片。",
+        "cta": {
+            "primary": "立即开始编辑",
+            "secondary": "查看提示词库"
+        },
+        "features": [
+            "AI图片生成",
+            "智能图片融合",
+            "提示词优化",
+            "多语言支持"
+        ]
+    },
+    "features": {
+        "title": "为什么选择BananaEditor？",
+        "subtitle": "Nano banana AI技术与专业图片编辑的完美结合",
+        "items": [
+            {
+                "title": "AI图片生成",
+                "description": "使用先进的nano banana AI技术从文本提示生成令人惊艳的图片。完美适用于创意项目和专业工作。",
+                "icon": "magic"
+            },
+            {
+                "title": "智能图片融合",
+                "description": "使用智能AI融合技术无缝混合两张图片。用nano banana AI精度创建独特的构图。",
+                "icon": "layers"
+            },
+            {
+                "title": "提示词优化",
+                "description": "自动增强您的提示词以获得更好的结果。我们的nano banana AI将您的想法优化为完美的指令。",
+                "icon": "sparkles"
+            },
+            {
+                "title": "专业工具",
+                "description": "访问完整的专业编辑工具套件。nano banana AI图片创作所需的一切都在一个地方。",
+                "icon": "tools"
+            }
+        ]
+    },
+    "demo": {
+        "title": "观看BananaEditor实际操作",
+        "subtitle": "体验nano banana AI技术的强大力量",
+        "tabs": [
+            {
+                "id": "generate",
+                "title": "AI生成",
+                "description": "将您的想法转化为令人惊艳的视觉效果"
+            },
+            {
+                "id": "fusion",
+                "title": "图片融合",
+                "description": "使用智能AI混合图片"
+            },
+            {
+                "id": "optimize",
+                "title": "提示词优化",
+                "description": "自动完善您的提示词"
+            }
+        ]
+    },
+    "cta": {
+        "title": "准备创建令人惊艳的图片了吗？",
+        "subtitle": "加入数千名使用nano banana AI技术的创作者",
+        "description": "立即开始使用BananaEditor强大的nano banana AI工具创建专业品质的图片。",
+        "button": "免费开始使用",
+        "note": "无需注册 • 即时访问"
+    }
+}

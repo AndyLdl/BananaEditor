@@ -1,0 +1,71 @@
+{
+    "toolbar": {
+        "generate": "生成",
+        "fusion": "融合",
+        "optimize": "优化",
+        "export": "导出",
+        "settings": "设置",
+        "help": "帮助"
+    },
+    "modes": {
+        "generation": "AI图片生成",
+        "fusion": "图片融合",
+        "optimization": "提示词优化"
+    },
+    "panels": {
+        "upload": "上传图片",
+        "prompt": "输入提示词",
+        "parameters": "参数设置",
+        "history": "历史记录",
+        "properties": "属性面板"
+    },
+    "generation": {
+        "title": "AI图片生成",
+        "uploadReference": "上传参考图片",
+        "enterPrompt": "输入您的提示词",
+        "style": "风格",
+        "quality": "质量",
+        "generate": "生成图片",
+        "regenerate": "重新生成",
+        "downloading": "下载中...",
+        "processing": "处理中..."
+    },
+    "fusion": {
+        "title": "图片融合",
+        "uploadFirst": "上传第一张图片",
+        "uploadSecond": "上传第二张图片",
+        "ratio": "融合比例",
+        "blendMode": "混合模式",
+        "startFusion": "开始融合",
+        "adjustParameters": "调整参数"
+    },
+    "optimization": {
+        "title": "提示词优化",
+        "original": "原始提示词",
+        "optimized": "优化后提示词",
+        "optimize": "优化",
+        "apply": "应用",
+        "suggestions": "建议",
+        "retryOptimization": "重新优化",
+        "editManually": "手动编辑",
+        "applyOptimization": "应用优化",
+        "copyOptimized": "复制优化后的提示词",
+        "optimizing": "AI正在优化中...",
+        "optimizationComplete": "优化完成",
+        "optimizationFailed": "优化失败，请重试",
+        "improvements": "优化建议",
+        "comparison": "对比分析",
+        "characterCount": "字符数",
+        "keywordDensity": "关键词密度",
+        "detailLevel": "描述详细度",
+        "close": "关闭"
+    },
+    "export": {
+        "title": "导出图片",
+        "format": "格式",
+        "quality": "质量",
+        "size": "尺寸",
+        "download": "下载",
+        "share": "分享"
+    }
+}

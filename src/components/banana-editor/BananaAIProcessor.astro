@@ -1,0 +1,1120 @@
+---
+// BananaEditor AI处理器组件（重构版）
+// 与SessionManager集成，处理用户消息并调用云函数生成图片
+
+export interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<div class={`banana-ai-processor ${className}`} id="banana-ai-processor">
+  <!-- 这个组件主要包含JavaScript逻辑，没有可见的UI -->
+</div>
+
+<script>
+  // BananaEditor AI处理器类（重构版）
+  class BananaAIProcessor {
+    constructor() {
+      // 直接使用Firebase云函数URL
+      this.cloudFunctionUrl =
+        "https://bananaaigenerator-vs5qoxox3a-uc.a.run.app";
+
+      // 备用：从环境变量读取
+      const envUrl =
+        import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL ||
+        import.meta.env.PUBLIC_CLOUD_FUNCTION_URL;
+      if (envUrl && envUrl.includes("bananaeditor-927be.cloudfunctions.net")) {
+        this.cloudFunctionUrl = envUrl;
+      }
+
+      this.isProcessing = false;
+      this.isInitializing = true; // 防止初始化时重复渲染
+      this.currentActiveImage = null; // 当前 Canvas 激活的图片 URL
+      this.init();
+    }
+
+    init() {
+      // 监听用户消息处理事件
+      window.addEventListener("sendMessage", (e) => {
+        this.processUserMessage(e.detail);
+      });
+
+      // 等待SessionManager初始化
+      this.waitForSessionManager();
+
+      // 设置全局方法
+      this.setupGlobalMethods();
+
+      // 监听 Canvas DOM 变化
+      this.setupCanvasObserver();
+
+      console.log("🍌 BananaAI Processor initialized (Session-based)");
+      console.log("📍 Cloud Function URL:", this.cloudFunctionUrl);
+
+      // 测试云函数连接（暂时禁用以调试 Canvas 问题）
+      // if (
+      //   this.cloudFunctionUrl &&
+      //   !this.cloudFunctionUrl.includes("your-project-id")
+      // ) {
+      //   setTimeout(() => {
+      //     this.testCloudFunction();
+      //   }, 1000);
+      // }
+    }
+
+    // 等待SessionManager初始化
+    waitForSessionManager() {
+      const checkSessionManager = () => {
+        if (window.sessionManager) {
+          this.setupSessionEvents();
+
+          // ⚠️ 注意：聊天历史现在由 React 组件管理，这里只处理画布
+          // 渲染当前会话的画布
+          const session = window.sessionManager?.getCurrentSession();
+          if (session && session.lastImageUrl) {
+            this.updateCanvasWithImage(session.lastImageUrl);
+          }
+
+          this.updateSessionStatus();
+
+          // 初始化完成，允许处理新消息
+          setTimeout(() => {
+            this.isInitializing = false;
+          }, 500);
+        } else {
+          setTimeout(checkSessionManager, 100);
+        }
+      };
+      checkSessionManager();
+    }
+
+    // 设置会话事件监听
+    setupSessionEvents() {
+      // 监听会话切换
+      window.addEventListener("sessionSwitch", (e) => {
+        // ⚠️ 注意：聊天历史现在由 React 组件管理，这里只处理画布
+        // this.renderCurrentSession(); // 已禁用，React 组件会处理
+
+        // 更新画布显示当前会话的最后一张图片
+        const session = window.sessionManager?.getCurrentSession();
+        if (session && session.lastImageUrl) {
+          this.updateCanvasWithImage(session.lastImageUrl);
+        } else {
+          this.clearCanvas();
+        }
+
+        this.updateSessionStatus();
+      });
+
+      // 监听消息更新 - 只更新状态和画布，不显示消息（避免重复）
+      window.addEventListener("messageUpdate", (e) => {
+        const { sessionId, message } = e.detail;
+        // 只处理当前会话的消息，且不是正在初始化时
+        if (
+          sessionId === window.sessionManager.currentSessionId &&
+          !this.isInitializing
+        ) {
+          this.updateSessionStatus();
+
+          // 如果是AI消息且包含图片，更新画布
+          if (message.role === "model" && message.imageUrl) {
+            this.updateCanvasWithImage(message.imageUrl);
+          }
+        }
+      });
+
+      // 监听会话清空
+      window.addEventListener("sessionClear", (e) => {
+        const { sessionId } = e.detail;
+        if (sessionId === window.sessionManager.currentSessionId) {
+          // ⚠️ 注意：聊天历史现在由 React 组件管理，这里只清空画布
+          // this.clearChatHistory(); // 已禁用，React 组件会处理
+          this.clearCanvas();
+          this.updateSessionStatus();
+        }
+      });
+
+      // 监听历史图片选择（用户点击 Generation History 中的图片）
+      window.addEventListener("historyImageSelected", (e) => {
+        const historyItem = e.detail;
+        if (historyItem && historyItem.imageUrl) {
+          console.log("🖼️ 用户选择历史图片:", historyItem.imageUrl);
+          this.currentActiveImage = historyItem.imageUrl;
+          this.updateCanvasWithImage(historyItem.imageUrl);
+        }
+      });
+    }
+
+    // 处理用户消息
+    async processUserMessage(messageData) {
+      if (this.isProcessing) {
+        console.log("AI is already processing, skipping...");
+        return;
+      }
+
+      if (!window.sessionManager) {
+        console.error("❌ SessionManager not available");
+        return;
+      }
+
+      this.isProcessing = true;
+
+      try {
+        console.log("🚀 Processing user message:", messageData);
+
+        // 处理不同的数据结构：{message} 或 {text}
+        const messageText = messageData.message || messageData.text;
+        console.log("📝 Message text:", messageText);
+
+        if (!messageText || !messageText.trim()) {
+          throw new Error("Prompt is empty or undefined");
+        }
+
+        // 获取当前会话的对话历史（排除刚添加的用户消息，避免重复发送）
+        const conversationHistory =
+          window.sessionManager.getCurrentConversationHistory(true);
+        console.log(
+          "📚 Current conversation history length (excluding current message):",
+          conversationHistory.length
+        );
+        console.log(
+          "📚 完整对话历史内容:",
+          JSON.stringify(conversationHistory, null, 2)
+        );
+
+        // 用户消息已经由 React 组件添加了，这里不需要再添加
+        // 只需要处理 AI 响应
+
+        // 调用云函数生成图片
+        const result = await this.callCloudFunction(
+          messageText.trim(),
+          conversationHistory
+        );
+
+        if (result.success) {
+          // 添加AI响应到当前会话
+          const aiMessage = window.sessionManager.addMessage({
+            role: "model",
+            content:
+              result.data.generatedPrompt || "Image generated successfully!",
+            imageUrl: result.data.imageUrl,
+            timestamp: Date.now(),
+          });
+
+          // React 组件会自动显示，这里不需要手动渲染
+
+          // 发送成功响应事件
+          window.dispatchEvent(
+            new CustomEvent("aiResponse", {
+              detail: {
+                text:
+                  result.data.generatedPrompt ||
+                  "Image generated successfully!",
+                status: "success",
+                imageUrl: result.data.imageUrl,
+                thumbnailUrl: result.data.thumbnailUrl,
+                prompt: messageText,
+                metadata: result.data.metadata,
+                suggestions: result.data.suggestions,
+              },
+            })
+          );
+        } else {
+          // 添加错误消息到当前会话
+          const errorMessage = window.sessionManager.addMessage({
+            role: "model",
+            content:
+              result.error?.message || "Generation failed, please try again",
+            timestamp: Date.now(),
+            isError: true,
+          });
+
+          // React 组件会自动显示，这里不需要手动渲染
+
+          // 发送错误响应事件
+          window.dispatchEvent(
+            new CustomEvent("aiResponse", {
+              detail: {
+                text:
+                  result.error?.message ||
+                  "Generation failed, please try again",
+                status: "error",
+                prompt: messageText,
+              },
+            })
+          );
+        }
+      } catch (error) {
+        console.error("❌ AI processing failed:", error);
+
+        // 添加错误消息到当前会话
+        if (window.sessionManager) {
+          const errorMessage = window.sessionManager.addMessage({
+            role: "model",
+            content: `Generation failed: ${error.message}`,
+            timestamp: Date.now(),
+            isError: true,
+          });
+
+          // ⚠️ 注意：聊天历史现在由 React 组件管理，消息会通过 messageUpdate 事件自动显示
+          // this.displayMessageInChat(errorMessage); // 已禁用，React 组件会处理
+        }
+
+        // 发送错误响应事件
+        window.dispatchEvent(
+          new CustomEvent("aiResponse", {
+            detail: {
+              text: `Generation failed: ${error.message}`,
+              status: "error",
+              prompt: messageText,
+            },
+          })
+        );
+      } finally {
+        this.isProcessing = false;
+        // React 组件会自动处理思考状态，这里不需要手动隐藏
+      }
+    }
+
+    // 调用云函数
+    async callCloudFunction(prompt, conversationHistory = []) {
+      console.log("🔧 callCloudFunction called with:", {
+        prompt,
+        promptType: typeof prompt,
+        promptLength: prompt ? prompt.length : "undefined",
+        historyLength: conversationHistory.length,
+        cloudFunctionUrl: this.cloudFunctionUrl,
+      });
+
+      if (
+        !this.cloudFunctionUrl ||
+        this.cloudFunctionUrl.includes("your-project-id")
+      ) {
+        throw new Error(
+          "云函数 URL 未配置，请运行: npm run config:frontend configure"
+        );
+      }
+
+      if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+        throw new Error("提示词参数无效");
+      }
+
+      console.log("📡 Calling cloud function...");
+
+      try {
+        const requestData = {
+          prompt: prompt.trim(),
+          style: "realistic",
+          quality: "high",
+          creativity: 70,
+          colorTone: "",
+          outputFormat: "jpeg",
+          conversationHistory: conversationHistory,
+        };
+
+        // 如果有当前激活的图片，转为 base64 发送（用于修改）
+        if (this.currentActiveImage) {
+          console.log(
+            "🖼️ 检测到激活图片，转换为 base64:",
+            this.currentActiveImage
+          );
+          try {
+            const base64 = await this.imageUrlToBase64(this.currentActiveImage);
+            if (base64) {
+              requestData.currentActiveImage = {
+                url: this.currentActiveImage,
+                base64: base64,
+              };
+              console.log("✅ 当前激活图片已添加到请求中");
+            }
+          } catch (error) {
+            console.error("❌ 图片转换失败:", error);
+          }
+        }
+
+        const requestId = `banana_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        console.log("📤 Sending request with data:", {
+          ...requestData,
+          promptLength: prompt.length,
+          historyLength: conversationHistory.length,
+          hasActiveImage: !!requestData.currentActiveImage,
+          requestId,
+        });
+        console.log(
+          "📤 完整请求数据 (包含历史):",
+          JSON.stringify(requestData, null, 2)
+        );
+
+        const response = await fetch(this.cloudFunctionUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Request-ID": requestId,
+            "User-Agent": "BananaEditor-Session/1.0",
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        console.log(
+          "📥 Response status:",
+          response.status,
+          response.statusText
+        );
+
+        if (!response.ok) {
+          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error?.message || errorMessage;
+            console.error("❌ Error response data:", errorData);
+          } catch (parseError) {
+            console.error("❌ Failed to parse error response:", parseError);
+          }
+          throw new Error(errorMessage);
+        }
+
+        const result = await response.json();
+        console.log("✅ Cloud function response:", result);
+        return result;
+      } catch (error) {
+        console.error("❌ Cloud function call failed:", error);
+        throw error;
+      }
+    }
+
+    // 渲染当前会话
+    renderCurrentSession() {
+      const session = window.sessionManager
+        ? window.sessionManager.getCurrentSession()
+        : null;
+      if (!session) {
+        this.clearChatHistory();
+        this.clearCanvas();
+        return;
+      }
+
+      console.log("🔄 Rendering session:", session.id, session.title);
+
+      // 清空聊天历史
+      this.clearChatHistory();
+
+      // 渲染会话消息
+      session.messages.forEach((message) => {
+        this.displayMessageInChat(message);
+      });
+
+      // 更新画布显示最后的图片
+      if (session.lastImageUrl) {
+        this.updateCanvasWithImage(session.lastImageUrl);
+      } else {
+        this.clearCanvas();
+      }
+    }
+
+    // 仅显示消息到聊天界面
+    displayMessageInChat(message) {
+      const chatHistory = document.getElementById("chat-history");
+      if (!chatHistory) return;
+
+      // 隐藏空状态
+      const historyEmpty = chatHistory.querySelector(".history-empty");
+      if (historyEmpty) {
+        historyEmpty.style.display = "none";
+      }
+
+      // 创建消息元素
+      const messageElement = this.createMessageElement(message);
+      chatHistory.appendChild(messageElement);
+
+      // 滚动到底部
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+
+      // 添加动画效果
+      setTimeout(() => {
+        messageElement.classList.add("message-visible");
+      }, 10);
+    }
+
+    // 创建消息元素
+    createMessageElement(message) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `chat-message ${message.role}-message`;
+
+      if (message.isError) {
+        messageDiv.classList.add("error-message");
+      }
+
+      const timestamp = new Date(message.timestamp).toLocaleTimeString(
+        "zh-CN",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      );
+
+      // 聊天窗口只显示文本内容，不显示图片
+      const userIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>`;
+
+      const aiIcon = `🍌`;
+
+      let messageHTML = `
+        <div class="message-header">
+          <div class="message-avatar ${message.role}">
+            ${message.role === "user" ? userIcon : aiIcon}
+          </div>
+          <div class="message-info">
+            <span class="message-sender">${message.role === "user" ? "You" : "BananaAI"}</span>
+            <span class="message-time">${timestamp}</span>
+          </div>
+        </div>
+        <div class="message-content">
+          <div class="message-text">${this.formatMessageText(message.content)}</div>
+      `;
+
+      // 如果AI消息包含图片，只显示提示文本
+      if (message.role === "model" && message.imageUrl) {
+        messageHTML += `
+          <div class="image-generated-notice">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21,15 16,10 5,21"></polyline>
+            </svg>
+            <span>Image generated and displayed on the right canvas</span>
+          </div>
+        `;
+      }
+
+      messageHTML += `</div>`;
+      messageDiv.innerHTML = messageHTML;
+      return messageDiv;
+    }
+
+    // 格式化消息文本
+    formatMessageText(text) {
+      return text.replace(/\n/g, "<br>");
+    }
+
+    // 显示AI思考状态
+    showAIThinking() {
+      const chatHistory = document.getElementById("chat-history");
+      if (!chatHistory) return;
+
+      // 移除之前的思考状态
+      const existingThinking = chatHistory.querySelector(".ai-thinking");
+      if (existingThinking) {
+        existingThinking.remove();
+      }
+
+      const thinkingDiv = document.createElement("div");
+      thinkingDiv.className = "chat-message model-message ai-thinking";
+      thinkingDiv.innerHTML = `
+        <div class="message-header">
+          <div class="message-avatar model">🤖</div>
+          <div class="message-info">
+            <span class="message-sender">BananaAI</span>
+            <span class="message-time">Thinking...</span>
+          </div>
+        </div>
+        <div class="message-content">
+          <div class="thinking-animation">
+            <div class="thinking-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="thinking-text">AI is generating image, please wait...</span>
+          </div>
+        </div>
+      `;
+
+      chatHistory.appendChild(thinkingDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+
+      setTimeout(() => {
+        thinkingDiv.classList.add("message-visible");
+      }, 10);
+    }
+
+    // 隐藏AI思考状态
+    hideAIThinking() {
+      const thinkingElement = document.querySelector(".ai-thinking");
+      if (thinkingElement) {
+        thinkingElement.remove();
+      }
+    }
+
+    // 清空聊天历史显示
+    clearChatHistory() {
+      const chatHistory = document.getElementById("chat-history");
+      if (chatHistory) {
+        chatHistory.innerHTML = `
+          <div class="history-empty">
+            <div class="empty-icon">Chat</div>
+            <p class="empty-text">
+              Start a conversation, describe the image effect you want
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    // 清空画布
+    clearCanvas() {
+      const canvasEmpty = document.getElementById("canvas-empty");
+      const canvasImage = document.getElementById("canvas-image");
+
+      if (canvasEmpty && canvasImage) {
+        canvasEmpty.style.display = "block";
+        canvasImage.style.display = "none";
+      }
+    }
+
+    // 更新画布显示图片
+    updateCanvasWithImage(imageUrl) {
+      try {
+        const canvasEmpty = document.getElementById("canvas-empty");
+        const canvasImage = document.getElementById("canvas-image");
+        const currentImage = document.getElementById("current-image");
+
+        if (canvasEmpty && canvasImage && currentImage && imageUrl) {
+          // 隐藏空状态
+          canvasEmpty.style.display = "none";
+
+          // 显示图片
+          currentImage.src = imageUrl;
+          currentImage.alt = "AI生成的图片";
+          canvasImage.style.display = "block";
+
+          // 更新当前激活图片
+          this.currentActiveImage = imageUrl;
+
+          // 更新图片信息
+          this.updateImageInfo({ imageUrl });
+
+          console.log("🖼️ Canvas updated with image:", imageUrl);
+        }
+      } catch (error) {
+        console.error("❌ Failed to update canvas with image:", error);
+      }
+    }
+
+    // 将图片 URL 转为 base64
+    async imageUrlToBase64(imageUrl) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous"; // 允许跨域
+
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            // 转为 base64（移除 "data:image/jpeg;base64," 前缀）
+            const base64 = canvas.toDataURL("image/jpeg", 0.9).split(",")[1];
+            resolve(base64);
+          } catch (error) {
+            console.error("Canvas 转换失败:", error);
+            reject(error);
+          }
+        };
+
+        img.onerror = (error) => {
+          console.error("图片加载失败:", error);
+          reject(error);
+        };
+
+        img.src = imageUrl;
+      });
+    }
+
+    // 更新图片信息
+    updateImageInfo(data) {
+      const imageDimensions = document.getElementById("image-dimensions");
+      const imageSize = document.getElementById("image-size");
+
+      if (imageDimensions) {
+        imageDimensions.textContent = "1024×1024"; // 默认尺寸
+      }
+
+      if (imageSize) {
+        imageSize.textContent = "-- KB"; // 无法获取确切大小
+      }
+    }
+
+    // 更新会话状态显示
+    updateSessionStatus() {
+      const statusElement = document.getElementById("conversation-status");
+      if (!statusElement) return;
+
+      const statusText = statusElement.querySelector(".status-text");
+      if (!statusText) return;
+
+      const session = window.sessionManager
+        ? window.sessionManager.getCurrentSession()
+        : null;
+
+      if (!session || session.messages.length === 0) {
+        statusText.textContent = "Ready to start conversation";
+        statusElement.style.background =
+          "linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)";
+        statusElement.style.borderColor = "rgba(34, 197, 94, 0.2)";
+        statusElement.style.color = "#059669";
+      } else {
+        const conversationCount = Math.floor(session.messages.length / 2);
+        statusText.textContent = `${session.title} - ${conversationCount} conversations`;
+        statusElement.style.background =
+          "linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%)";
+        statusElement.style.borderColor = "rgba(59, 130, 246, 0.2)";
+        statusElement.style.color = "#2563eb";
+      }
+    }
+
+    // 设置全局方法
+    setupGlobalMethods() {
+      // 图片预览
+      window.openImagePreview = (imageUrl) => {
+        const fullscreenModal = document.getElementById("fullscreen-modal");
+        const fullscreenImage = document.getElementById("fullscreen-image");
+        const modalOverlay = document.getElementById("modal-overlay");
+
+        if (fullscreenModal && fullscreenImage && modalOverlay) {
+          fullscreenImage.src = imageUrl;
+          modalOverlay.style.display = "block";
+          fullscreenModal.style.display = "block";
+        }
+      };
+
+      // 下载图片
+      window.downloadImage = async (imageUrl) => {
+        try {
+          const response = await fetch(imageUrl);
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `banana-ai-image-${Date.now()}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error("下载图片失败:", error);
+        }
+      };
+
+      // 复制图片链接
+      window.copyImageUrl = async (imageUrl) => {
+        try {
+          await navigator.clipboard.writeText(imageUrl);
+          this.showToast("图片链接已复制到剪贴板");
+        } catch (error) {
+          console.error("复制链接失败:", error);
+          this.showToast("复制失败，请手动复制");
+        }
+      };
+
+      // 清空当前会话的全局方法
+      window.clearCurrentSession = () => {
+        if (window.sessionManager) {
+          window.sessionManager.clearCurrentSession();
+        }
+      };
+
+      // 导出当前会话的全局方法
+      window.exportCurrentSession = () => {
+        if (window.sessionManager) {
+          const exportData = window.sessionManager.exportCurrentSession();
+          if (exportData) {
+            this.downloadJSON(exportData, `banana-session-${Date.now()}.json`);
+            this.showToast("会话导出成功");
+          }
+        }
+      };
+    }
+
+    // 工具方法
+    downloadJSON(data, filename) {
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(dataBlob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+    }
+
+    // 显示提示消息
+    showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast-message";
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        z-index: 10000;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+      `;
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0)";
+      }, 10);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-10px)";
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 3000);
+    }
+
+    // 获取处理状态
+    isCurrentlyProcessing() {
+      return this.isProcessing;
+    }
+
+    // 监听 Canvas DOM 变化
+    setupCanvasObserver() {
+      const canvasEmpty = document.getElementById("canvas-empty");
+      const canvasImage = document.getElementById("canvas-image");
+
+      if (!canvasEmpty || !canvasImage) return;
+
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "style"
+          ) {
+            const target = mutation.target;
+            const display = window.getComputedStyle(target).display;
+            console.log(
+              `🔍 [Canvas Observer] ${target.id} style changed to display: ${display}`
+            );
+            console.trace("Stack trace:");
+          }
+        });
+      });
+
+      observer.observe(canvasEmpty, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+      observer.observe(canvasImage, {
+        attributes: true,
+        attributeFilter: ["style"],
+      });
+
+      console.log("👁️ Canvas observer setup complete");
+    }
+
+    // 设置云函数URL
+    setCloudFunctionUrl(url) {
+      this.cloudFunctionUrl = url;
+      console.log("🔧 Cloud function URL updated:", url);
+    }
+
+    // 测试云函数连接
+    async testCloudFunction() {
+      try {
+        console.log("🧪 Testing cloud function connection...");
+
+        if (
+          !this.cloudFunctionUrl ||
+          this.cloudFunctionUrl.includes("your-project-id")
+        ) {
+          throw new Error("云函数 URL 未配置");
+        }
+
+        const response = await fetch(this.cloudFunctionUrl, {
+          method: "GET",
+          headers: {
+            "User-Agent": "BananaEditor-Test/1.0",
+          },
+        });
+
+        console.log("🧪 Test response status:", response.status);
+
+        if (response.ok) {
+          console.log("✅ Cloud function is accessible");
+          return true;
+        } else {
+          console.log("⚠️ Cloud function returned non-200 status");
+          return false;
+        }
+      } catch (error) {
+        console.error("❌ Cloud function test failed:", error);
+        return false;
+      }
+    }
+  }
+
+  // 初始化AI处理器
+  document.addEventListener("DOMContentLoaded", function () {
+    const instance = new BananaAIProcessor();
+    window.bananaAIProcessor = instance;
+
+    // 为 React 组件暴露实例
+    if (!window.BananaAIProcessor) {
+      window.BananaAIProcessor = BananaAIProcessor;
+    }
+    window.BananaAIProcessor.instance = instance;
+  });
+
+  // 导出到全局作用域
+  window.BananaAIProcessor = BananaAIProcessor;
+</script>
+
+<style>
+  .banana-ai-processor {
+    display: none; /* 这个组件没有可见的UI */
+  }
+
+  /* 聊天消息样式 */
+  .chat-message {
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  .chat-message.message-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .message-avatar.user {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+  }
+
+  .message-avatar.model {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: #2d1810;
+  }
+
+  .message-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .message-sender {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .message-time {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  .message-content {
+    margin-left: 44px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+
+  .user-message .message-content {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-color: #bfdbfe;
+  }
+
+  .model-message .message-content {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-color: #fde68a;
+  }
+
+  .error-message .message-content {
+    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+    border-color: #fca5a5;
+  }
+
+  .message-content::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #e5e7eb;
+  }
+
+  .user-message .message-content::before {
+    border-bottom-color: #bfdbfe;
+  }
+
+  .model-message .message-content::before {
+    border-bottom-color: #fde68a;
+  }
+
+  .error-message .message-content::before {
+    border-bottom-color: #fca5a5;
+  }
+
+  .message-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #374151;
+    word-wrap: break-word;
+  }
+
+  /* 图片生成提示 */
+  .image-generated-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.1) 0%,
+      rgba(16, 185, 129, 0.05) 100%
+    );
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #059669;
+    font-weight: 500;
+  }
+
+  .image-generated-notice svg {
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  /* AI思考动画 */
+  .ai-thinking .message-content {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-color: #d1d5db;
+  }
+
+  .thinking-animation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .thinking-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .thinking-dots span {
+    width: 8px;
+    height: 8px;
+    background: #6b7280;
+    border-radius: 50%;
+    animation: thinking 1.4s infinite ease-in-out;
+  }
+
+  .thinking-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+
+  .thinking-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+
+  @keyframes thinking {
+    0%,
+    80%,
+    100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .thinking-text {
+    font-size: 14px;
+    color: #6b7280;
+    font-style: italic;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .message-content {
+      margin-left: 0;
+      margin-top: 8px;
+    }
+
+    .message-content::before {
+      display: none;
+    }
+
+    .image-generated-notice {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+  }
+</style>

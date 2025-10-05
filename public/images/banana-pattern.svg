@@ -1,0 +1,12 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="banana-pattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+      <!-- 香蕉图案 -->
+      <path d="M10 25 Q15 15 25 20 Q35 25 30 35 Q25 40 15 35 Q5 30 10 25" 
+            fill="#FFD700" opacity="0.1"/>
+      <path d="M35 10 Q40 5 45 10 Q50 15 45 20 Q40 25 35 20 Q30 15 35 10" 
+            fill="#FFA500" opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#banana-pattern)" />
+</svg>

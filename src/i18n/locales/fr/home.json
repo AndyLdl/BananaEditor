@@ -1,0 +1,71 @@
+{
+    "hero": {
+        "title": "Éditeur d'Images IA Professionnel",
+        "subtitle": "Alimenté par la Technologie Nano Banana",
+        "description": "Créez des images époustouflantes avec la technologie nano banana IA. Générez, fusionnez et éditez des images comme un professionnel avec nos outils avancés alimentés par l'IA.",
+        "cta": {
+            "primary": "Commencer à Éditer Maintenant",
+            "secondary": "Voir la Bibliothèque de Prompts"
+        },
+        "features": [
+            "Génération d'Images IA",
+            "Fusion Intelligente d'Images",
+            "Optimisation de Prompts",
+            "Support Multilingue"
+        ]
+    },
+    "features": {
+        "title": "Pourquoi choisir BananaEditor ?",
+        "subtitle": "La technologie nano banana IA rencontre l'édition professionnelle d'images",
+        "items": [
+            {
+                "title": "Génération d'Images IA",
+                "description": "Générez des images époustouflantes à partir de prompts texte en utilisant la technologie avancée nano banana IA. Parfait pour les projets créatifs et le travail professionnel.",
+                "icon": "magic"
+            },
+            {
+                "title": "Fusion Intelligente d'Images",
+                "description": "Mélangez deux images de manière transparente avec la fusion IA intelligente. Créez des compositions uniques avec la précision nano banana IA.",
+                "icon": "layers"
+            },
+            {
+                "title": "Optimisation de Prompts",
+                "description": "Améliorez vos prompts automatiquement pour de meilleurs résultats. Notre nano banana IA optimise vos idées en instructions parfaites.",
+                "icon": "sparkles"
+            },
+            {
+                "title": "Outils Professionnels",
+                "description": "Accédez à une suite complète d'outils d'édition professionnels. Tout ce dont vous avez besoin pour la création d'images nano banana IA en un seul endroit.",
+                "icon": "tools"
+            }
+        ]
+    },
+    "demo": {
+        "title": "Voir BananaEditor en Action",
+        "subtitle": "Découvrez la puissance de la technologie nano banana IA",
+        "tabs": [
+            {
+                "id": "generate",
+                "title": "Génération IA",
+                "description": "Transformez vos idées en visuels époustouflants"
+            },
+            {
+                "id": "fusion",
+                "title": "Fusion d'Images",
+                "description": "Mélangez des images avec l'IA intelligente"
+            },
+            {
+                "id": "optimize",
+                "title": "Optimisation de Prompts",
+                "description": "Perfectionnez vos prompts automatiquement"
+            }
+        ]
+    },
+    "cta": {
+        "title": "Prêt à Créer des Images Incroyables ?",
+        "subtitle": "Rejoignez des milliers de créateurs utilisant la technologie nano banana IA",
+        "description": "Commencez à créer des images de qualité professionnelle dès aujourd'hui avec les puissants outils nano banana IA de BananaEditor.",
+        "button": "Commencer Gratuitement",
+        "note": "Aucune inscription requise • Accès instantané"
+    }
+}

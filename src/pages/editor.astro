@@ -1,0 +1,420 @@
+---
+// BananaEditor 编辑器主页面
+// 展示新设计的AI图片编辑器
+
+import EditorPageLayout from "../layouts/EditorLayout.astro";
+import EditorLayout from "../components/banana-editor/NewEditorLayout.astro";
+import BananaAIProcessor from "../components/banana-editor/BananaAIProcessor.astro";
+
+import UnifiedHistoryItem from "../components/banana-editor/UnifiedHistoryItem.astro";
+// ChatMessage 组件已被 BananaAIProcessor 替代，不再使用
+// import ChatMessage from "../components/banana-editor/ChatMessage.astro";
+
+const title = "BananaEditor - AI图片编辑器";
+const description =
+  "使用nano banana AI技术进行图片生成、修改和融合的专业编辑器";
+---
+
+<EditorPageLayout title={title} description={description}>
+  <main class="editor-page">
+    <!-- 编辑器主布局 -->
+    <EditorLayout activeMode="generate" />
+
+    <!-- AI处理器组件 -->
+    <BananaAIProcessor />
+
+    <!-- 隐藏的组件（用于模板） -->
+    <div style="display: none;">
+      <UnifiedHistoryItem />
+      <!-- ChatMessage 组件已移除，聊天功能由 BananaAIProcessor 处理 -->
+    </div>
+  </main>
+</EditorPageLayout>
+
+<style>
+  .editor-page {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* 确保编辑器占满整个页面 */
+  :global(html, body) {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* 提示消息动画 */
+  :global(@keyframes slideInRight) {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  :global(@keyframes slideOutRight) {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+</style>
+
+<script>
+  // 加载SessionSidebar React组件
+  const SessionSidebarScript = document.createElement("script");
+  SessionSidebarScript.type = "text/babel";
+  SessionSidebarScript.innerHTML = `
+    // SessionSidebar组件将在这里定义
+    // 由于内容较长，我们将通过动态加载的方式处理
+  `;
+
+  // 编辑器页面主控制器
+  class EditorController {
+    constructor() {
+      this.currentMode = "generate";
+      this.isProcessing = false;
+      this.hasUnsavedWork = false;
+      this.history = [];
+      this.historyIndex = -1;
+
+      this.init();
+    }
+
+    init() {
+      // 监听模式切换
+      window.addEventListener("editorModeChange", (e) => {
+        this.handleModeChange(e.detail);
+      });
+
+      // 监听AI响应（由BananaAIProcessor处理）
+      window.addEventListener("aiResponse", (e) => {
+        this.handleAIResponse(e.detail);
+      });
+
+      // 监听历史图片选择
+      window.addEventListener("historyImageSelected", (e) => {
+        this.displayImage(e.detail);
+      });
+
+      // 监听使用历史图片
+      window.addEventListener("useHistoryImage", (e) => {
+        this.useHistoryImage(e.detail);
+      });
+
+      // 初始化示例数据（开发用）- 已禁用，使用真实会话数据
+      // this.initExampleData();
+    }
+
+    // 处理模式切换
+    handleModeChange(detail) {
+      const { mode, icon, text } = detail;
+      this.currentMode = mode;
+
+      // 更新画布标题
+      const canvasIcon = document.getElementById("canvas-title-icon");
+      const canvasText = document.getElementById("canvas-title-text");
+
+      if (canvasIcon) canvasIcon.textContent = icon;
+      if (canvasText) {
+        const modeTexts = {
+          generate: "开始创作",
+          modify: "编辑图片",
+          fusion: "融合图片",
+        };
+        canvasText.textContent = modeTexts[mode] || "开始创作";
+      }
+
+      // 更新快捷建议
+      this.updateQuickSuggestions(mode);
+
+      // 清空当前状态（可选）
+      // this.clearCurrentState();
+    }
+
+    // 处理AI响应
+    handleAIResponse(responseData) {
+      const { status, imageUrl, text, metadata } = responseData;
+
+      if (status === "success" && imageUrl) {
+        // 创建图片数据对象
+        const imageData = {
+          id: this.generateId(),
+          imageUrl,
+          thumbnailUrl: responseData.thumbnailUrl || imageUrl,
+          prompt: responseData.prompt || text,
+          timestamp: Date.now(),
+          size: metadata?.dimensions
+            ? `${metadata.dimensions.width}x${metadata.dimensions.height}`
+            : "512x512",
+          mode: this.currentMode,
+          metadata,
+        };
+
+        // 显示图片
+        this.displayImage(imageData);
+
+        // 添加到历史
+        this.addToHistory(imageData);
+
+        console.log("✅ AI响应处理完成:", imageData);
+      } else if (status === "error") {
+        console.error("❌ AI生成失败:", text);
+        this.hideCanvasLoading();
+        this.showToast(text || "生成失败，请重试");
+      }
+    }
+
+    // 显示图片
+    displayImage(imageData) {
+      const canvasEmpty = document.getElementById("canvas-empty");
+      const canvasImage = document.getElementById("canvas-image");
+      const currentImage = document.getElementById("current-image");
+      const imageDimensions = document.getElementById("image-dimensions");
+      const imageSize = document.getElementById("image-size");
+
+      if (canvasEmpty) canvasEmpty.style.display = "none";
+      if (canvasImage) canvasImage.style.display = "flex";
+
+      if (currentImage) {
+        currentImage.src = imageData.imageUrl;
+        currentImage.alt = imageData.prompt || "生成的图片";
+      }
+
+      if (imageDimensions) {
+        imageDimensions.textContent = imageData.size || "--";
+      }
+
+      if (imageSize) {
+        // 计算文件大小（模拟）
+        const sizeKB = Math.floor(Math.random() * 500 + 100);
+        imageSize.textContent = `${sizeKB}KB`;
+      }
+    }
+
+    // 添加到历史
+    addToHistory(imageData) {
+      window.dispatchEvent(
+        new CustomEvent("imageGenerated", {
+          detail: imageData,
+        })
+      );
+    }
+
+    // 使用历史图片
+    useHistoryImage(imageData) {
+      this.displayImage(imageData);
+
+      // 添加系统消息
+      if (window.chatManager) {
+        window.chatManager.addSystemMessage(
+          `已切换到图片: ${imageData.prompt}`
+        );
+      }
+    }
+
+    // 显示画布加载状态
+    showCanvasLoading() {
+      const canvasEmpty = document.getElementById("canvas-empty");
+      const canvasImage = document.getElementById("canvas-image");
+      const canvasLoading = document.getElementById("canvas-loading");
+
+      if (canvasEmpty) canvasEmpty.style.display = "none";
+      if (canvasImage) canvasImage.style.display = "none";
+      if (canvasLoading) canvasLoading.style.display = "flex";
+
+      // 重置进度
+      const progressFill = document.getElementById("loading-progress-fill");
+      const progressText = document.getElementById("loading-progress-text");
+      if (progressFill) progressFill.style.width = "0%";
+      if (progressText) progressText.textContent = "0%";
+    }
+
+    // 隐藏画布加载状态
+    hideCanvasLoading() {
+      const canvasLoading = document.getElementById("canvas-loading");
+      if (canvasLoading) canvasLoading.style.display = "none";
+    }
+
+    // 更新快捷建议
+    updateQuickSuggestions(mode) {
+      const suggestions = document.querySelector(".suggestions-list");
+      if (!suggestions) return;
+
+      const suggestionsByMode = {
+        generate: [
+          { text: "🐱 可爱小猫", prompt: "一只可爱的橙色小猫" },
+          { text: "🏞️ 风景画", prompt: "美丽的山水风景画" },
+          { text: "🏠 室内设计", prompt: "现代简约的室内设计" },
+          { text: "🎨 抽象艺术", prompt: "色彩丰富的抽象艺术作品" },
+        ],
+        modify: [
+          { text: "🌅 改变天空", prompt: "把天空改成夕阳色" },
+          { text: "🎨 改变颜色", prompt: "改变主体颜色" },
+          { text: "✨ 添加效果", prompt: "添加光影效果" },
+          { text: "🔄 改变风格", prompt: "改成卡通风格" },
+        ],
+        fusion: [
+          { text: "🌊 自然融合", prompt: "自然过渡，无缝融合" },
+          { text: "🎨 艺术融合", prompt: "创造艺术效果的融合" },
+          { text: "💫 梦幻效果", prompt: "营造梦幻的视觉效果" },
+          { text: "🔥 创意混合", prompt: "大胆的创意混合效果" },
+        ],
+      };
+
+      const modeSuggestions =
+        suggestionsByMode[mode] || suggestionsByMode.generate;
+
+      suggestions.innerHTML = "";
+      modeSuggestions.forEach((item) => {
+        const button = document.createElement("button");
+        button.className = "suggestion-tag";
+        button.textContent = item.text;
+        button.dataset.prompt = item.prompt;
+
+        button.addEventListener("click", () => {
+          const chatInput = document.getElementById("chat-input");
+          if (chatInput) {
+            chatInput.value = item.prompt;
+            chatInput.focus();
+          }
+        });
+
+        suggestions.appendChild(button);
+      });
+    }
+
+    // 初始化示例数据
+    initExampleData() {
+      // 延迟添加示例历史数据
+      setTimeout(() => {
+        const exampleHistory = [
+          {
+            id: "example-1",
+            imageUrl: "https://picsum.photos/seed/cat/512/512",
+            prompt: "一只可爱的橙色小猫坐在花园里",
+            timestamp: Date.now() - 3600000, // 1小时前
+            size: "512x512",
+            mode: "generate",
+          },
+          {
+            id: "example-2",
+            imageUrl: "https://picsum.photos/seed/landscape/512/512",
+            prompt: "美丽的山水风景画，水墨画风格",
+            timestamp: Date.now() - 7200000, // 2小时前
+            size: "512x512",
+            mode: "generate",
+          },
+        ];
+
+        // 添加示例历史
+        exampleHistory.forEach((item) => {
+          this.addToHistory(item);
+        });
+
+        // 显示第一张图片
+        this.displayImage(exampleHistory[0]);
+      }, 1000);
+    }
+
+    // 生成ID
+    generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    // 保存当前工作
+    saveCurrentWork() {
+      // 实现保存逻辑
+      console.log("保存当前工作");
+      this.hasUnsavedWork = false;
+
+      // 显示保存成功提示
+      this.showToast("工作已保存");
+    }
+
+    // 撤销操作
+    undo() {
+      if (this.historyIndex > 0) {
+        this.historyIndex--;
+        const previousState = this.history[this.historyIndex];
+        this.restoreState(previousState);
+        console.log("撤销操作");
+      }
+    }
+
+    // 重做操作
+    redo() {
+      if (this.historyIndex < this.history.length - 1) {
+        this.historyIndex++;
+        const nextState = this.history[this.historyIndex];
+        this.restoreState(nextState);
+        console.log("重做操作");
+      }
+    }
+
+    // 取消当前操作
+    cancelCurrentOperation() {
+      if (this.isProcessing) {
+        this.isProcessing = false;
+        this.hideCanvasLoading();
+        console.log("取消当前操作");
+
+        // 显示取消提示
+        this.showToast("操作已取消");
+      }
+    }
+
+    // 恢复状态
+    restoreState(state) {
+      // 实现状态恢复逻辑
+      console.log("恢复状态:", state);
+    }
+
+    // 显示提示消息
+    showToast(message) {
+      // 简单的提示实现
+      const toast = document.createElement("div");
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #2d1810;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        animation: slideInRight 0.3s ease-out;
+      `;
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = "slideOutRight 0.3s ease-in";
+        setTimeout(() => {
+          if (document.body.contains(toast)) {
+            document.body.removeChild(toast);
+          }
+        }, 300);
+      }, 2000);
+    }
+  }
+
+  // 初始化编辑器控制器
+  document.addEventListener("DOMContentLoaded", function () {
+    window.editorController = new EditorController();
+  });
+</script>

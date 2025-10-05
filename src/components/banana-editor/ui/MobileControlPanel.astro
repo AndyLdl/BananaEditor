@@ -1,0 +1,1262 @@
+---
+// MobileControlPanel.astro - 移动端专用控制面板
+// 提供触摸友好的编辑器控制界面
+
+export interface Props {
+  currentMode?: "generate" | "fusion";
+  isVisible?: boolean;
+  panelType?: "sidebar" | "properties" | "tools";
+}
+
+const {
+  currentMode = "generate",
+  isVisible = false,
+  panelType = "sidebar",
+} = Astro.props;
+---
+
+<div class={`mobile-control-panel ${panelType}-panel ${isVisible ? "visible" : ""}`} id={`mobile-${panelType}-panel`}>
+  <!-- 面板头部 -->
+  <div class="panel-header">
+    <div class="panel-title">
+      {panelType === "sidebar" && "工具面板"}
+      {panelType === "properties" && "参数设置"}
+      {panelType === "tools" && "编辑工具"}
+    </div>
+    <button class="panel-close" id={`close-${panelType}-panel`} aria-label="关闭面板">
+      <span class="close-icon">✕</span>
+    </button>
+  </div>
+
+  <!-- 面板内容 -->
+  <div class="panel-content">
+    {panelType === "sidebar" && (
+      <div class="sidebar-mobile-content">
+        <!-- 功能选择器 -->
+        <div class="mobile-section">
+          <h3 class="section-title">编辑模式</h3>
+          <div class="mode-selector-mobile">
+            <button class={`mode-btn-mobile ${currentMode === "generate" ? "active" : ""}`} data-mode="generate">
+              <div class="mode-icon-mobile">✨</div>
+              <div class="mode-info-mobile">
+                <span class="mode-name">AI生成</span>
+                <span class="mode-desc">从文字生成图片</span>
+              </div>
+            </button>
+            <button class={`mode-btn-mobile ${currentMode === "fusion" ? "active" : ""}`} data-mode="fusion">
+              <div class="mode-icon-mobile">🔄</div>
+              <div class="mode-info-mobile">
+                <span class="mode-name">图片融合</span>
+                <span class="mode-desc">智能融合两张图片</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- 快速操作 -->
+        <div class="mobile-section">
+          <h3 class="section-title">快速操作</h3>
+          <div class="quick-actions-mobile">
+            <button class="action-btn-mobile" id="mobile-upload">
+              <span class="action-icon">📁</span>
+              <span class="action-label">上传图片</span>
+            </button>
+            <button class="action-btn-mobile" id="mobile-prompts">
+              <span class="action-icon">📋</span>
+              <span class="action-label">提示词库</span>
+            </button>
+            <button class="action-btn-mobile" id="mobile-reset">
+              <span class="action-icon">🔄</span>
+              <span class="action-label">重置画布</span>
+            </button>
+            <button class="action-btn-mobile" id="mobile-help">
+              <span class="action-icon">❓</span>
+              <span class="action-label">帮助</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 历史记录 -->
+        <div class="mobile-section">
+          <h3 class="section-title">最近操作</h3>
+          <div class="history-mobile" id="mobile-history">
+            <div class="history-item-mobile">
+              <div class="history-preview-mobile"></div>
+              <div class="history-info-mobile">
+                <span class="history-action">AI生成</span>
+                <span class="history-time">刚刚</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {panelType === "properties" && (
+      <div class="properties-mobile-content">
+        <!-- 提示词输入 -->
+        <div class="mobile-section">
+          <h3 class="section-title">提示词</h3>
+          <div class="prompt-input-mobile">
+            <textarea
+              class="prompt-textarea-mobile"
+              id="mobile-prompt-textarea"
+              placeholder="描述你想要生成的图片..."
+              rows="4"
+            ></textarea>
+            <div class="prompt-actions-mobile">
+              <button class="prompt-btn-mobile optimize-btn-mobile">
+                <span class="btn-icon">🚀</span>
+                <span class="btn-label">优化</span>
+              </button>
+              <button class="prompt-btn-mobile clear-btn-mobile">
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-label">清空</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 参数设置 -->
+        <div class="mobile-section">
+          <h3 class="section-title">生成参数</h3>
+          <div class="parameters-mobile">
+            <div class="parameter-item-mobile">
+              <label class="parameter-label-mobile">
+                <span class="label-text">图片尺寸</span>
+                <select class="parameter-select-mobile" id="mobile-size-select">
+                  <option value="512x512">512×512</option>
+                  <option value="768x768">768×768</option>
+                  <option value="1024x1024" selected>1024×1024</option>
+                </select>
+              </label>
+            </div>
+            
+            <div class="parameter-item-mobile">
+              <label class="parameter-label-mobile">
+                <span class="label-text">生成质量</span>
+                <select class="parameter-select-mobile" id="mobile-quality-select">
+                  <option value="standard">标准</option>
+                  <option value="high" selected>高质量</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="parameter-item-mobile">
+              <label class="parameter-label-mobile">
+                <span class="label-text">风格强度</span>
+                <input 
+                  type="range" 
+                  class="parameter-range-mobile" 
+                  id="mobile-style-strength"
+                  min="0" 
+                  max="100" 
+                  value="50"
+                />
+                <span class="range-value" id="style-strength-value">50%</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="mobile-section">
+          <div class="action-buttons-mobile">
+            <button class="primary-btn-mobile" id="mobile-generate-btn">
+              <span class="btn-icon">✨</span>
+              <span class="btn-label">开始生成</span>
+            </button>
+            <button class="secondary-btn-mobile" id="mobile-save-settings">
+              <span class="btn-icon">💾</span>
+              <span class="btn-label">保存设置</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {panelType === "tools" && (
+      <div class="tools-mobile-content">
+        <!-- 画布工具 -->
+        <div class="mobile-section">
+          <h3 class="section-title">画布工具</h3>
+          <div class="canvas-tools-mobile">
+            <div class="tool-group-mobile">
+              <span class="tool-group-label">缩放</span>
+              <div class="zoom-controls-mobile">
+                <button class="tool-btn-mobile" id="mobile-zoom-out">
+                  <span class="tool-icon">-</span>
+                </button>
+                <span class="zoom-display-mobile" id="mobile-zoom-display">100%</span>
+                <button class="tool-btn-mobile" id="mobile-zoom-in">
+                  <span class="tool-icon">+</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="tool-group-mobile">
+              <span class="tool-group-label">视图</span>
+              <div class="view-controls-mobile">
+                <button class="tool-btn-mobile" id="mobile-fit-window">
+                  <span class="tool-icon">⊞</span>
+                  <span class="tool-label">适应</span>
+                </button>
+                <button class="tool-btn-mobile" id="mobile-actual-size">
+                  <span class="tool-icon">1:1</span>
+                  <span class="tool-label">实际</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="tool-group-mobile">
+              <span class="tool-group-label">操作</span>
+              <div class="action-controls-mobile">
+                <button class="tool-btn-mobile" id="mobile-undo">
+                  <span class="tool-icon">↶</span>
+                  <span class="tool-label">撤销</span>
+                </button>
+                <button class="tool-btn-mobile" id="mobile-redo">
+                  <span class="tool-icon">↷</span>
+                  <span class="tool-label">重做</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 导出选项 -->
+        <div class="mobile-section">
+          <h3 class="section-title">导出</h3>
+          <div class="export-options-mobile">
+            <button class="export-btn-mobile" data-format="png">
+              <span class="export-icon">🖼️</span>
+              <div class="export-info">
+                <span class="export-format">PNG</span>
+                <span class="export-desc">高质量透明背景</span>
+              </div>
+            </button>
+            <button class="export-btn-mobile" data-format="jpg">
+              <span class="export-icon">📷</span>
+              <div class="export-info">
+                <span class="export-format">JPG</span>
+                <span class="export-desc">标准图片格式</span>
+              </div>
+            </button>
+            <button class="export-btn-mobile" data-format="webp">
+              <span class="export-icon">🌐</span>
+              <div class="export-info">
+                <span class="export-format">WebP</span>
+                <span class="export-desc">现代压缩格式</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <!-- 面板底部 -->
+  <div class="panel-footer">
+    <div class="panel-drag-handle"></div>
+  </div>
+</div>
+
+<style>
+  /* 移动端控制面板基础样式 */
+  .mobile-control-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-control-panel.visible {
+    transform: translateY(0);
+  }
+
+  /* 面板头部 */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .panel-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .panel-close:hover {
+    background: #e5e5e5;
+  }
+
+  .close-icon {
+    font-size: 16px;
+    color: #666;
+  }
+
+  /* 面板内容 */
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 20px;
+  }
+
+  .mobile-section {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* 模式选择器 */
+  .mode-selector-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mode-btn-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .mode-btn-mobile.active {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .mode-btn-mobile:active {
+    transform: scale(0.98);
+  }
+
+  .mode-icon-mobile {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--banana-light, #fff8dc);
+    border-radius: 12px;
+  }
+
+  .mode-info-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mode-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .mode-desc {
+    font-size: 14px;
+    color: #666;
+  }
+
+  /* 快速操作 */
+  .quick-actions-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .action-btn-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .action-btn-mobile:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 215, 0, 0.05);
+  }
+
+  .action-btn-mobile:active {
+    transform: scale(0.95);
+  }
+
+  .action-icon {
+    font-size: 24px;
+  }
+
+  .action-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  /* 历史记录 */
+  .history-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .history-item-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .history-item-mobile:hover {
+    background: rgba(255, 215, 0, 0.05);
+  }
+
+  .history-preview-mobile {
+    width: 40px;
+    height: 40px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .history-info-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .history-action {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .history-time {
+    font-size: 12px;
+    color: #666;
+  }
+
+  /* 提示词输入 */
+  .prompt-input-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .prompt-textarea-mobile {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: border-color 0.2s ease;
+    min-height: 100px;
+  }
+
+  .prompt-textarea-mobile:focus {
+    border-color: var(--banana-primary, #ffd700);
+    outline: none;
+  }
+
+  .prompt-actions-mobile {
+    display: flex;
+    gap: 8px;
+  }
+
+  .prompt-btn-mobile {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    border: 1px solid var(--banana-primary, #ffd700);
+    background: transparent;
+    color: var(--banana-dark, #2d1810);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .optimize-btn-mobile {
+    background: var(--banana-gradient, linear-gradient(135deg, #ffd700 0%, #ffa500 100%));
+  }
+
+  .prompt-btn-mobile:hover {
+    background: var(--banana-primary, #ffd700);
+  }
+
+  .prompt-btn-mobile:active {
+    transform: scale(0.98);
+  }
+
+  /* 参数设置 */
+  .parameters-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .parameter-item-mobile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .parameter-label-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .label-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .parameter-select-mobile {
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+
+  .parameter-select-mobile:focus {
+    border-color: var(--banana-primary, #ffd700);
+    outline: none;
+  }
+
+  .parameter-range-mobile {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #e0e0e0;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .parameter-range-mobile::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--banana-primary, #ffd700);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .parameter-range-mobile::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--banana-primary, #ffd700);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .range-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* 操作按钮 */
+  .action-buttons-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .primary-btn-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border: none;
+    background: var(--banana-gradient, linear-gradient(135deg, #ffd700 0%, #ffa500 100%));
+    color: var(--banana-dark, #2d1810);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  }
+
+  .primary-btn-mobile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+  }
+
+  .primary-btn-mobile:active {
+    transform: translateY(0);
+  }
+
+  .secondary-btn-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border: 2px solid var(--banana-primary, #ffd700);
+    background: transparent;
+    color: var(--banana-dark, #2d1810);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .secondary-btn-mobile:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .secondary-btn-mobile:active {
+    transform: scale(0.98);
+  }
+
+  /* 画布工具 */
+  .canvas-tools-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tool-group-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .tool-group-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  .zoom-controls-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .tool-btn-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 48px;
+  }
+
+  .tool-btn-mobile:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .tool-btn-mobile:active {
+    transform: scale(0.95);
+  }
+
+  .zoom-display-mobile {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .view-controls-mobile,
+  .action-controls-mobile {
+    display: flex;
+    gap: 8px;
+  }
+
+  .tool-icon {
+    font-size: 16px;
+  }
+
+  .tool-label {
+    font-size: 12px;
+  }
+
+  /* 导出选项 */
+  .export-options-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .export-btn-mobile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .export-btn-mobile:hover {
+    border-color: var(--banana-primary, #ffd700);
+    background: rgba(255, 215, 0, 0.05);
+  }
+
+  .export-btn-mobile:active {
+    transform: scale(0.98);
+  }
+
+  .export-icon {
+    font-size: 24px;
+    width: 40px;
+    text-align: center;
+  }
+
+  .export-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .export-format {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .export-desc {
+    font-size: 14px;
+    color: #666;
+  }
+
+  /* 面板底部 */
+  .panel-footer {
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    border-top: 1px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .panel-drag-handle {
+    width: 40px;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+  }
+
+  /* 滚动条样式 */
+  .panel-content::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .panel-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+
+  .panel-content::-webkit-scrollbar-thumb {
+    background: var(--banana-secondary, #ffa500);
+    border-radius: 2px;
+  }
+
+  .panel-content::-webkit-scrollbar-thumb:hover {
+    background: var(--banana-primary, #ffd700);
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 480px) {
+    .panel-header {
+      padding: 12px 16px 8px;
+    }
+
+    .panel-content {
+      padding: 0 16px 16px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+    }
+
+    .quick-actions-mobile {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .action-btn-mobile {
+      padding: 12px 8px;
+    }
+
+    .action-label {
+      font-size: 12px;
+    }
+  }
+
+  /* 高对比度模式 */
+  @media (prefers-contrast: high) {
+    .mobile-control-panel {
+      border: 2px solid #000;
+    }
+
+    .mode-btn-mobile.active {
+      border-color: #000;
+      background: #fff;
+    }
+
+    .primary-btn-mobile {
+      background: #000;
+      color: #fff;
+    }
+  }
+
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-control-panel {
+      transition: none;
+    }
+
+    .mode-btn-mobile,
+    .action-btn-mobile,
+    .tool-btn-mobile,
+    .export-btn-mobile {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // 移动端控制面板交互逻辑
+  class MobileControlPanel {
+    private panel: HTMLElement | null = null;
+    private closeButton: HTMLElement | null = null;
+    private panelType: string = '';
+    private isVisible: boolean = false;
+
+    constructor(panelType: string) {
+      this.panelType = panelType;
+      this.init();
+    }
+
+    private init(): void {
+      this.panel = document.getElementById(`mobile-${this.panelType}-panel`);
+      this.closeButton = document.getElementById(`close-${this.panelType}-panel`);
+      
+      this.setupEventListeners();
+    }
+
+    private setupEventListeners(): void {
+      // 关闭按钮
+      this.closeButton?.addEventListener('click', () => {
+        this.hide();
+      });
+
+      // 拖拽手势关闭
+      this.setupDragToClose();
+
+      // 根据面板类型设置特定事件
+      if (this.panelType === 'sidebar') {
+        this.setupSidebarEvents();
+      } else if (this.panelType === 'properties') {
+        this.setupPropertiesEvents();
+      } else if (this.panelType === 'tools') {
+        this.setupToolsEvents();
+      }
+
+      // 监听全局事件
+      document.addEventListener(`show-mobile-${this.panelType}`, () => {
+        this.show();
+      });
+
+      document.addEventListener(`hide-mobile-${this.panelType}`, () => {
+        this.hide();
+      });
+    }
+
+    private setupDragToClose(): void {
+      if (!this.panel) return;
+
+      let startY = 0;
+      let currentY = 0;
+      let isDragging = false;
+
+      const dragHandle = this.panel.querySelector('.panel-drag-handle');
+      
+      const handleStart = (e: TouchEvent | MouseEvent) => {
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        startY = clientY;
+        isDragging = true;
+        this.panel!.style.transition = 'none';
+      };
+
+      const handleMove = (e: TouchEvent | MouseEvent) => {
+        if (!isDragging) return;
+        
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        currentY = clientY - startY;
+        
+        if (currentY > 0) {
+          this.panel!.style.transform = `translateY(${currentY}px)`;
+        }
+      };
+
+      const handleEnd = () => {
+        if (!isDragging) return;
+        
+        isDragging = false;
+        this.panel!.style.transition = '';
+        
+        if (currentY > 100) {
+          this.hide();
+        } else {
+          this.panel!.style.transform = 'translateY(0)';
+        }
+        
+        currentY = 0;
+      };
+
+      // 触摸事件
+      dragHandle?.addEventListener('touchstart', handleStart, { passive: true });
+      document.addEventListener('touchmove', handleMove, { passive: true });
+      document.addEventListener('touchend', handleEnd, { passive: true });
+
+      // 鼠标事件
+      dragHandle?.addEventListener('mousedown', handleStart);
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleEnd);
+    }
+
+    private setupSidebarEvents(): void {
+      // 模式切换
+      const modeButtons = this.panel?.querySelectorAll('.mode-btn-mobile');
+      modeButtons?.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const mode = target.dataset.mode;
+          
+          modeButtons.forEach(btn => btn.classList.remove('active'));
+          target.classList.add('active');
+          
+          document.dispatchEvent(new CustomEvent('editor:mode-change', {
+            detail: { mode }
+          }));
+        });
+      });
+
+      // 快速操作
+      const uploadBtn = document.getElementById('mobile-upload');
+      const promptsBtn = document.getElementById('mobile-prompts');
+      const resetBtn = document.getElementById('mobile-reset');
+      const helpBtn = document.getElementById('mobile-help');
+
+      uploadBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:upload-image'));
+        this.hide();
+      });
+
+      promptsBtn?.addEventListener('click', () => {
+        window.open('/prompts', '_blank');
+      });
+
+      resetBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:reset-canvas'));
+        this.hide();
+      });
+
+      helpBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:show-help'));
+        this.hide();
+      });
+    }
+
+    private setupPropertiesEvents(): void {
+      // 提示词优化
+      const optimizeBtn = this.panel?.querySelector('.optimize-btn-mobile');
+      optimizeBtn?.addEventListener('click', () => {
+        const textarea = document.getElementById('mobile-prompt-textarea') as HTMLTextAreaElement;
+        if (textarea?.value.trim()) {
+          document.dispatchEvent(new CustomEvent('editor:optimize-prompt', {
+            detail: { prompt: textarea.value }
+          }));
+        }
+      });
+
+      // 清空提示词
+      const clearBtn = this.panel?.querySelector('.clear-btn-mobile');
+      clearBtn?.addEventListener('click', () => {
+        const textarea = document.getElementById('mobile-prompt-textarea') as HTMLTextAreaElement;
+        if (textarea) {
+          textarea.value = '';
+          textarea.focus();
+        }
+      });
+
+      // 参数变化
+      const sizeSelect = document.getElementById('mobile-size-select');
+      const qualitySelect = document.getElementById('mobile-quality-select');
+      const styleRange = document.getElementById('mobile-style-strength') as HTMLInputElement;
+      const styleValue = document.getElementById('style-strength-value');
+
+      sizeSelect?.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        document.dispatchEvent(new CustomEvent('editor:size-change', {
+          detail: { size: target.value }
+        }));
+      });
+
+      qualitySelect?.addEventListener('change', (e) => {
+        const target = e.target as HTMLSelectElement;
+        document.dispatchEvent(new CustomEvent('editor:quality-change', {
+          detail: { quality: target.value }
+        }));
+      });
+
+      styleRange?.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        const value = target.value;
+        if (styleValue) {
+          styleValue.textContent = `${value}%`;
+        }
+        document.dispatchEvent(new CustomEvent('editor:style-strength-change', {
+          detail: { strength: parseInt(value) }
+        }));
+      });
+
+      // 生成按钮
+      const generateBtn = document.getElementById('mobile-generate-btn');
+      generateBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:start-generate'));
+        this.hide();
+      });
+
+      // 保存设置
+      const saveBtn = document.getElementById('mobile-save-settings');
+      saveBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:save-settings'));
+      });
+    }
+
+    private setupToolsEvents(): void {
+      // 缩放控制
+      const zoomIn = document.getElementById('mobile-zoom-in');
+      const zoomOut = document.getElementById('mobile-zoom-out');
+      
+      zoomIn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:zoom-in'));
+      });
+
+      zoomOut?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:zoom-out'));
+      });
+
+      // 视图控制
+      const fitWindow = document.getElementById('mobile-fit-window');
+      const actualSize = document.getElementById('mobile-actual-size');
+
+      fitWindow?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:fit-window'));
+      });
+
+      actualSize?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:actual-size'));
+      });
+
+      // 操作控制
+      const undoBtn = document.getElementById('mobile-undo');
+      const redoBtn = document.getElementById('mobile-redo');
+
+      undoBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:undo'));
+      });
+
+      redoBtn?.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('editor:redo'));
+      });
+
+      // 导出选项
+      const exportButtons = this.panel?.querySelectorAll('.export-btn-mobile');
+      exportButtons?.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const format = target.dataset.format;
+          
+          document.dispatchEvent(new CustomEvent('editor:export-image', {
+            detail: { format }
+          }));
+          
+          this.hide();
+        });
+      });
+    }
+
+    // 公共方法
+    public show(): void {
+      if (this.panel && !this.isVisible) {
+        this.panel.classList.add('visible');
+        this.isVisible = true;
+        
+        // 隐藏其他面板
+        document.dispatchEvent(new CustomEvent('hide-other-mobile-panels', {
+          detail: { except: this.panelType }
+        }));
+        
+        // 添加背景遮罩
+        this.addOverlay();
+      }
+    }
+
+    public hide(): void {
+      if (this.panel && this.isVisible) {
+        this.panel.classList.remove('visible');
+        this.isVisible = false;
+        this.removeOverlay();
+      }
+    }
+
+    public toggle(): void {
+      if (this.isVisible) {
+        this.hide();
+      } else {
+        this.show();
+      }
+    }
+
+    private addOverlay(): void {
+      const existingOverlay = document.querySelector('.mobile-panel-overlay');
+      if (existingOverlay) return;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'mobile-panel-overlay';
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      `;
+
+      document.body.appendChild(overlay);
+
+      // 点击遮罩关闭面板
+      overlay.addEventListener('click', () => {
+        this.hide();
+      });
+
+      // 动画显示
+      requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+      });
+    }
+
+    private removeOverlay(): void {
+      const overlay = document.querySelector('.mobile-panel-overlay');
+      if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.remove();
+        }, 300);
+      }
+    }
+  }
+
+  // 初始化移动端控制面板
+  document.addEventListener('DOMContentLoaded', () => {
+    const sidebarPanel = new MobileControlPanel('sidebar');
+    const propertiesPanel = new MobileControlPanel('properties');
+    const toolsPanel = new MobileControlPanel('tools');
+
+    // 监听隐藏其他面板事件
+    document.addEventListener('hide-other-mobile-panels', (e: any) => {
+      const except = e.detail.except;
+      
+      if (except !== 'sidebar') sidebarPanel.hide();
+      if (except !== 'properties') propertiesPanel.hide();
+      if (except !== 'tools') toolsPanel.hide();
+    });
+
+    // 导出到全局作用域
+    (window as any).MobileControlPanels = {
+      sidebar: sidebarPanel,
+      properties: propertiesPanel,
+      tools: toolsPanel
+    };
+  });
+</script>

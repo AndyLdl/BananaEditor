@@ -1,0 +1,595 @@
+---
+// 操作状态指示器组件
+// 显示当前正在进行的操作状态和进度
+---
+
+<div id="operation-status-container" class="operation-status-container">
+  <!-- 操作状态将通过JavaScript动态添加到这里 -->
+</div>
+
+<style>
+  .operation-status-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9998;
+    max-width: 350px;
+    pointer-events: none;
+  }
+
+  .operation-status {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    margin-bottom: 12px;
+    pointer-events: auto;
+    transform: translateY(100%);
+    transition: all 0.3s ease-in-out;
+    border-left: 4px solid #e5e7eb;
+  }
+
+  .operation-status.show {
+    transform: translateY(0);
+  }
+
+  .operation-status.hide {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  /* 操作状态类型样式 */
+  .operation-status.pending {
+    border-left-color: #f59e0b;
+    background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+  }
+
+  .operation-status.processing {
+    border-left-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+  }
+
+  .operation-status.success {
+    border-left-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  }
+
+  .operation-status.error {
+    border-left-color: #ef4444;
+    background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
+  }
+
+  .operation-status.cancelled {
+    border-left-color: #6b7280;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  }
+
+  /* 操作头部 */
+  .operation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .operation-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .operation-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .operation-time {
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  /* 操作消息 */
+  .operation-message {
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  /* 进度条 */
+  .operation-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .operation-progress-bar {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    position: relative;
+  }
+
+  .operation-progress-bar.indeterminate {
+    width: 30% !important;
+    animation: indeterminate 2s infinite linear;
+  }
+
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
+  }
+
+  /* 进度文本 */
+  .operation-progress-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  /* 操作按钮 */
+  .operation-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .operation-action {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .operation-action.cancel {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+  }
+
+  .operation-action.cancel:hover {
+    background: #e5e7eb;
+  }
+
+  .operation-action.retry {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .operation-action.retry:hover {
+    background: #2563eb;
+  }
+
+  /* 加载动画 */
+  .loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 状态图标 */
+  .status-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 640px) {
+    .operation-status-container {
+      bottom: 10px;
+      right: 10px;
+      left: 10px;
+      max-width: none;
+    }
+
+    .operation-status {
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .operation-title {
+      font-size: 13px;
+    }
+
+    .operation-message {
+      font-size: 12px;
+    }
+  }
+
+  /* 暗色主题支持 */
+  @media (prefers-color-scheme: dark) {
+    .operation-status {
+      background: #1f2937;
+      color: #f9fafb;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .operation-status.pending {
+      background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    }
+
+    .operation-status.processing {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    }
+
+    .operation-status.success {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    }
+
+    .operation-status.error {
+      background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    }
+
+    .operation-status.cancelled {
+      background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    }
+
+    .operation-title {
+      color: #f9fafb;
+    }
+
+    .operation-message {
+      color: #d1d5db;
+    }
+
+    .operation-time {
+      color: #9ca3af;
+    }
+
+    .operation-progress-text {
+      color: #9ca3af;
+    }
+
+    .operation-action.cancel {
+      background: #374151;
+      color: #f9fafb;
+      border-color: #4b5563;
+    }
+
+    .operation-action.cancel:hover {
+      background: #4b5563;
+    }
+  }
+</style>
+
+<script>
+  // 操作状态管理器
+  class OperationStatusManager {
+    private container: HTMLElement;
+    private operations = new Map<string, HTMLElement>();
+
+    constructor() {
+      this.container = document.getElementById("operation-status-container")!;
+      this.initializeGlobalHandler();
+    }
+
+    // 初始化全局错误处理器集成
+    private initializeGlobalHandler(): void {
+      // 暂时禁用全局错误处理器集成，直到解决导入问题
+      console.log(
+        "OperationStatusManager initialized with basic functionality",
+      );
+    }
+
+    // 更新操作状态
+    updateOperationStatus(status: any): void {
+      const existingElement = this.operations.get(status.id);
+
+      if (
+        status.status === "success" ||
+        status.status === "error" ||
+        status.status === "cancelled"
+      ) {
+        // 操作完成，显示短暂的结果然后移除
+        if (existingElement) {
+          this.updateElement(existingElement, status);
+          setTimeout(() => {
+            this.removeOperation(status.id);
+          }, 3000);
+        }
+      } else {
+        // 操作进行中，创建或更新元素
+        if (existingElement) {
+          this.updateElement(existingElement, status);
+        } else {
+          this.createOperation(status);
+        }
+      }
+    }
+
+    // 创建操作元素
+    private createOperation(status: any): void {
+      const element = this.createOperationElement(status);
+      this.container.appendChild(element);
+      this.operations.set(status.id, element);
+
+      // 触发显示动画
+      requestAnimationFrame(() => {
+        element.classList.add("show");
+      });
+    }
+
+    // 创建操作元素
+    private createOperationElement(status: any): HTMLElement {
+      const element = document.createElement("div");
+      element.className = `operation-status ${status.status}`;
+      element.setAttribute("data-id", status.id);
+
+      this.updateElement(element, status);
+      return element;
+    }
+
+    // 更新元素内容
+    private updateElement(element: HTMLElement, status: any): void {
+      // 更新状态类
+      element.className = `operation-status ${status.status} show`;
+
+      // 计算经过时间
+      const elapsed = status.endTime
+        ? new Date(status.endTime).getTime() -
+          new Date(status.startTime).getTime()
+        : Date.now() - new Date(status.startTime).getTime();
+      const elapsedText = this.formatDuration(elapsed);
+
+      // 创建图标
+      const icon = this.createStatusIcon(status.status, status.type);
+
+      // 创建进度条
+      const progressBar = this.createProgressBar(status);
+
+      // 创建操作按钮
+      const actions = this.createActions(status);
+
+      element.innerHTML = `
+        <div class="operation-header">
+          <div class="operation-title">
+            ${icon}
+            ${this.getOperationTitle(status.type)}
+          </div>
+          <div class="operation-time">${elapsedText}</div>
+        </div>
+        <div class="operation-message">${status.message || this.getDefaultMessage(status.status)}</div>
+        ${progressBar}
+        ${actions}
+      `;
+
+      // 绑定操作按钮事件
+      this.bindActionEvents(element, status);
+    }
+
+    // 创建状态图标
+    private createStatusIcon(status: string, type: string): string {
+      const icons = {
+        pending: `<div class="loading-spinner"></div>`,
+        processing: `<div class="loading-spinner"></div>`,
+        success: `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>`,
+        error: `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        </svg>`,
+        cancelled: `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>`,
+      };
+
+      return icons[status as keyof typeof icons] || icons.processing;
+    }
+
+    // 创建进度条
+    private createProgressBar(status: any): string {
+      if (
+        status.status === "success" ||
+        status.status === "error" ||
+        status.status === "cancelled"
+      ) {
+        return "";
+      }
+
+      const progress = status.progress || 0;
+      const isIndeterminate = progress === 0 || status.status === "pending";
+
+      return `
+        <div class="operation-progress">
+          <div class="operation-progress-bar ${isIndeterminate ? "indeterminate" : ""}" 
+               style="width: ${isIndeterminate ? "30%" : progress + "%"}"></div>
+        </div>
+        <div class="operation-progress-text">
+          <span>进度</span>
+          <span>${isIndeterminate ? "处理中..." : progress + "%"}</span>
+        </div>
+      `;
+    }
+
+    // 创建操作按钮
+    private createActions(status: any): string {
+      const actions = [];
+
+      if (status.status === "processing" || status.status === "pending") {
+        actions.push(
+          `<button class="operation-action cancel" data-action="cancel">取消</button>`,
+        );
+      }
+
+      if (status.status === "error") {
+        actions.push(
+          `<button class="operation-action retry" data-action="retry">重试</button>`,
+        );
+      }
+
+      return actions.length > 0
+        ? `<div class="operation-actions">${actions.join("")}</div>`
+        : "";
+    }
+
+    // 绑定操作按钮事件
+    private bindActionEvents(element: HTMLElement, status: any): void {
+      const cancelBtn = element.querySelector(
+        '[data-action="cancel"]',
+      ) as HTMLElement;
+      const retryBtn = element.querySelector(
+        '[data-action="retry"]',
+      ) as HTMLElement;
+
+      if (cancelBtn) {
+        cancelBtn.onclick = () => {
+          this.cancelOperation(status.id);
+        };
+      }
+
+      if (retryBtn) {
+        retryBtn.onclick = () => {
+          this.retryOperation(status.id);
+        };
+      }
+    }
+
+    // 取消操作
+    private cancelOperation(operationId: string): void {
+      // 这里应该调用实际的取消逻辑
+      console.log("Cancelling operation:", operationId);
+
+      // 更新状态为已取消
+      const element = this.operations.get(operationId);
+      if (element) {
+        const cancelledStatus = {
+          id: operationId,
+          status: "cancelled",
+          message: "操作已取消",
+          type: "other",
+        };
+        this.updateElement(element, cancelledStatus);
+
+        setTimeout(() => {
+          this.removeOperation(operationId);
+        }, 2000);
+      }
+    }
+
+    // 重试操作
+    private retryOperation(operationId: string): void {
+      // 这里应该调用实际的重试逻辑
+      console.log("Retrying operation:", operationId);
+
+      // 移除当前状态，重试将创建新的操作状态
+      this.removeOperation(operationId);
+    }
+
+    // 获取操作标题
+    private getOperationTitle(type: string): string {
+      const titles = {
+        generate: "AI图片生成",
+        fusion: "图片融合",
+        optimize: "提示词优化",
+        upload: "文件上传",
+        other: "处理中",
+      };
+      return titles[type as keyof typeof titles] || "操作";
+    }
+
+    // 获取默认消息
+    private getDefaultMessage(status: string): string {
+      const messages = {
+        pending: "正在准备...",
+        processing: "正在处理，请稍候...",
+        success: "操作成功完成",
+        error: "操作失败",
+        cancelled: "操作已取消",
+      };
+      return messages[status as keyof typeof messages] || "处理中...";
+    }
+
+    // 格式化持续时间
+    private formatDuration(ms: number): string {
+      const seconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(seconds / 60);
+
+      if (minutes > 0) {
+        return `${minutes}分${seconds % 60}秒`;
+      } else {
+        return `${seconds}秒`;
+      }
+    }
+
+    // 移除操作
+    removeOperation(operationId: string): void {
+      const element = this.operations.get(operationId);
+      if (element) {
+        element.classList.add("hide");
+
+        setTimeout(() => {
+          if (element.parentNode) {
+            element.parentNode.removeChild(element);
+          }
+          this.operations.delete(operationId);
+        }, 300);
+      }
+    }
+
+    // 清除所有操作
+    clearAll(): void {
+      this.operations.forEach((_, id) => {
+        this.removeOperation(id);
+      });
+    }
+
+    // 获取活动操作数量
+    getActiveCount(): number {
+      return this.operations.size;
+    }
+  }
+
+  // 初始化操作状态管理器
+  let operationStatusManager: OperationStatusManager;
+
+  // 等待DOM加载完成
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      operationStatusManager = new OperationStatusManager();
+    });
+  } else {
+    operationStatusManager = new OperationStatusManager();
+  }
+
+  // 导出全局函数
+  (window as any).showOperationStatus = (status: any) => {
+    if (operationStatusManager) {
+      operationStatusManager.updateOperationStatus(status);
+    }
+  };
+
+  (window as any).removeOperationStatus = (id: string) => {
+    if (operationStatusManager) {
+      operationStatusManager.removeOperation(id);
+    }
+  };
+</script>

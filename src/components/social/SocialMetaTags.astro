@@ -1,0 +1,416 @@
+---
+/**
+ * 社交媒体Meta标签组件
+ * 优化Open Graph和Twitter Card标签
+ */
+
+import { baseSEOConfig } from "../../config/seo";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  url?: string;
+  type?: "website" | "article" | "product" | "profile";
+  siteName?: string;
+  locale?: string;
+
+  // Twitter特定属性
+  twitterCard?: "summary" | "summary_large_image" | "app" | "player";
+  twitterSite?: string;
+  twitterCreator?: string;
+
+  // 文章特定属性
+  publishedTime?: string;
+  modifiedTime?: string;
+  expirationTime?: string;
+  author?: string;
+  section?: string;
+  tags?: string[];
+
+  // 产品特定属性（用于AI生成的作品）
+  price?: string;
+  currency?: string;
+  availability?: string;
+
+  // 自定义属性
+  customMeta?: Array<{
+    property?: string;
+    name?: string;
+    content: string;
+  }>;
+}
+
+const {
+  title = "",
+  description = "",
+  image = "",
+  imageAlt = "",
+  url = "",
+  type = "website",
+  siteName = baseSEOConfig.siteName,
+  locale = "en_US",
+
+  twitterCard = "summary_large_image",
+  twitterSite = baseSEOConfig.twitterHandle,
+  twitterCreator = baseSEOConfig.twitterHandle,
+
+  publishedTime,
+  modifiedTime,
+  expirationTime,
+  author,
+  section,
+  tags = [],
+
+  price,
+  currency,
+  availability,
+
+  customMeta = [],
+} = Astro.props;
+
+// 构建完整的URL和图片URL
+const fullUrl = url || Astro.url.href;
+const fullImageUrl = image
+  ? image.startsWith("http")
+    ? image
+    : `${baseSEOConfig.siteUrl}${image}`
+  : `${baseSEOConfig.siteUrl}${baseSEOConfig.defaultImage}`;
+const finalImageAlt = imageAlt || `${title} - ${siteName}`;
+
+// 优化描述长度
+const optimizedDescription =
+  description.length > 160
+    ? description.substring(0, 157) + "..."
+    : description;
+
+// 生成关键词标签
+const keywordTags = [
+  "nano banana",
+  "nano banana ai",
+  "banana ai",
+  "ai image editor",
+  ...tags,
+].slice(0, 10); // 限制标签数量
+---
+
+<!-- Open Graph 基础标签 -->
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={optimizedDescription} />
+<meta property="og:image" content={fullImageUrl} />
+<meta property="og:image:alt" content={finalImageAlt} />
+<meta property="og:url" content={fullUrl} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content={locale} />
+
+<!-- 图片详细信息 -->
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<!-- 网站信息 -->
+{
+  type === "website" && (
+    <>
+      <meta property="og:determiner" content="the" />
+      <meta property="og:rich_attachment" content="true" />
+    </>
+  )
+}
+
+<!-- 文章特定标签 -->
+{
+  type === "article" && (
+    <>
+      {publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {expirationTime && (
+        <meta property="article:expiration_time" content={expirationTime} />
+      )}
+      {author && <meta property="article:author" content={author} />}
+      {section && <meta property="article:section" content={section} />}
+      {tags.map((tag) => (
+        <meta property="article:tag" content={tag} />
+      ))}
+    </>
+  )
+}
+
+<!-- 产品特定标签（用于AI作品） -->
+{
+  type === "product" && (
+    <>
+      {price && <meta property="product:price:amount" content={price} />}
+      {currency && (
+        <meta property="product:price:currency" content={currency} />
+      )}
+      {availability && (
+        <meta property="product:availability" content={availability} />
+      )}
+      <meta property="product:condition" content="new" />
+      <meta property="product:category" content="AI Generated Art" />
+    </>
+  )
+}
+
+<!-- Twitter Card 标签 -->
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:site" content={twitterSite} />
+<meta name="twitter:creator" content={twitterCreator} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={optimizedDescription} />
+<meta name="twitter:image" content={fullImageUrl} />
+<meta name="twitter:image:alt" content={finalImageAlt} />
+
+<!-- Twitter特定增强 -->
+{
+  twitterCard === "summary_large_image" && (
+    <>
+      <meta name="twitter:image:width" content="1200" />
+      <meta name="twitter:image:height" content="630" />
+    </>
+  )
+}
+
+<!-- 应用特定Twitter标签 -->
+<meta name="twitter:app:name:iphone" content="BananaEditor" />
+<meta name="twitter:app:name:ipad" content="BananaEditor" />
+<meta name="twitter:app:name:googleplay" content="BananaEditor" />
+<meta name="twitter:app:url:iphone" content={fullUrl} />
+<meta name="twitter:app:url:ipad" content={fullUrl} />
+<meta name="twitter:app:url:googleplay" content={fullUrl} />
+
+<!-- Facebook特定标签 -->
+<meta property="fb:app_id" content="your-facebook-app-id" />
+<meta property="fb:pages" content="your-facebook-page-id" />
+
+<!-- LinkedIn特定标签 -->
+<meta property="og:image:secure_url" content={fullImageUrl} />
+
+<!-- Pinterest特定标签 -->
+<meta name="pinterest-rich-pin" content="true" />
+<meta property="og:see_also" content={`${baseSEOConfig.siteUrl}/prompts`} />
+
+<!-- WhatsApp特定标签 -->
+<meta property="og:image:type" content="image/jpeg" />
+
+<!-- 通用社交媒体标签 -->
+<meta name="theme-color" content="#F59E0B" />
+<meta name="msapplication-TileColor" content="#F59E0B" />
+
+<!-- 搜索引擎社交信号 -->
+<meta
+  name="robots"
+  content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+/>
+
+<!-- 地理位置标签（如果适用） -->
+<meta property="og:latitude" content="37.7749" />
+<meta property="og:longitude" content="-122.4194" />
+<meta property="og:street-address" content="" />
+<meta property="og:locality" content="San Francisco" />
+<meta property="og:region" content="CA" />
+<meta property="og:postal-code" content="94102" />
+<meta property="og:country-name" content="USA" />
+
+<!-- 联系信息 -->
+<meta property="og:email" content="hello@bananaeditor.com" />
+<meta property="og:phone_number" content="+1-555-0123" />
+
+<!-- 音频/视频标签（如果有演示视频） -->
+{/* 如果有产品演示视频 */}
+<!-- <meta property="og:video" content="https://bananaeditor.com/demo-video.mp4" />
+<meta property="og:video:secure_url" content="https://bananaeditor.com/demo-video.mp4" />
+<meta property="og:video:type" content="video/mp4" />
+<meta property="og:video:width" content="1280" />
+<meta property="og:video:height" content="720" /> -->
+
+<!-- 自定义Meta标签 -->
+{
+  customMeta.map((meta) =>
+    meta.property ? (
+      <meta property={meta.property} content={meta.content} />
+    ) : (
+      <meta name={meta.name} content={meta.content} />
+    ),
+  )
+}
+
+<!-- 结构化数据增强 -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type":
+      type === "article"
+        ? "Article"
+        : type === "product"
+          ? "Product"
+          : "WebPage",
+    name: title,
+    description: optimizedDescription,
+    image: {
+      "@type": "ImageObject",
+      url: fullImageUrl,
+      width: 1200,
+      height: 630,
+      alt: finalImageAlt,
+    },
+    url: fullUrl,
+    publisher: {
+      "@type": "Organization",
+      name: siteName,
+      logo: {
+        "@type": "ImageObject",
+        url: `${baseSEOConfig.siteUrl}/logo.png`,
+      },
+    },
+    ...(type === "article" && {
+      author: {
+        "@type": "Person",
+        name: author || "BananaEditor Team",
+      },
+      datePublished: publishedTime,
+      dateModified: modifiedTime || publishedTime,
+      headline: title,
+      keywords: keywordTags.join(", "),
+    }),
+    ...(type === "product" && {
+      brand: {
+        "@type": "Brand",
+        name: "BananaEditor",
+      },
+      category: "AI Generated Art",
+      offers: {
+        "@type": "Offer",
+        price: price || "0",
+        priceCurrency: currency || "USD",
+        availability: availability || "https://schema.org/InStock",
+      },
+    }),
+  })}
+/>
+
+<!-- 社交媒体验证标签 -->
+<meta name="google-site-verification" content="your-google-verification" />
+<meta
+  name="facebook-domain-verification"
+  content="your-facebook-verification"
+/>
+<meta
+  name="pinterest-site-verification"
+  content="your-pinterest-verification"
+/>
+
+<!-- 性能优化提示 -->
+<link rel="preconnect" href="https://graph.facebook.com" />
+<link rel="preconnect" href="https://connect.facebook.net" />
+<link rel="preconnect" href="https://platform.twitter.com" />
+<link rel="preconnect" href="https://syndication.twitter.com" />
+
+<!-- 社交媒体脚本预加载 -->
+<link rel="dns-prefetch" href="//platform.twitter.com" />
+<link rel="dns-prefetch" href="//connect.facebook.net" />
+<link rel="dns-prefetch" href="//assets.pinterest.com" />
+<link rel="dns-prefetch" href="//platform.linkedin.com" />
+
+<style>
+  /* 确保社交媒体嵌入内容的样式 */
+  .social-embed {
+    max-width: 100%;
+    margin: 1rem 0;
+  }
+
+  .social-embed iframe {
+    max-width: 100%;
+    border: none;
+  }
+
+  /* 社交媒体分享按钮的预设样式 */
+  .social-share-preview {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    background: #f8fafc;
+  }
+
+  .social-share-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+  }
+
+  .social-share-preview h3 {
+    margin: 0.5rem 0 0.25rem 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .social-share-preview p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+</style>
+
+<script>
+  // 社交媒体分享跟踪
+  document.addEventListener("DOMContentLoaded", () => {
+    // 监听社交媒体分享事件
+    window.addEventListener("socialShare", (event) => {
+      const { platform, url, title } = event.detail;
+
+      // 发送到Google Analytics
+      if (typeof gtag !== "undefined") {
+        gtag("event", "share", {
+          method: platform,
+          content_type: "page",
+          item_id: url,
+          custom_parameter_1: title,
+        });
+      }
+
+      // 发送到Facebook Pixel
+      if (typeof fbq !== "undefined") {
+        fbq("track", "Share", {
+          content_name: title,
+          content_category: "social_share",
+          method: platform,
+        });
+      }
+    });
+
+    // 检测社交媒体爬虫
+    const userAgent = navigator.userAgent.toLowerCase();
+    const socialCrawlers = [
+      "facebookexternalhit",
+      "twitterbot",
+      "linkedinbot",
+      "pinterestbot",
+      "whatsapp",
+      "telegrambot",
+    ];
+
+    const isSocialCrawler = socialCrawlers.some((crawler) =>
+      userAgent.includes(crawler),
+    );
+
+    if (isSocialCrawler) {
+      // 为社交媒体爬虫优化页面
+      document.body.classList.add("social-crawler");
+
+      // 确保关键内容立即可见
+      const images = document.querySelectorAll('img[loading="lazy"]');
+      images.forEach((img) => {
+        img.removeAttribute("loading");
+      });
+    }
+  });
+</script>

@@ -1,0 +1,818 @@
+---
+// 提示词网格展示组件 - 显示提示词卡片
+---
+
+<div class="prompt-grid-container">
+  <!-- 加载状态 -->
+  <div class="loading-state" id="loading-state">
+    <div class="loading-spinner"></div>
+    <p>加载提示词中...</p>
+  </div>
+
+  <!-- 空状态 -->
+  <div class="empty-state" id="empty-state" style="display: none;">
+    <div class="empty-icon">📝</div>
+    <h3>暂无提示词</h3>
+    <p>没有找到符合条件的提示词，试试调整筛选条件或创建新的提示词。</p>
+    <button class="create-prompt-button" id="create-new-prompt">
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+          clip-rule="evenodd"></path>
+      </svg>
+      创建新提示词
+    </button>
+  </div>
+
+  <!-- 提示词网格 -->
+  <div class="prompt-grid" id="prompt-grid">
+    <!-- 动态生成的提示词卡片 -->
+  </div>
+
+  <!-- 分页控制 -->
+  <div class="pagination" id="pagination" style="display: none;">
+    <button class="pagination-button" id="prev-page" disabled>
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+          clip-rule="evenodd"></path>
+      </svg>
+      上一页
+    </button>
+
+    <div class="pagination-info">
+      <span id="page-info">第 1 页，共 1 页</span>
+    </div>
+
+    <button class="pagination-button" id="next-page" disabled>
+      下一页
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .prompt-grid-container {
+    width: 100%;
+    min-height: 400px;
+  }
+
+  /* 加载状态 */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: #666;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 空状态 */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #666;
+  }
+
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  .empty-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2d1810;
+    font-size: 1.5rem;
+  }
+
+  .empty-state p {
+    margin: 0 0 2rem 0;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .create-prompt-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .create-prompt-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .create-prompt-button:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255, 165, 0, 0.3);
+  }
+
+  /* 提示词网格 */
+  .prompt-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  /* 网格视图 */
+  .prompt-grid.grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  /* 列表视图 */
+  .prompt-grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* 提示词卡片 */
+  .prompt-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .prompt-card:hover {
+    border-color: #ffd700;
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .prompt-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .prompt-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d1810;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .prompt-category {
+    background: #ffd700;
+    color: #2d1810;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .prompt-content {
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .prompt-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  .prompt-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .star {
+    color: #ffd700;
+  }
+
+  .star.empty {
+    color: #ddd;
+  }
+
+  .prompt-usage {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .prompt-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .prompt-tag {
+    background: #f0f0f0;
+    color: #666;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+  }
+
+  .prompt-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .action-button {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    color: #666;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .action-button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .action-button:hover {
+    border-color: #ffd700;
+    color: #ffa500;
+  }
+
+  .action-button.primary {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: white;
+    border-color: #ffd700;
+  }
+
+  .action-button.primary:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  }
+
+  /* 列表视图样式 */
+  .prompt-grid.list-view .prompt-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+  }
+
+  .prompt-grid.list-view .prompt-card-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .prompt-grid.list-view .prompt-info {
+    flex: 1;
+  }
+
+  .prompt-grid.list-view .prompt-content {
+    margin-bottom: 0.5rem;
+    -webkit-line-clamp: 1;
+  }
+
+  .prompt-grid.list-view .prompt-actions {
+    flex-shrink: 0;
+    width: 200px;
+  }
+
+  /* 分页 */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 0;
+  }
+
+  .pagination-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pagination-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .pagination-button:hover:not(:disabled) {
+    border-color: #ffd700;
+    color: #ffa500;
+  }
+
+  .pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .pagination-info {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .prompt-grid.grid-view {
+      grid-template-columns: 1fr;
+    }
+
+    .prompt-grid.list-view .prompt-card {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .prompt-grid.list-view .prompt-card-content {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .prompt-grid.list-view .prompt-actions {
+      width: 100%;
+    }
+
+    .prompt-actions {
+      flex-direction: column;
+    }
+
+    .pagination {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  // 提示词网格功能实现
+  class PromptGrid {
+    constructor() {
+      this.container = document.getElementById("prompt-grid");
+      this.loadingState = document.getElementById("loading-state");
+      this.emptyState = document.getElementById("empty-state");
+      this.pagination = document.getElementById("pagination");
+      this.prevButton = document.getElementById("prev-page");
+      this.nextButton = document.getElementById("next-page");
+      this.pageInfo = document.getElementById("page-info");
+      this.createButton = document.getElementById("create-new-prompt");
+
+      this.prompts = [];
+      this.filteredPrompts = [];
+      this.currentPage = 1;
+      this.itemsPerPage = 12;
+      this.currentView = "grid";
+      this.currentFilters = {
+        search: "",
+        category: "all",
+        sort: "newest",
+        rating: "all",
+      };
+
+      this.init();
+    }
+
+    async init() {
+      // 绑定事件监听器
+      this.bindEvents();
+
+      // 加载提示词数据
+      await this.loadPrompts();
+
+      // 初始渲染
+      this.applyFilters();
+    }
+
+    bindEvents() {
+      // 搜索事件
+      document.addEventListener("promptSearch", (e) => {
+        this.currentFilters.search = e.detail.query;
+        this.currentPage = 1;
+        this.applyFilters();
+      });
+
+      // 分类筛选事件
+      document.addEventListener("promptCategoryFilter", (e) => {
+        this.currentFilters.category = e.detail.category;
+        this.currentPage = 1;
+        this.applyFilters();
+      });
+
+      // 筛选器变更事件
+      document.addEventListener("promptFiltersChanged", (e) => {
+        this.currentFilters.sort = e.detail.sort;
+        this.currentFilters.rating = e.detail.rating;
+        this.currentPage = 1;
+        this.applyFilters();
+      });
+
+      // 视图变更事件
+      document.addEventListener("promptViewChanged", (e) => {
+        this.currentView = e.detail.view;
+        this.updateView();
+      });
+
+      // 分页事件
+      this.prevButton.addEventListener("click", () => {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this.renderPrompts();
+          this.updatePagination();
+        }
+      });
+
+      this.nextButton.addEventListener("click", () => {
+        const totalPages = Math.ceil(
+          this.filteredPrompts.length / this.itemsPerPage,
+        );
+        if (this.currentPage < totalPages) {
+          this.currentPage++;
+          this.renderPrompts();
+          this.updatePagination();
+        }
+      });
+
+      // 创建新提示词事件
+      this.createButton.addEventListener("click", () => {
+        this.openCreateModal();
+      });
+    }
+
+    async loadPrompts() {
+      try {
+        this.showLoading();
+
+        // 从API加载提示词
+        const response = await fetch("/api/prompts");
+        const result = await response.json();
+
+        if (result.success) {
+          this.prompts = result.data.prompts || [];
+          this.hideLoading();
+        } else {
+          throw new Error(result.error?.message || "加载失败");
+        }
+      } catch (error) {
+        console.error("加载提示词失败:", error);
+        this.hideLoading();
+        this.showEmpty();
+      }
+    }
+
+    applyFilters() {
+      let filtered = [...this.prompts];
+
+      // 搜索筛选
+      if (this.currentFilters.search) {
+        const query = this.currentFilters.search.toLowerCase();
+        filtered = filtered.filter(
+          (prompt) =>
+            prompt.title.toLowerCase().includes(query) ||
+            prompt.content.toLowerCase().includes(query) ||
+            prompt.tags.some((tag) => tag.toLowerCase().includes(query)),
+        );
+      }
+
+      // 分类筛选
+      if (this.currentFilters.category !== "all") {
+        filtered = filtered.filter(
+          (prompt) => prompt.category === this.currentFilters.category,
+        );
+      }
+
+      // 评分筛选
+      if (this.currentFilters.rating !== "all") {
+        const minRating = parseInt(this.currentFilters.rating);
+        filtered = filtered.filter((prompt) => prompt.rating >= minRating);
+      }
+
+      // 排序
+      filtered.sort((a, b) => {
+        switch (this.currentFilters.sort) {
+          case "newest":
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          case "oldest":
+            return new Date(a.createdAt) - new Date(b.createdAt);
+          case "rating":
+            return b.rating - a.rating;
+          case "usage":
+            return b.usageCount - a.usageCount;
+          case "alphabetical":
+            return a.title.localeCompare(b.title);
+          default:
+            return 0;
+        }
+      });
+
+      this.filteredPrompts = filtered;
+
+      // 更新分类计数
+      this.updateCategoryCounts();
+
+      // 渲染结果
+      if (filtered.length === 0) {
+        this.showEmpty();
+      } else {
+        this.renderPrompts();
+        this.updatePagination();
+      }
+    }
+
+    updateCategoryCounts() {
+      const counts = {};
+      const categories = ["portrait", "landscape", "abstract", "anime"];
+
+      categories.forEach((category) => {
+        counts[category] = this.prompts.filter(
+          (p) => p.category === category,
+        ).length;
+      });
+
+      // 触发计数更新事件
+      const countEvent = new CustomEvent("promptsDataUpdated", {
+        detail: {
+          counts: counts,
+          total: this.prompts.length,
+        },
+      });
+      document.dispatchEvent(countEvent);
+    }
+
+    renderPrompts() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      const pagePrompts = this.filteredPrompts.slice(startIndex, endIndex);
+
+      this.container.innerHTML = pagePrompts
+        .map((prompt) => this.createPromptCard(prompt))
+        .join("");
+
+      // 绑定卡片事件
+      this.bindCardEvents();
+
+      this.hideLoading();
+      this.hideEmpty();
+      this.container.style.display = "grid";
+    }
+
+    createPromptCard(prompt) {
+      const stars = Array.from(
+        { length: 5 },
+        (_, i) =>
+          `<span class="star ${i < prompt.rating ? "" : "empty"}">★</span>`,
+      ).join("");
+
+      const tags = prompt.tags
+        .map((tag) => `<span class="prompt-tag">${tag}</span>`)
+        .join("");
+
+      return `
+        <div class="prompt-card" data-prompt-id="${prompt.id}">
+          <div class="prompt-card-header">
+            <h3 class="prompt-title">${prompt.title}</h3>
+            <span class="prompt-category">${this.getCategoryName(prompt.category)}</span>
+          </div>
+          
+          <div class="prompt-content">${prompt.content}</div>
+          
+          <div class="prompt-meta">
+            <div class="prompt-rating">${stars}</div>
+            <div class="prompt-usage">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              ${prompt.usageCount}
+            </div>
+          </div>
+          
+          <div class="prompt-tags">${tags}</div>
+          
+          <div class="prompt-actions">
+            <button class="action-button primary" data-action="use" data-prompt-id="${prompt.id}">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+              </svg>
+              在编辑器中使用
+            </button>
+            
+            <button class="action-button" data-action="copy" data-prompt-id="${prompt.id}">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+              </svg>
+              复制
+            </button>
+            
+            <button class="action-button" data-action="favorite" data-prompt-id="${prompt.id}">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+              </svg>
+              收藏
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    bindCardEvents() {
+      // 绑定操作按钮事件
+      this.container.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const action = button.dataset.action;
+          const promptId = button.dataset.promptId;
+          this.handleCardAction(action, promptId);
+        });
+      });
+
+      // 绑定卡片点击事件
+      this.container.querySelectorAll(".prompt-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const promptId = card.dataset.promptId;
+          this.openPromptModal(promptId);
+        });
+      });
+    }
+
+    handleCardAction(action, promptId) {
+      const prompt = this.prompts.find((p) => p.id === promptId);
+      if (!prompt) return;
+
+      switch (action) {
+        case "use":
+          this.useInEditor(prompt);
+          break;
+        case "copy":
+          this.copyPrompt(prompt);
+          break;
+        case "favorite":
+          this.toggleFavorite(prompt);
+          break;
+      }
+    }
+
+    useInEditor(prompt) {
+      // 跳转到编辑器并传递提示词
+      const editorUrl = `/editor?prompt=${encodeURIComponent(prompt.content)}`;
+      window.open(editorUrl, "_blank");
+
+      // 增加使用次数
+      prompt.usageCount++;
+
+      // 显示成功消息
+      this.showNotification("正在跳转到编辑器...", "success");
+    }
+
+    copyPrompt(prompt) {
+      navigator.clipboard
+        .writeText(prompt.content)
+        .then(() => {
+          this.showNotification("已复制到剪贴板", "success");
+        })
+        .catch(() => {
+          this.showNotification("复制失败", "error");
+        });
+    }
+
+    toggleFavorite(prompt) {
+      // 这里可以实现收藏功能
+      this.showNotification("收藏功能开发中...", "info");
+    }
+
+    getCategoryName(category) {
+      const categoryNames = {
+        portrait: "人物肖像",
+        landscape: "风景自然",
+        abstract: "抽象艺术",
+        anime: "动漫风格",
+      };
+      return categoryNames[category] || category;
+    }
+
+    updateView() {
+      this.container.className = `prompt-grid ${this.currentView}-view`;
+    }
+
+    updatePagination() {
+      const totalPages = Math.ceil(
+        this.filteredPrompts.length / this.itemsPerPage,
+      );
+
+      if (totalPages <= 1) {
+        this.pagination.style.display = "none";
+        return;
+      }
+
+      this.pagination.style.display = "flex";
+      this.pageInfo.textContent = `第 ${this.currentPage} 页，共 ${totalPages} 页`;
+
+      this.prevButton.disabled = this.currentPage === 1;
+      this.nextButton.disabled = this.currentPage === totalPages;
+    }
+
+    showLoading() {
+      this.loadingState.style.display = "flex";
+      this.container.style.display = "none";
+      this.emptyState.style.display = "none";
+      this.pagination.style.display = "none";
+    }
+
+    hideLoading() {
+      this.loadingState.style.display = "none";
+    }
+
+    showEmpty() {
+      this.emptyState.style.display = "flex";
+      this.container.style.display = "none";
+      this.pagination.style.display = "none";
+    }
+
+    hideEmpty() {
+      this.emptyState.style.display = "none";
+    }
+
+    openPromptModal(promptId) {
+      // 打开提示词详情模态框
+      console.log("打开提示词详情:", promptId);
+    }
+
+    openCreateModal() {
+      // 打开创建提示词模态框
+      console.log("打开创建提示词模态框");
+    }
+
+    showNotification(message, type = "info") {
+      // 显示通知消息
+      const event = new CustomEvent("showNotification", {
+        detail: { message, type },
+      });
+      document.dispatchEvent(event);
+    }
+  }
+
+  // 初始化提示词网格组件
+  document.addEventListener("DOMContentLoaded", () => {
+    window.promptGrid = new PromptGrid();
+  });
+</script>

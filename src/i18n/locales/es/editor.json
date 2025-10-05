@@ -1,0 +1,71 @@
+{
+    "toolbar": {
+        "generate": "Generar",
+        "fusion": "Fusión",
+        "optimize": "Optimizar",
+        "export": "Exportar",
+        "settings": "Configuración",
+        "help": "Ayuda"
+    },
+    "modes": {
+        "generation": "Generación AI",
+        "fusion": "Fusión de Imágenes",
+        "optimization": "Optimización de Prompts"
+    },
+    "panels": {
+        "upload": "Subir Imagen",
+        "prompt": "Ingresar Prompt",
+        "parameters": "Parámetros",
+        "history": "Historial",
+        "properties": "Propiedades"
+    },
+    "generation": {
+        "title": "Generación de Imágenes AI",
+        "uploadReference": "Subir Imagen de Referencia",
+        "enterPrompt": "Ingresa tu prompt",
+        "style": "Estilo",
+        "quality": "Calidad",
+        "generate": "Generar Imagen",
+        "regenerate": "Regenerar",
+        "downloading": "Descargando...",
+        "processing": "Procesando..."
+    },
+    "fusion": {
+        "title": "Fusión de Imágenes",
+        "uploadFirst": "Subir Primera Imagen",
+        "uploadSecond": "Subir Segunda Imagen",
+        "ratio": "Proporción de Fusión",
+        "blendMode": "Modo de Mezcla",
+        "startFusion": "Iniciar Fusión",
+        "adjustParameters": "Ajustar Parámetros"
+    },
+    "optimization": {
+        "title": "Optimización de Prompts",
+        "original": "Prompt Original",
+        "optimized": "Prompt Optimizado",
+        "optimize": "Optimizar",
+        "apply": "Aplicar",
+        "suggestions": "Sugerencias",
+        "retryOptimization": "Reintentar Optimización",
+        "editManually": "Editar Manualmente",
+        "applyOptimization": "Aplicar Optimización",
+        "copyOptimized": "Copiar Prompt Optimizado",
+        "optimizing": "AI está optimizando...",
+        "optimizationComplete": "Optimización Completa",
+        "optimizationFailed": "Optimización Falló, Por Favor Reintentar",
+        "improvements": "Sugerencias de Optimización",
+        "comparison": "Análisis de Comparación",
+        "characterCount": "Conteo de Caracteres",
+        "keywordDensity": "Densidad de Palabras Clave",
+        "detailLevel": "Nivel de Detalle",
+        "close": "Cerrar"
+    },
+    "export": {
+        "title": "Exportar Imagen",
+        "format": "Formato",
+        "quality": "Calidad",
+        "size": "Tamaño",
+        "download": "Descargar",
+        "share": "Compartir"
+    }
+}

@@ -1,0 +1,1028 @@
+---
+// EditorToolbar.astro - BananaEditor顶部工具栏组件
+// 提供功能切换、语言切换和导出选项
+
+export interface Props {
+  currentMode?: "generate" | "fusion";
+  currentLanguage?: string;
+  showMobileMenu?: boolean;
+}
+
+const {
+  currentMode = "generate",
+  currentLanguage = "zh",
+  showMobileMenu = true,
+} = Astro.props;
+
+// 语言选项配置
+const languages = [
+  { code: "zh", name: "中文", flag: "🇨🇳" },
+  { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "es", name: "Español", flag: "🇪🇸" },
+  { code: "fr", name: "Français", flag: "🇫🇷" },
+];
+
+// 导出格式选项
+const exportFormats = [
+  { value: "png", label: "PNG", description: "高质量透明背景" },
+  { value: "jpg", label: "JPG", description: "标准图片格式" },
+  { value: "webp", label: "WebP", description: "现代压缩格式" },
+  { value: "svg", label: "SVG", description: "矢量图格式" },
+];
+---
+
+<div class="editor-toolbar-container">
+  <!-- 左侧品牌区域 -->
+  <div class="toolbar-left">
+    <div class="brand-section">
+      <a href="/" class="brand-link">
+        <span class="brand-icon">🍌</span>
+        <h1 class="brand-title">BananaEditor</h1>
+        <span class="brand-badge">AI</span>
+      </a>
+    </div>
+
+    <!-- 面包屑导航 -->
+    <nav class="breadcrumb-nav" aria-label="页面导航">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href="/" class="breadcrumb-link">首页</a>
+        </li>
+        <li class="breadcrumb-separator">/</li>
+        <li class="breadcrumb-item current">
+          <span class="breadcrumb-current">编辑器</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- 中央功能切换区域 -->
+  <div class="toolbar-center">
+    <div class="mode-switcher" role="tablist" aria-label="编辑模式选择">
+      <button
+        class={`mode-button ${currentMode === "generate" ? "active" : ""}`}
+        role="tab"
+        aria-selected={currentMode === "generate"}
+        aria-controls="generate-panel"
+        data-mode="generate"
+        id="generate-tab">
+        <span class="mode-icon" aria-hidden="true">✨</span>
+        <span class="mode-label">AI生成</span>
+        <span class="mode-description">从文字生成图片</span>
+      </button>
+
+      <button
+        class={`mode-button ${currentMode === "fusion" ? "active" : ""}`}
+        role="tab"
+        aria-selected={currentMode === "fusion"}
+        aria-controls="fusion-panel"
+        data-mode="fusion"
+        id="fusion-tab">
+        <span class="mode-icon" aria-hidden="true">🔄</span>
+        <span class="mode-label">图片融合</span>
+        <span class="mode-description">智能融合两张图片</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 右侧操作区域 -->
+  <div class="toolbar-right">
+    <!-- 语言切换器 -->
+    <div class="language-switcher">
+      <button
+        class="language-button"
+        aria-label="切换语言"
+        aria-haspopup="true"
+        aria-expanded="false"
+        id="language-toggle">
+        <span class="language-flag" aria-hidden="true">
+          {
+            languages.find((lang) => lang.code === currentLanguage)?.flag ||
+              "🌐"
+          }
+        </span>
+        <span class="language-name">
+          {
+            languages.find((lang) => lang.code === currentLanguage)?.name ||
+              "中文"
+          }
+        </span>
+        <span class="dropdown-arrow" aria-hidden="true">▼</span>
+      </button>
+
+      <div class="language-dropdown" id="language-dropdown" role="menu">
+        {
+          languages.map((lang) => (
+            <button
+              class={`language-option ${lang.code === currentLanguage ? "active" : ""}`}
+              role="menuitem"
+              data-language={lang.code}>
+              <span class="option-flag" aria-hidden="true">
+                {lang.flag}
+              </span>
+              <span class="option-name">{lang.name}</span>
+              {lang.code === currentLanguage && (
+                <span class="option-check" aria-hidden="true">
+                  ✓
+                </span>
+              )}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- 导出按钮 -->
+    <div class="export-section">
+      <button
+        class="export-button"
+        aria-label="导出图片"
+        aria-haspopup="true"
+        aria-expanded="false"
+        id="export-toggle">
+        <span class="export-icon" aria-hidden="true">💾</span>
+        <span class="export-label">导出</span>
+        <span class="dropdown-arrow" aria-hidden="true">▼</span>
+      </button>
+
+      <div class="export-dropdown" id="export-dropdown" role="menu">
+        <div class="export-header">
+          <h3>选择导出格式</h3>
+        </div>
+        {
+          exportFormats.map((format) => (
+            <button
+              class="export-option"
+              role="menuitem"
+              data-format={format.value}>
+              <div class="export-option-main">
+                <span class="export-format">{format.label}</span>
+                <span class="export-description">{format.description}</span>
+              </div>
+              <span class="export-arrow" aria-hidden="true">
+                →
+              </span>
+            </button>
+          ))
+        }
+        <div class="export-divider"></div>
+        <button class="export-option export-settings" role="menuitem">
+          <div class="export-option-main">
+            <span class="export-format">高级设置</span>
+            <span class="export-description">自定义尺寸和质量</span>
+          </div>
+          <span class="export-arrow" aria-hidden="true">⚙️</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 更多操作 -->
+    <div class="more-actions">
+      <button
+        class="action-button"
+        aria-label="撤销操作"
+        title="撤销 (Ctrl+Z)"
+        id="undo-button">
+        <span class="action-icon" aria-hidden="true">↶</span>
+      </button>
+
+      <button
+        class="action-button"
+        aria-label="重做操作"
+        title="重做 (Ctrl+Y)"
+        id="redo-button">
+        <span class="action-icon" aria-hidden="true">↷</span>
+      </button>
+
+      <button
+        class="action-button"
+        aria-label="帮助"
+        title="帮助和快捷键"
+        id="help-button">
+        <span class="action-icon" aria-hidden="true">❓</span>
+      </button>
+    </div>
+
+    <!-- 移动端菜单按钮 -->
+    {
+      showMobileMenu && (
+        <button
+          class="mobile-menu-button"
+          aria-label="打开移动端菜单"
+          id="mobile-menu-toggle">
+          <span class="hamburger-icon" aria-hidden="true">
+            ☰
+          </span>
+        </button>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* 工具栏容器 */
+  .editor-toolbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding: 0 16px;
+    background: var(--banana-gradient);
+    border-bottom: 2px solid var(--banana-border, #ffe55c);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
+    position: relative;
+  }
+
+  /* 左侧品牌区域 */
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .brand-section {
+    display: flex;
+    align-items: center;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease;
+  }
+
+  .brand-link:hover {
+    transform: scale(1.02);
+  }
+
+  .brand-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  .brand-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--banana-dark, #2d1810);
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .brand-badge {
+    background: var(--banana-accent, #ff6b35);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* 面包屑导航 */
+  .breadcrumb-nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+  }
+
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumb-link {
+    color: var(--banana-dark, #2d1810);
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .breadcrumb-link:hover {
+    opacity: 1;
+  }
+
+  .breadcrumb-separator {
+    color: var(--banana-dark, #2d1810);
+    opacity: 0.5;
+    margin: 0 4px;
+  }
+
+  .breadcrumb-current {
+    color: var(--banana-dark, #2d1810);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* 中央功能切换区域 */
+  .toolbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 600px;
+  }
+
+  .mode-switcher {
+    display: flex;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+  }
+
+  .mode-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--banana-dark, #2d1810);
+    min-width: 120px;
+    position: relative;
+  }
+
+  .mode-button.active {
+    background: var(--banana-primary, #ffd700);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .mode-button:hover:not(.active) {
+    background: rgba(255, 215, 0, 0.2);
+  }
+
+  .mode-icon {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+
+  .mode-label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .mode-description {
+    font-size: 11px;
+    opacity: 0.7;
+    line-height: 1;
+  }
+
+  /* 右侧操作区域 */
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* 语言切换器 */
+  .language-switcher {
+    position: relative;
+  }
+
+  .language-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--banana-dark, #2d1810);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .language-button:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .language-flag {
+    font-size: 16px;
+  }
+
+  .dropdown-arrow {
+    font-size: 10px;
+    opacity: 0.6;
+    transition: transform 0.2s ease;
+  }
+
+  .language-button[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .language-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    min-width: 160px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+  }
+
+  .language-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .language-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .language-option:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .language-option.active {
+    background: rgba(255, 215, 0, 0.2);
+    font-weight: 500;
+  }
+
+  .option-flag {
+    font-size: 16px;
+  }
+
+  .option-name {
+    flex: 1;
+  }
+
+  .option-check {
+    color: var(--banana-accent, #ff6b35);
+    font-weight: 600;
+  }
+
+  /* 导出按钮 */
+  .export-section {
+    position: relative;
+  }
+
+  .export-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--banana-dark, #2d1810);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .export-button:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .export-icon {
+    font-size: 16px;
+  }
+
+  .export-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    min-width: 220px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+  }
+
+  .export-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .export-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 4px;
+  }
+
+  .export-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .export-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: left;
+  }
+
+  .export-option:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .export-option-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .export-format {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .export-description {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .export-arrow {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+  }
+
+  .export-option:hover .export-arrow {
+    opacity: 1;
+  }
+
+  .export-divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 4px 0;
+  }
+
+  .export-settings {
+    border-top: 1px solid #f0f0f0;
+    margin-top: 4px;
+    padding-top: 8px;
+  }
+
+  /* 更多操作 */
+  .more-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .action-button:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .action-icon {
+    font-size: 16px;
+  }
+
+  /* 移动端菜单按钮 */
+  .mobile-menu-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--banana-dark, #2d1810);
+  }
+
+  .mobile-menu-button:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .hamburger-icon {
+    font-size: 18px;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 1024px) {
+    .breadcrumb-nav {
+      display: none;
+    }
+
+    .mode-button {
+      min-width: 100px;
+      padding: 10px 16px;
+    }
+
+    .mode-description {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .toolbar-center {
+      display: none;
+    }
+
+    .more-actions {
+      display: none;
+    }
+
+    .mobile-menu-button {
+      display: flex;
+    }
+
+    .language-switcher .language-name {
+      display: none;
+    }
+
+    .export-button .export-label {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .editor-toolbar-container {
+      padding: 0 12px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+    }
+
+    .toolbar-right {
+      gap: 4px;
+    }
+
+    .language-button,
+    .export-button {
+      padding: 6px 8px;
+    }
+  }
+
+  /* 高对比度模式 */
+  @media (prefers-contrast: high) {
+    .mode-switcher {
+      background: white;
+      border: 2px solid #000;
+    }
+
+    .mode-button.active {
+      background: #000;
+      color: white;
+    }
+
+    .language-dropdown,
+    .export-dropdown {
+      border: 1px solid #000;
+    }
+  }
+
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  // 编辑器工具栏交互逻辑
+  class EditorToolbar {
+    private languageButton: HTMLElement | null = null;
+    private languageDropdown: HTMLElement | null = null;
+    private exportButton: HTMLElement | null = null;
+    private exportDropdown: HTMLElement | null = null;
+    private modeButtons: NodeListOf<HTMLElement> | null = null;
+    private currentMode: string = "generate";
+
+    constructor() {
+      this.init();
+    }
+
+    private init(): void {
+      this.languageButton = document.getElementById("language-toggle");
+      this.languageDropdown = document.getElementById("language-dropdown");
+      this.exportButton = document.getElementById("export-toggle");
+      this.exportDropdown = document.getElementById("export-dropdown");
+      this.modeButtons = document.querySelectorAll(".mode-button");
+
+      this.setupEventListeners();
+    }
+
+    private setupEventListeners(): void {
+      // 模式切换
+      this.modeButtons?.forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const mode = target.dataset.mode;
+          if (mode) {
+            this.switchMode(mode);
+          }
+        });
+      });
+
+      // 语言切换器
+      this.languageButton?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleLanguageDropdown();
+      });
+
+      // 语言选项
+      const languageOptions = document.querySelectorAll(".language-option");
+      languageOptions.forEach((option) => {
+        option.addEventListener("click", (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const language = target.dataset.language;
+          if (language) {
+            this.changeLanguage(language);
+          }
+        });
+      });
+
+      // 导出按钮
+      this.exportButton?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleExportDropdown();
+      });
+
+      // 导出选项
+      const exportOptions = document.querySelectorAll(
+        ".export-option[data-format]",
+      );
+      exportOptions.forEach((option) => {
+        option.addEventListener("click", (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const format = target.dataset.format;
+          if (format) {
+            this.exportImage(format);
+          }
+        });
+      });
+
+      // 高级设置
+      const settingsOption = document.querySelector(".export-settings");
+      settingsOption?.addEventListener("click", () => {
+        this.openExportSettings();
+      });
+
+      // 操作按钮
+      const undoButton = document.getElementById("undo-button");
+      const redoButton = document.getElementById("redo-button");
+      const helpButton = document.getElementById("help-button");
+
+      undoButton?.addEventListener("click", () => this.undo());
+      redoButton?.addEventListener("click", () => this.redo());
+      helpButton?.addEventListener("click", () => this.showHelp());
+
+      // 移动端菜单
+      const mobileMenuButton = document.getElementById("mobile-menu-toggle");
+      mobileMenuButton?.addEventListener("click", () => {
+        document.dispatchEvent(new CustomEvent("editor:toggle-mobile-menu"));
+      });
+
+      // 点击外部关闭下拉菜单
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".language-switcher")) {
+          this.closeLanguageDropdown();
+        }
+        if (!target.closest(".export-section")) {
+          this.closeExportDropdown();
+        }
+      });
+
+      // 键盘快捷键
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          switch (e.key) {
+            case "z":
+              e.preventDefault();
+              this.undo();
+              break;
+            case "y":
+              e.preventDefault();
+              this.redo();
+              break;
+            case "s":
+              e.preventDefault();
+              this.exportImage("png");
+              break;
+          }
+        }
+      });
+    }
+
+    private switchMode(mode: string): void {
+      this.currentMode = mode;
+
+      // 更新按钮状态
+      this.modeButtons?.forEach((button) => {
+        const isActive = button.dataset.mode === mode;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-selected", isActive.toString());
+      });
+
+      // 触发模式切换事件
+      document.dispatchEvent(
+        new CustomEvent("editor:mode-change", {
+          detail: { mode },
+        }),
+      );
+
+      console.log("切换到模式:", mode);
+    }
+
+    private toggleLanguageDropdown(): void {
+      const isOpen =
+        this.languageButton?.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        this.closeLanguageDropdown();
+      } else {
+        this.openLanguageDropdown();
+      }
+    }
+
+    private openLanguageDropdown(): void {
+      this.languageButton?.setAttribute("aria-expanded", "true");
+      this.languageDropdown?.classList.add("show");
+    }
+
+    private closeLanguageDropdown(): void {
+      this.languageButton?.setAttribute("aria-expanded", "false");
+      this.languageDropdown?.classList.remove("show");
+    }
+
+    private changeLanguage(language: string): void {
+      console.log("切换语言:", language);
+
+      // 触发语言切换事件
+      document.dispatchEvent(
+        new CustomEvent("editor:language-change", {
+          detail: { language },
+        }),
+      );
+
+      this.closeLanguageDropdown();
+
+      // 这里可以添加实际的语言切换逻辑
+      // 例如重新加载页面或更新界面文本
+    }
+
+    private toggleExportDropdown(): void {
+      const isOpen =
+        this.exportButton?.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        this.closeExportDropdown();
+      } else {
+        this.openExportDropdown();
+      }
+    }
+
+    private openExportDropdown(): void {
+      this.exportButton?.setAttribute("aria-expanded", "true");
+      this.exportDropdown?.classList.add("show");
+    }
+
+    private closeExportDropdown(): void {
+      this.exportButton?.setAttribute("aria-expanded", "false");
+      this.exportDropdown?.classList.remove("show");
+    }
+
+    private exportImage(format: string): void {
+      console.log("导出图片，格式:", format);
+
+      // 触发导出事件
+      document.dispatchEvent(
+        new CustomEvent("editor:export-image", {
+          detail: { format },
+        }),
+      );
+
+      this.closeExportDropdown();
+
+      // 这里将在后续任务中实现实际的导出逻辑
+    }
+
+    private openExportSettings(): void {
+      console.log("打开导出设置");
+
+      // 触发导出设置事件
+      document.dispatchEvent(new CustomEvent("editor:export-settings"));
+
+      this.closeExportDropdown();
+    }
+
+    private undo(): void {
+      console.log("撤销操作");
+
+      // 触发撤销事件
+      document.dispatchEvent(new CustomEvent("editor:undo"));
+    }
+
+    private redo(): void {
+      console.log("重做操作");
+
+      // 触发重做事件
+      document.dispatchEvent(new CustomEvent("editor:redo"));
+    }
+
+    private showHelp(): void {
+      console.log("显示帮助");
+
+      // 触发帮助事件
+      document.dispatchEvent(new CustomEvent("editor:show-help"));
+    }
+
+    // 公共方法
+    public getCurrentMode(): string {
+      return this.currentMode;
+    }
+
+    public setMode(mode: string): void {
+      this.switchMode(mode);
+    }
+  }
+
+  // 初始化工具栏
+  document.addEventListener("DOMContentLoaded", () => {
+    const toolbar = new EditorToolbar();
+
+    // 导出到全局作用域
+    (window as any).EditorToolbar = toolbar;
+  });
+</script>
