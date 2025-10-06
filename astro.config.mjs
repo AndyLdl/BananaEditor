@@ -9,7 +9,7 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://bananaeditor.com",
+  site: "https://bananaeditor.net",
   output: 'static', // 使用静态输出，API 路由在客户端调用云函数
   integrations: [
     react(),

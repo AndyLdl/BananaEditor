@@ -39,7 +39,7 @@ export const secondaryKeywords = [
 // 基础SEO配置
 export const baseSEOConfig = {
     siteName: 'BananaEditor',
-    siteUrl: process.env.SITE_URL || 'https://bananaeditor.com',
+    siteUrl: process.env.SITE_URL || 'https://bananaeditor.net',
     defaultLanguage: 'en',
     defaultImage: '/opengraph.jpg',
     twitterHandle: '@bananaeditor'
