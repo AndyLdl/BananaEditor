@@ -270,7 +270,7 @@ import Layout from "../layouts/Layout.astro";
         this.showResult(
           "健康检查失败",
           "云函数 URL 未正确配置。请运行: <code>npm run config:frontend</code>",
-          "error",
+          "error"
         );
         return;
       }
@@ -293,7 +293,7 @@ import Layout from "../layouts/Layout.astro";
              状态码: ${response.status}<br>
              响应时间: ${responseTime}ms<br>
              URL: <code>${this.functionUrl}</code>`,
-            "success",
+            "success"
           );
         } else {
           this.showResult(
@@ -301,7 +301,7 @@ import Layout from "../layouts/Layout.astro";
             `云函数响应异常<br>
              状态码: ${response.status}<br>
              响应时间: ${responseTime}ms`,
-            "warning",
+            "warning"
           );
         }
       } catch (error) {
@@ -309,7 +309,7 @@ import Layout from "../layouts/Layout.astro";
           "健康检查失败",
           `网络错误: ${error.message}<br>
            请检查云函数是否已部署`,
-          "error",
+          "error"
         );
       }
     }
@@ -325,28 +325,33 @@ import Layout from "../layouts/Layout.astro";
       testButton.disabled = true;
       testButton.textContent = "🔄 测试中...";
 
-      this.showResult("功能测试", "正在测试 AI 图片生成功能...", "info");
+      this.showResult("功能测试", "正在测试加密 AI 图片生成功能...", "info");
 
       try {
+        // 使用加密客户端进行测试
+        const { SecureBananaAIProcessor } = await import(
+          "../utils/secure-api-client.ts"
+        );
+        const secureProcessor = new SecureBananaAIProcessor(this.functionUrl);
+
         // 获取表单数据
         const formData = new FormData(form);
+        const prompt = formData.get("prompt") as string;
 
         // 添加请求ID
         const requestId = `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
         const startTime = Date.now();
-        const response = await fetch(this.functionUrl, {
-          method: "POST",
-          body: formData,
-          headers: {
-            "X-Request-ID": requestId,
-          },
-        });
+
+        // 使用加密客户端调用
+        const responseData = await secureProcessor.callCloudFunction(
+          prompt,
+          []
+        );
 
         const responseTime = Date.now() - startTime;
-        const responseData = await response.json();
 
-        if (response.ok && responseData.success) {
+        if (responseData.success) {
           this.showResult(
             "功能测试成功",
             `AI 生成功能正常<br>
@@ -355,7 +360,7 @@ import Layout from "../layouts/Layout.astro";
              使用模型: ${responseData.data?.metadata?.model || "unknown"}<br>
              生成内容长度: ${responseData.data?.generatedPrompt?.length || 0} 字符<br>
              建议数量: ${responseData.data?.suggestions?.length || 0} 个`,
-            "success",
+            "success"
           );
 
           // 显示生成的内容
@@ -365,7 +370,7 @@ import Layout from "../layouts/Layout.astro";
               `<div class="bg-gray-100 p-3 rounded text-sm">
                 ${responseData.data.generatedPrompt.substring(0, 200)}${responseData.data.generatedPrompt.length > 200 ? "..." : ""}
                </div>`,
-              "info",
+              "info"
             );
           }
         } else {
@@ -374,7 +379,7 @@ import Layout from "../layouts/Layout.astro";
             `错误信息: ${responseData.error?.message || "未知错误"}<br>
              错误代码: ${responseData.error?.code || "UNKNOWN"}<br>
              响应时间: ${responseTime}ms`,
-            "error",
+            "error"
           );
         }
       } catch (error) {
@@ -382,7 +387,7 @@ import Layout from "../layouts/Layout.astro";
           "功能测试异常",
           `网络错误: ${error.message}<br>
            请检查云函数配置和网络连接`,
-          "error",
+          "error"
         );
       } finally {
         // 恢复按钮

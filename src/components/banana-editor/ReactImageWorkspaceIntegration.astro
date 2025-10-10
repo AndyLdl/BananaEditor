@@ -1,8 +1,10 @@
 ---
 // React Image Workspace 集成
+import ImageWorkspace from "./react/ImageWorkspace";
 ---
 
 <div id="react-image-workspace-root" class="react-image-workspace-container">
+  <ImageWorkspace client:visible />
 </div>
 
 <style>
@@ -23,51 +25,3 @@
     order: 4; /* 在最右侧 */
   }
 </style>
-
-<script>
-  // 动态导入 React 和组件
-  import React from "react";
-  import { createRoot } from "react-dom/client";
-
-  // 立即执行或等待 DOM 加载完成
-  function mountReactImageWorkspace() {
-    const container = document.getElementById("react-image-workspace-root");
-
-    if (container) {
-      console.log("🚀 Mounting React Image Workspace Component...");
-
-      // 动态导入 ImageWorkspace 组件
-      import("./react/ImageWorkspace")
-        .then((module) => {
-          const ImageWorkspace = module.default;
-          const root = createRoot(container);
-          root.render(React.createElement(ImageWorkspace));
-
-          console.log(
-            "✅ React Image Workspace Component Mounted Successfully"
-          );
-        })
-        .catch((error) => {
-          console.error(
-            "❌ Failed to load React Image Workspace Component:",
-            error
-          );
-        });
-    } else {
-      console.warn(
-        "⚠️ react-image-workspace-root container not found, retrying..."
-      );
-      // 如果容器还没准备好,稍后重试
-      setTimeout(mountReactImageWorkspace, 100);
-    }
-  }
-
-  // 检查 DOM 是否已经加载完成
-  if (document.readyState === "loading") {
-    // DOM 还在加载中,等待 DOMContentLoaded 事件
-    document.addEventListener("DOMContentLoaded", mountReactImageWorkspace);
-  } else {
-    // DOM 已经加载完成,直接执行
-    mountReactImageWorkspace();
-  }
-</script>

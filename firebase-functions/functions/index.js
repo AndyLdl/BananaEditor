@@ -14,6 +14,11 @@ import sharp from 'sharp';
 import cors from 'cors';
 import Busboy from 'busboy';
 import crypto from 'crypto';
+import {
+    decryptRequestBody,
+    verifySignature,
+    isTimestampValid
+} from './encryption.js';
 
 // 初始化 Firebase Admin
 const app = initializeApp();
@@ -46,12 +51,37 @@ const getBucket = () => {
     return storage.bucket(bucketName);
 };
 
-// 配置 CORS
+// 配置 CORS - 使用环境变量控制允许的来源
 const corsHandler = cors({
-    origin: true,
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-    credentials: true
+    origin: (origin, callback) => {
+        // 获取允许的来源列表
+        const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['*'];
+
+        console.log('🔍 CORS检查:', {
+            requestOrigin: origin,
+            allowedOrigins: allowedOrigins,
+            isAllowed: allowedOrigins.includes('*') || allowedOrigins.includes(origin)
+        });
+
+        // 允许所有来源（开发环境）或特定来源（生产环境）
+        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log('❌ CORS拒绝来源:', origin);
+            callback(new Error('CORS策略不允许此来源'));
+        }
+    },
+    methods: ['POST', 'OPTIONS'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Request-ID',
+        'X-Encrypted-Data',
+        'X-IV',
+        'X-Signature',
+        'X-Timestamp'
+    ],
+    credentials: false // 更安全，不发送凭据
 });
 
 /**
@@ -581,6 +611,46 @@ export const bananaAIGenerator = onRequest({
                 return;
             }
 
+            // 🔐 简单的加密验证
+            const encryptedData = req.headers['x-encrypted-data'];
+            const signature = req.headers['x-signature'];
+            const requestTimestamp = req.headers['x-timestamp'];
+
+            if (!encryptedData || !signature || !requestTimestamp) {
+                res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_ENCRYPTION_HEADERS',
+                        message: '缺少加密请求头，请使用加密客户端'
+                    }
+                });
+                return;
+            }
+
+            // 验证时间戳
+            if (!isTimestampValid(parseInt(requestTimestamp))) {
+                res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_TIMESTAMP',
+                        message: '请求时间戳无效或已过期'
+                    }
+                });
+                return;
+            }
+
+            // 验证签名
+            if (!verifySignature(encryptedData, requestTimestamp, signature)) {
+                res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_SIGNATURE',
+                        message: '请求签名验证失败'
+                    }
+                });
+                return;
+            }
+
             // 检查请求类型并相应处理
             const contentType = req.headers['content-type'] || '';
             let requestBody = {};
@@ -590,8 +660,23 @@ export const bananaAIGenerator = onRequest({
 
             if (contentType.includes('application/json')) {
                 // 处理 JSON 请求（BananaEditor 聊天模式）
-                console.log('📋 处理 JSON 请求');
-                requestBody = req.body || {};
+                console.log('📋 处理加密的 JSON 请求');
+
+                try {
+                    // 解密请求体
+                    requestBody = decryptRequestBody(encryptedData, req.headers['x-iv']);
+                    console.log('✅ 请求体解密成功');
+                } catch (error) {
+                    console.log('❌ 请求体解密失败:', error.message);
+                    res.status(400).json({
+                        success: false,
+                        error: {
+                            code: 'DECRYPTION_FAILED',
+                            message: '请求体解密失败'
+                        }
+                    });
+                    return;
+                }
 
                 // 提取对话历史
                 if (requestBody.conversationHistory && Array.isArray(requestBody.conversationHistory)) {
@@ -599,7 +684,7 @@ export const bananaAIGenerator = onRequest({
                     console.log('📚 对话历史长度:', conversationHistory.length);
                 }
 
-                console.log('JSON 请求体:', JSON.stringify(requestBody, null, 2));
+                console.log('解密后的请求体:', JSON.stringify(requestBody, null, 2));
             } else if (contentType.includes('multipart/form-data')) {
                 // 处理 multipart/form-data 请求（带图片上传）
                 console.log('📎 处理 multipart/form-data 请求');
@@ -692,9 +777,9 @@ export const bananaAIGenerator = onRequest({
             }
 
             // 保存到 Cloud Storage
-            const timestamp = Date.now();
-            const imageFilename = `banana-generated/${requestId}-${timestamp}.${params.outputFormat}`;
-            const thumbnailFilename = `banana-thumbnails/${requestId}-${timestamp}.${params.outputFormat}`;
+            const imageTimestamp = Date.now();
+            const imageFilename = `banana-generated/${requestId}-${imageTimestamp}.${params.outputFormat}`;
+            const thumbnailFilename = `banana-thumbnails/${requestId}-${imageTimestamp}.${params.outputFormat}`;
 
             const imageUrl = await saveToCloudStorage(imageBuffer, imageFilename);
             const thumbnailUrl = await saveToCloudStorage(imageBuffer, thumbnailFilename);

@@ -63,7 +63,16 @@ export default defineConfig({
       }
     },
     optimizeDeps: {
-      include: ['@astrojs/tailwind']
+      include: ['@astrojs/tailwind', 'react', 'react-dom']
+    },
+    // 构建配置
+    build: {
+      minify: 'esbuild',
+      terserOptions: {
+        compress: {
+          drop_console: true, // 生产环境移除 console 语句
+        }
+      }
     }
   }
 });

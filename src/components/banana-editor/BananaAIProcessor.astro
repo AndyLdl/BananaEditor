@@ -16,6 +16,11 @@ const { className = "" } = Astro.props;
 <script>
   // BananaEditor AI处理器类（重构版）
   class BananaAIProcessor {
+    cloudFunctionUrl: string;
+    isProcessing: boolean;
+    isInitializing: boolean;
+    currentActiveImage: string | null;
+
     constructor() {
       // 直接使用Firebase云函数URL
       this.cloudFunctionUrl =
@@ -37,7 +42,7 @@ const { className = "" } = Astro.props;
 
     init() {
       // 监听用户消息处理事件
-      window.addEventListener("sendMessage", (e) => {
+      window.addEventListener("sendMessage", (e: any) => {
         this.processUserMessage(e.detail);
       });
 
@@ -93,7 +98,7 @@ const { className = "" } = Astro.props;
     // 设置会话事件监听
     setupSessionEvents() {
       // 监听会话切换
-      window.addEventListener("sessionSwitch", (e) => {
+      window.addEventListener("sessionSwitch", (e: any) => {
         // ⚠️ 注意：聊天历史现在由 React 组件管理，这里只处理画布
         // this.renderCurrentSession(); // 已禁用，React 组件会处理
 
@@ -109,7 +114,7 @@ const { className = "" } = Astro.props;
       });
 
       // 监听消息更新 - 只更新状态和画布，不显示消息（避免重复）
-      window.addEventListener("messageUpdate", (e) => {
+      window.addEventListener("messageUpdate", (e: any) => {
         const { sessionId, message } = e.detail;
         // 只处理当前会话的消息，且不是正在初始化时
         if (
@@ -126,7 +131,7 @@ const { className = "" } = Astro.props;
       });
 
       // 监听会话清空
-      window.addEventListener("sessionClear", (e) => {
+      window.addEventListener("sessionClear", (e: any) => {
         const { sessionId } = e.detail;
         if (sessionId === window.sessionManager.currentSessionId) {
           // ⚠️ 注意：聊天历史现在由 React 组件管理，这里只清空画布
@@ -137,7 +142,7 @@ const { className = "" } = Astro.props;
       });
 
       // 监听历史图片选择（用户点击 Generation History 中的图片）
-      window.addEventListener("historyImageSelected", (e) => {
+      window.addEventListener("historyImageSelected", (e: any) => {
         const historyItem = e.detail;
         if (historyItem && historyItem.imageUrl) {
           console.log("🖼️ 用户选择历史图片:", historyItem.imageUrl);
@@ -161,12 +166,12 @@ const { className = "" } = Astro.props;
 
       this.isProcessing = true;
 
+      // 处理不同的数据结构：{message} 或 {text}
+      const messageText = messageData.message || messageData.text;
+      console.log("📝 Message text:", messageText);
+
       try {
         console.log("🚀 Processing user message:", messageData);
-
-        // 处理不同的数据结构：{message} 或 {text}
-        const messageText = messageData.message || messageData.text;
-        console.log("📝 Message text:", messageText);
 
         if (!messageText || !messageText.trim()) {
           throw new Error("Prompt is empty or undefined");
@@ -192,6 +197,14 @@ const { className = "" } = Astro.props;
           messageText.trim(),
           conversationHistory
         );
+
+        console.log("🔍 检查响应条件:", {
+          resultType: typeof result,
+          hasSuccess: "success" in result,
+          successValue: result.success,
+          successType: typeof result.success,
+          resultKeys: Object.keys(result),
+        });
 
         if (result.success) {
           // 添加AI响应到当前会话
@@ -278,7 +291,7 @@ const { className = "" } = Astro.props;
       }
     }
 
-    // 调用云函数
+    // 调用云函数 - 使用加密客户端
     async callCloudFunction(prompt, conversationHistory = []) {
       console.log("🔧 callCloudFunction called with:", {
         prompt,
@@ -301,9 +314,20 @@ const { className = "" } = Astro.props;
         throw new Error("提示词参数无效");
       }
 
-      console.log("📡 Calling cloud function...");
+      console.log("🔐 使用加密客户端调用云函数...");
 
       try {
+        // 导入加密客户端
+        const { SecureBananaAIProcessor } = await import(
+          "../../utils/secure-api-client.ts"
+        );
+
+        // 创建加密处理器
+        const secureProcessor = new SecureBananaAIProcessor(
+          this.cloudFunctionUrl
+        );
+
+        // 构建请求数据
         const requestData = {
           prompt: prompt.trim(),
           style: "realistic",
@@ -334,53 +358,29 @@ const { className = "" } = Astro.props;
           }
         }
 
-        const requestId = `banana_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-        console.log("📤 Sending request with data:", {
-          ...requestData,
+        console.log("📤 发送加密请求数据:", {
           promptLength: prompt.length,
           historyLength: conversationHistory.length,
           hasActiveImage: !!requestData.currentActiveImage,
-          requestId,
-        });
-        console.log(
-          "📤 完整请求数据 (包含历史):",
-          JSON.stringify(requestData, null, 2)
-        );
-
-        const response = await fetch(this.cloudFunctionUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Request-ID": requestId,
-            "User-Agent": "BananaEditor-Session/1.0",
-          },
-          body: JSON.stringify(requestData),
         });
 
-        console.log(
-          "📥 Response status:",
-          response.status,
-          response.statusText
+        // 使用加密客户端调用
+        const result = await secureProcessor.callCloudFunction(
+          requestData,
+          requestData.currentActiveImage
         );
 
-        if (!response.ok) {
-          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error?.message || errorMessage;
-            console.error("❌ Error response data:", errorData);
-          } catch (parseError) {
-            console.error("❌ Failed to parse error response:", parseError);
-          }
-          throw new Error(errorMessage);
-        }
-
-        const result = await response.json();
-        console.log("✅ Cloud function response:", result);
+        console.log("✅ 加密云函数调用成功:", result);
+        console.log("📊 响应数据结构:", {
+          hasSuccess: "success" in result,
+          successValue: result.success,
+          hasData: "data" in result,
+          dataKeys: result.data ? Object.keys(result.data) : "no data",
+          fullResult: result,
+        });
         return result;
       } catch (error) {
-        console.error("❌ Cloud function call failed:", error);
+        console.error("❌ 加密云函数调用失败:", error);
         throw error;
       }
     }
@@ -855,21 +855,43 @@ const { className = "" } = Astro.props;
           throw new Error("云函数 URL 未配置");
         }
 
-        const response = await fetch(this.cloudFunctionUrl, {
-          method: "GET",
-          headers: {
-            "User-Agent": "BananaEditor-Test/1.0",
-          },
-        });
+        // 使用加密客户端进行健康检查
+        try {
+          const { SecureBananaAIProcessor } = await import(
+            "../../utils/secure-api-client.ts"
+          );
+          const secureProcessor = new SecureBananaAIProcessor(
+            this.cloudFunctionUrl
+          );
 
-        console.log("🧪 Test response status:", response.status);
+          // 发送一个简单的测试请求
+          const testResult = await secureProcessor.callCloudFunction(
+            "测试连接",
+            []
+          );
 
-        if (response.ok) {
-          console.log("✅ Cloud function is accessible");
+          console.log("✅ 加密云函数连接测试成功");
           return true;
-        } else {
-          console.log("⚠️ Cloud function returned non-200 status");
-          return false;
+        } catch (encryptionError) {
+          console.log("⚠️ 加密连接测试失败，尝试直接连接...");
+
+          // 如果加密测试失败，尝试直接连接（用于调试）
+          const response = await fetch(this.cloudFunctionUrl, {
+            method: "GET",
+            headers: {
+              "User-Agent": "BananaEditor-Test/1.0",
+            },
+          });
+
+          console.log("🧪 Test response status:", response.status);
+
+          if (response.ok) {
+            console.log("✅ Cloud function is accessible (but not encrypted)");
+            return true;
+          } else {
+            console.log("⚠️ Cloud function returned non-200 status");
+            return false;
+          }
         }
       } catch (error) {
         console.error("❌ Cloud function test failed:", error);

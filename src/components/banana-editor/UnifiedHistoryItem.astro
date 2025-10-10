@@ -11,6 +11,28 @@ const { className = "", mode = "thumbnail" } = Astro.props;
 ---
 
 <div class={`unified-history-item ${className}`} id="unified-history-item">
+  <!-- 历史记录容器 -->
+  <div id="history-list" class="history-list"></div>
+
+  <!-- 空状态提示 -->
+  <div id="history-empty" class="history-empty" style="display: none;">
+    <div class="empty-content">
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <polyline points="21,15 16,10 5,21"></polyline>
+      </svg>
+      <p>No images generated yet</p>
+      <p class="empty-subtitle">Start creating amazing images with AI</p>
+    </div>
+  </div>
+
   <!-- 统一历史项目模板 -->
   <template id="unified-history-item-template">
     <div class="history-item" data-id="" data-mode="thumbnail">
@@ -110,6 +132,48 @@ const { className = "", mode = "thumbnail" } = Astro.props;
   .unified-history-item {
     width: 100%;
     height: 100%;
+  }
+
+  /* 历史记录容器 */
+  .history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+    min-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* 空状态样式 */
+  .history-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: #666;
+    text-align: center;
+  }
+
+  .empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .empty-content svg {
+    opacity: 0.5;
+  }
+
+  .empty-content p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .empty-subtitle {
+    font-size: 14px;
+    opacity: 0.7;
   }
 
   /* 基础历史项目样式 */
@@ -417,13 +481,43 @@ const { className = "", mode = "thumbnail" } = Astro.props;
 <script>
   // 统一历史管理类
   class UnifiedHistoryManager {
+    galleryScroll: HTMLElement | null = null;
+    galleryEmpty: HTMLElement | null = null;
+    template: HTMLTemplateElement | null = null;
+    items: any[] = [];
+    currentId: string | null = null;
+    displayMode: string = "thumbnail";
+
     constructor() {
-      this.galleryScroll = document.getElementById("history-list");
-      this.galleryEmpty = document.getElementById("history-empty");
-      this.template = document.getElementById("unified-history-item-template");
+      this.galleryScroll = null;
+      this.galleryEmpty = null;
+      this.template = null;
       this.items = [];
       this.currentId = null;
       this.displayMode = "thumbnail"; // 'thumbnail' 或 'detailed'
+
+      // 延迟初始化，确保DOM准备好
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () =>
+          this.initializeElements()
+        );
+      } else {
+        this.initializeElements();
+      }
+    }
+
+    initializeElements() {
+      this.galleryScroll = document.getElementById("history-list");
+      this.galleryEmpty = document.getElementById("history-empty");
+      this.template = document.getElementById(
+        "unified-history-item-template"
+      ) as HTMLTemplateElement;
+
+      if (!this.galleryScroll) {
+        console.warn("history-list element not found, retrying...");
+        setTimeout(() => this.initializeElements(), 100);
+        return;
+      }
 
       this.init();
     }
@@ -433,17 +527,17 @@ const { className = "", mode = "thumbnail" } = Astro.props;
       // 注意：不再监听 imageGenerated 事件，避免重复添加
       // 改为统一使用 messageUpdate 事件来处理新图片
 
-      window.addEventListener("imageSelected", (e) => {
+      window.addEventListener("imageSelected", (e: any) => {
         this.setCurrentItem(e.detail.id);
       });
 
       // 监听显示模式切换
-      window.addEventListener("historyDisplayModeChange", (e) => {
+      window.addEventListener("historyDisplayModeChange", (e: any) => {
         this.setDisplayMode(e.detail.mode);
       });
 
       // 监听新消息添加 - 智能更新历史列表
-      window.addEventListener("messageUpdate", (e) => {
+      window.addEventListener("messageUpdate", (e: any) => {
         const { sessionId, message } = e.detail;
         // 只处理当前会话的消息
         if (
@@ -594,20 +688,20 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 添加历史项目到 DOM（不添加到 items 数组，因为数据来自 session）
-    addHistoryItemToDOM(data) {
+    addHistoryItemToDOM(data: any) {
       const { id, imageUrl, prompt, timestamp, size } = data;
 
       if (!this.template || !this.galleryScroll) return;
 
       // 克隆模板
       const clone = this.template.content.cloneNode(true);
-      const item = clone.querySelector(".history-item");
+      const item = clone.querySelector(".history-item") as HTMLElement;
 
       // 设置数据
       item.dataset.id = id;
       item.dataset.mode = this.displayMode;
 
-      const img = item.querySelector("img");
+      const img = item.querySelector("img") as HTMLImageElement;
       img.src = imageUrl;
       img.alt = `Generated image: ${prompt}`;
 
@@ -637,13 +731,15 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 设置显示模式
-    setDisplayMode(mode) {
+    setDisplayMode(mode: string) {
       this.displayMode = mode;
+
+      if (!this.galleryScroll) return;
 
       // 更新所有现有项目的显示模式
       const items = this.galleryScroll.querySelectorAll(".history-item");
       items.forEach((item) => {
-        item.dataset.mode = mode;
+        (item as HTMLElement).dataset.mode = mode;
       });
 
       // 调整容器样式
@@ -657,31 +753,37 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 添加历史项目
-    addHistoryItem(data) {
+    addHistoryItem(data: any) {
       const { id, imageUrl, prompt, timestamp, size } = data;
 
       if (!this.template || !this.galleryScroll) return;
 
       // 克隆模板
       const clone = this.template.content.cloneNode(true);
-      const item = clone.querySelector(".history-item");
+      const item = clone.querySelector(".history-item") as HTMLElement;
 
       // 设置数据
       item.dataset.id = id;
       item.dataset.mode = this.displayMode;
 
-      const img = item.querySelector("img");
+      const img = item.querySelector("img") as HTMLImageElement;
       img.src = imageUrl;
       img.alt = `Generated image: ${prompt}`;
 
       const promptText = item.querySelector(".prompt-text");
-      promptText.textContent = prompt;
+      if (promptText) {
+        promptText.textContent = prompt;
+      }
 
       const metaTime = item.querySelector(".meta-time");
-      metaTime.textContent = this.formatTime(timestamp);
+      if (metaTime) {
+        metaTime.textContent = this.formatTime(timestamp);
+      }
 
       const metaSize = item.querySelector(".meta-size");
-      metaSize.textContent = size || "--";
+      if (metaSize) {
+        metaSize.textContent = size || "--";
+      }
 
       // 绑定事件
       this.bindItemEvents(item, data);
@@ -703,15 +805,13 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 绑定项目事件
-    bindItemEvents(item, data) {
+    bindItemEvents(item: HTMLElement, data: any) {
       const { id, imageUrl } = data;
 
       // 点击项目选择
-      item.addEventListener("click", (e) => {
-        if (
-          !e.target.closest(".overlay-btn") &&
-          !e.target.closest(".action-btn")
-        ) {
+      item.addEventListener("click", (e: Event) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".overlay-btn") && !target.closest(".action-btn")) {
           this.selectItem(id);
         }
       });
@@ -719,7 +819,7 @@ const { className = "", mode = "thumbnail" } = Astro.props;
       // 查看大图按钮
       const viewBtns = item.querySelectorAll(".view-btn");
       viewBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", (e: Event) => {
           e.stopPropagation();
           this.viewImage(imageUrl);
         });
@@ -728,7 +828,7 @@ const { className = "", mode = "thumbnail" } = Astro.props;
       // 使用此图片按钮
       const useBtns = item.querySelectorAll(".use-btn, .use-btn-detailed");
       useBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", (e: Event) => {
           e.stopPropagation();
           this.useImage(data);
         });
@@ -737,7 +837,7 @@ const { className = "", mode = "thumbnail" } = Astro.props;
       // 删除按钮
       const deleteBtns = item.querySelectorAll(".delete-btn");
       deleteBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", (e: Event) => {
           e.stopPropagation();
           this.deleteItem(id);
         });
@@ -746,7 +846,7 @@ const { className = "", mode = "thumbnail" } = Astro.props;
       // 更多操作按钮
       const moreBtns = item.querySelectorAll(".more-btn");
       moreBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", (e: Event) => {
           e.stopPropagation();
           this.showMoreActions(data);
         });
@@ -754,7 +854,15 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 选择项目
-    selectItem(id) {
+    selectItem(id: string) {
+      // 检查DOM是否准备好
+      if (!this.galleryScroll) {
+        console.warn("DOM not ready, deferring selectItem");
+        // 延迟执行
+        setTimeout(() => this.selectItem(id), 100);
+        return;
+      }
+
       this.setCurrentItem(id);
 
       const item = this.items.find((item) => item.id === id);
@@ -769,35 +877,47 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 设置当前项目
-    setCurrentItem(id) {
+    setCurrentItem(id: string) {
       this.currentId = id;
+
+      // 检查galleryScroll是否存在
+      if (!this.galleryScroll) {
+        console.warn("galleryScroll not found, skipping setCurrentItem");
+        return;
+      }
 
       // 更新UI状态
       const items = this.galleryScroll.querySelectorAll(".history-item");
       items.forEach((item) => {
-        const isCurrentItem = item.dataset.id === id;
+        const isCurrentItem = (item as HTMLElement).dataset.id === id;
         item.classList.toggle("current", isCurrentItem);
 
         const status = item.querySelector(".item-status");
-        status.style.display = isCurrentItem ? "block" : "none";
+        if (status) {
+          (status as HTMLElement).style.display = isCurrentItem
+            ? "block"
+            : "none";
+        }
       });
     }
 
     // 查看图片
-    viewImage(imageUrl) {
+    viewImage(imageUrl: string) {
       const modal = document.getElementById("modal-overlay");
       const fullscreenModal = document.getElementById("fullscreen-modal");
-      const fullscreenImage = document.getElementById("fullscreen-image");
+      const fullscreenImage = document.getElementById(
+        "fullscreen-image"
+      ) as HTMLImageElement;
 
       if (modal && fullscreenModal && fullscreenImage) {
         fullscreenImage.src = imageUrl;
-        modal.style.display = "flex";
-        fullscreenModal.style.display = "flex";
+        (modal as HTMLElement).style.display = "flex";
+        (fullscreenModal as HTMLElement).style.display = "flex";
       }
     }
 
     // 使用图片
-    useImage(data) {
+    useImage(data: any) {
       // 触发使用图片事件
       window.dispatchEvent(
         new CustomEvent("useHistoryImage", {
@@ -807,15 +927,17 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 删除项目
-    deleteItem(id) {
+    deleteItem(id: string) {
       if (confirm("Are you sure you want to delete this image?")) {
         // 从数组中移除
         this.items = this.items.filter((item) => item.id !== id);
 
         // 从DOM中移除
-        const item = this.galleryScroll.querySelector(`[data-id="${id}"]`);
-        if (item) {
-          item.remove();
+        if (this.galleryScroll) {
+          const item = this.galleryScroll.querySelector(`[data-id="${id}"]`);
+          if (item) {
+            item.remove();
+          }
         }
 
         // 如果删除的是当前项目，选择下一个
@@ -835,7 +957,7 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 显示更多操作
-    showMoreActions(data) {
+    showMoreActions(data: any) {
       // 这里可以显示更多操作菜单
       console.log("More actions for:", data);
     }
@@ -851,7 +973,9 @@ const { className = "", mode = "thumbnail" } = Astro.props;
       ) {
         this.items = [];
         this.currentId = null;
-        this.galleryScroll.innerHTML = "";
+        if (this.galleryScroll) {
+          this.galleryScroll.innerHTML = "";
+        }
         this.updateVisibility();
 
         // 触发清空事件
@@ -881,10 +1005,10 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 格式化时间
-    formatTime(timestamp) {
+    formatTime(timestamp: number) {
       const date = new Date(timestamp);
       const now = new Date();
-      const diff = now - date;
+      const diff = now.getTime() - date.getTime();
 
       if (diff < 60000) {
         // Within 1 minute
@@ -901,12 +1025,12 @@ const { className = "", mode = "thumbnail" } = Astro.props;
     }
 
     // 获取历史数据
-    getHistory() {
+    getHistory(): any[] {
       return this.items;
     }
 
     // 获取当前项目
-    getCurrentItem() {
+    getCurrentItem(): any {
       return this.items.find((item) => item.id === this.currentId);
     }
 
@@ -927,6 +1051,6 @@ const { className = "", mode = "thumbnail" } = Astro.props;
 
   // 初始化统一历史管理器
   document.addEventListener("DOMContentLoaded", function () {
-    window.unifiedHistoryManager = new UnifiedHistoryManager();
+    (window as any).unifiedHistoryManager = new UnifiedHistoryManager();
   });
 </script>
