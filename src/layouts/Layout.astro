@@ -11,6 +11,8 @@ import NotificationSystem from "@components/ui/NotificationSystem.astro";
 import OperationStatus from "@components/ui/OperationStatus.astro";
 import "@fontsource-variable/inter/index.css";
 import "../styles/globals.css";
+// 生产环境console重写
+import "../utils/console-override";
 
 export interface Props {
   title: string;

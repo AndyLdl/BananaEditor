@@ -67,10 +67,12 @@ export default defineConfig({
     },
     // 构建配置
     build: {
-      minify: 'esbuild',
+      minify: 'terser', // 使用 terser 而不是 esbuild
       terserOptions: {
         compress: {
           drop_console: true, // 生产环境移除 console 语句
+          drop_debugger: true, // 生产环境移除 debugger 语句
+          pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'] // 移除特定的console函数
         }
       }
     }
