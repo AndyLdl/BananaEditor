@@ -58,6 +58,8 @@ function generateRandomIV(): Uint8Array {
  */
 export async function encryptRequestData(data: any): Promise<{ encrypted: string; iv: string; timestamp: number }> {
     try {
+        console.log('🔐 开始加密请求数据...');
+
         // 生成随机 IV
         const iv = generateRandomIV();
 
@@ -74,12 +76,19 @@ export async function encryptRequestData(data: any): Promise<{ encrypted: string
         );
 
         // 加密数据
-        const dataBuffer = new TextEncoder().encode(JSON.stringify(data));
+        const jsonString = JSON.stringify(data);
+        console.log(`📏 JSON 数据大小: ${jsonString.length} 字符`);
+
+        const dataBuffer = new TextEncoder().encode(jsonString);
+        console.log(`📦 编码后数据大小: ${dataBuffer.length} 字节`);
+
+        console.log('🔒 开始 AES-CBC 加密...');
         const encryptedBuffer = await crypto.subtle.encrypt(
             { name: 'AES-CBC', iv: iv as unknown as ArrayBuffer },
             key,
             dataBuffer
         );
+        console.log('✅ 加密完成');
 
         const timestamp = Date.now();
 
@@ -89,6 +98,7 @@ export async function encryptRequestData(data: any): Promise<{ encrypted: string
             timestamp
         };
     } catch (error) {
+        console.error('❌ 加密过程出错:', error);
         throw new Error('数据加密失败: ' + (error as Error).message);
     }
 }
@@ -132,31 +142,52 @@ export async function secureApiCall(
     options: RequestInit = {}
 ): Promise<Response> {
     try {
+        console.log('🚀 secureApiCall 开始, URL:', url);
+
         // 加密请求数据
         const { encrypted, iv, timestamp } = await encryptRequestData(data);
+        console.log('✅ 数据加密完成, 加密数据长度:', encrypted.length);
 
         // 生成签名
+        console.log('🔏 生成签名...');
         const signature = await generateRequestSignature(encrypted, timestamp);
+        console.log('✅ 签名生成完成');
 
-        // 构建请求头
+        // 构建请求头 - 只放小的元数据，不要放大的加密数据
         const headers = new Headers(options.headers);
         headers.set('Content-Type', 'application/json');
-        headers.set('X-Encrypted-Data', encrypted);
+        // headers.set('X-Encrypted-Data', encrypted); // ❌ 移除：数据太大，放不进请求头
         headers.set('X-IV', iv);
         headers.set('X-Signature', signature);
         headers.set('X-Timestamp', timestamp.toString());
+        headers.set('X-Encrypted-Request', 'true'); // 标记这是加密请求
 
-        // 发送请求
+        // 发送请求 - 加密数据放在请求体中
+        const requestBody = JSON.stringify({
+            encrypted,  // 加密数据在这里
+            iv,
+            timestamp
+        });
+        console.log('📡 发送 POST 请求...');
+        console.log('📦 请求体大小:', requestBody.length, '字符');
+
         const response = await fetch(url, {
             ...options,
             method: 'POST',
             headers,
-            body: JSON.stringify({ encrypted, iv, timestamp })
+            body: requestBody
         });
+
+        console.log('📨 收到响应, status:', response.status, 'statusText:', response.statusText);
+
+        // 检查响应内容类型
+        const contentType = response.headers.get('content-type');
+        console.log('📄 响应 Content-Type:', contentType);
 
         return response;
     } catch (error) {
-        console.error('❌ 加密云函数调用失败:', error);
+        console.error('❌ secureApiCall 失败:', error);
+        console.error('❌ 错误堆栈:', (error as Error).stack);
         throw error;
     }
 }
@@ -176,22 +207,33 @@ export class SecureBananaAIProcessor {
      */
     async callCloudFunction(data: any, currentActiveImage?: string): Promise<any> {
         try {
+            console.log('🎯 SecureBananaAIProcessor.callCloudFunction 开始');
+
             // 添加当前活动图片到请求数据
             if (currentActiveImage) {
                 (data as any).currentActiveImage = currentActiveImage;
             }
 
+            console.log('📞 调用 secureApiCall...');
             const response = await secureApiCall(this.baseUrl, data);
+            console.log('✅ secureApiCall 返回响应');
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                console.error('❌ HTTP 错误, status:', response.status);
+                const errorText = await response.text();
+                console.error('❌ 错误响应内容:', errorText);
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
 
             // 解析响应为 JSON
+            console.log('📖 解析响应 JSON...');
             const result = await response.json();
+            console.log('✅ JSON 解析完成');
             return result;
         } catch (error) {
-            console.error('❌ 安全API调用失败:', error);
+            console.error('❌ SecureBananaAIProcessor 失败:', error);
+            console.error('❌ 错误类型:', error.constructor.name);
+            console.error('❌ 错误消息:', (error as Error).message);
             throw error;
         }
     }

@@ -612,16 +612,38 @@ export const bananaAIGenerator = onRequest({
             }
 
             // 🔐 简单的加密验证
-            const encryptedData = req.headers['x-encrypted-data'];
+            // ⚠️ 注意：由于加密数据可能很大（几百KB），我们从请求体中读取，而不是请求头
+            const isEncryptedRequest = req.headers['x-encrypted-request'] === 'true';
             const signature = req.headers['x-signature'];
             const requestTimestamp = req.headers['x-timestamp'];
+            const iv = req.headers['x-iv'];
 
-            if (!encryptedData || !signature || !requestTimestamp) {
+            let encryptedData = null;
+
+            if (isEncryptedRequest) {
+                // 从请求体中读取加密数据
+                try {
+                    const rawBody = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(req.body);
+                    const bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+                    encryptedData = bodyData.encrypted;
+                    console.log('📦 从请求体中读取加密数据, 长度:', encryptedData ? encryptedData.length : 0);
+                } catch (error) {
+                    console.error('❌ 读取加密数据失败:', error);
+                }
+            }
+
+            if (!encryptedData || !signature || !requestTimestamp || !iv) {
+                console.error('❌ 缺少加密参数:', {
+                    hasEncryptedData: !!encryptedData,
+                    hasSignature: !!signature,
+                    hasTimestamp: !!requestTimestamp,
+                    hasIV: !!iv
+                });
                 res.status(403).json({
                     success: false,
                     error: {
                         code: 'MISSING_ENCRYPTION_HEADERS',
-                        message: '缺少加密请求头，请使用加密客户端'
+                        message: '缺少加密请求头或加密数据，请使用加密客户端'
                     }
                 });
                 return;

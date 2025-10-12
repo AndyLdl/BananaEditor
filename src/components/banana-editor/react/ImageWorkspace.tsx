@@ -55,6 +55,25 @@ export default function ImageWorkspace() {
     localStorage.setItem('historyDisplayMode', newMode);
   };
 
+  // 辅助函数：设置当前图片并触发事件，通知 BananaAIProcessor 更新 currentActiveImage
+  const setCurrentImageAndNotify = (image: ImageItem | null) => {
+    setCurrentImage(image);
+    
+    // 触发 historyImageSelected 事件
+    if (image) {
+      window.dispatchEvent(
+        new CustomEvent("historyImageSelected", {
+          detail: {
+            id: image.id,
+            imageUrl: image.url,
+            prompt: image.prompt,
+            timestamp: image.timestamp,
+          },
+        })
+      );
+    }
+  };
+
   // Load history images from SessionManager
   const loadHistoryFromSession = () => {
     if (typeof window === 'undefined' || !window.sessionManager) {
@@ -97,9 +116,9 @@ export default function ImageWorkspace() {
     images.sort((a, b) => b.timestamp - a.timestamp);
     setHistoryImages(images);
     
-    // Set current image to the newest one
+    // Set current image to the newest one and notify
     if (images.length > 0) {
-      setCurrentImage(images[0]);
+      setCurrentImageAndNotify(images[0]);
     } else {
       setCurrentImage(null);
     }
@@ -144,7 +163,7 @@ export default function ImageWorkspace() {
         timestamp: Date.now(),
       };
 
-      setCurrentImage(newImage);
+      setCurrentImageAndNotify(newImage);
       setHistoryImages(prev => [newImage, ...prev].slice(0, 50)); // Keep max 50 images
       setIsLoading(false);
     };
@@ -265,7 +284,7 @@ export default function ImageWorkspace() {
   }, [isFullscreen]);
 
   const handleImageClick = (image: ImageItem) => {
-    setCurrentImage(image);
+    setCurrentImageAndNotify(image);
   };
 
   const handleDownload = async (url: string) => {

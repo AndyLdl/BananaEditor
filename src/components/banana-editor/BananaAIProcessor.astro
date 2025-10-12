@@ -362,9 +362,11 @@ const { className = "" } = Astro.props;
           promptLength: prompt.length,
           historyLength: conversationHistory.length,
           hasActiveImage: !!requestData.currentActiveImage,
+          imageDataSize: requestData.currentActiveImage?.base64?.length || 0,
         });
 
         // 使用加密客户端调用
+        console.log("🔄 开始调用加密客户端...");
         const result = await secureProcessor.callCloudFunction(
           requestData,
           requestData.currentActiveImage
@@ -381,6 +383,11 @@ const { className = "" } = Astro.props;
         return result;
       } catch (error) {
         console.error("❌ 加密云函数调用失败:", error);
+        console.error("❌ 错误详情:", {
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        });
         throw error;
       }
     }
