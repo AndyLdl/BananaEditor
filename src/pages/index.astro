@@ -14,6 +14,7 @@ import BananaUseCases from "@components/banana-editor/BananaUseCases.astro";
 import BananaFAQ from "@components/banana-editor/BananaFAQ.astro";
 import UserGuide from "@components/banana-editor/UserGuide.astro";
 import BananaCTA from "@components/banana-editor/BananaCTA.astro";
+import BananaBadges from "@components/banana-editor/BananaBadges.astro";
 import { loadTranslations } from "../i18n/utils";
 import { detectLanguageFromRequest } from "../utils/language-detector";
 
@@ -101,6 +102,9 @@ const seoConfig = {
 
     <!-- 最终CTA区域 -->
     <BananaCTA />
+
+    <!-- Badge展示区域 -->
+    <BananaBadges />
   </main>
 </Layout>
 
