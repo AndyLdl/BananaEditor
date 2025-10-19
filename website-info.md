@@ -30,7 +30,7 @@ Nano Banana AI is an ultra-fast image generator that creates consistent, high-qu
 
 BananaEditor, powered by Google NanoBanana AI, is an advanced AI image editor and generator designed for professional-grade results. Key features include:
 
-Conversational Image Editing: Edit images through natural chat-based interactions—simply describe what you want, and let AI do the work
+- **Conversational Image Editing**: Edit images through natural chat-based interactions—simply describe what you want, and let AI do the work
 - **Ultra-Fast Generation**: Create high-quality images (1024x1024) in just 2.3 seconds with cutting-edge AI technology
 - **Superior Consistency**: Maintain perfect element consistency across different scenes, poses, and styles (people, objects, backgrounds)
 - **Enhanced Interactive Experience**: Intuitive interface with real-time preview, drag-and-drop support, and seamless workflow
