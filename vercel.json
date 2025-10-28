@@ -1,8 +1,7 @@
 {
-    "buildCommand": "NODE_ENV=production npm run build",
-    "outputDirectory": "dist",
-    "framework": "astro",
-    "env": {
-        "NODE_ENV": "production"
+    "git": {
+        "deploymentEnabled": {
+            "main": true
+        }
     }
 }
