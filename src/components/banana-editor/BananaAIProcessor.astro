@@ -22,16 +22,23 @@ const { className = "" } = Astro.props;
     currentActiveImage: string | null;
 
     constructor() {
-      // 直接使用Firebase云函数URL
-      this.cloudFunctionUrl =
-        "https://bananaaigenerator-vs5qoxox3a-uc.a.run.app";
+      // 根据环境选择云函数URL
+      // 开发环境使用 v2（包含积分系统），生产环境使用 v1
+      const isDev =
+        import.meta.env.DEV || import.meta.env.MODE === "development";
 
-      // 备用：从环境变量读取
-      const envUrl =
-        import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL ||
-        import.meta.env.PUBLIC_CLOUD_FUNCTION_URL;
-      if (envUrl && envUrl.includes("bananaeditor-927be.cloudfunctions.net")) {
-        this.cloudFunctionUrl = envUrl;
+      if (isDev && import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL_DEV) {
+        // 开发环境：使用 v2 版本（带积分检查）
+        this.cloudFunctionUrl =
+          import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL_DEV;
+        console.log("🟢 [开发环境] 使用云函数 v2 (带积分系统)");
+      } else {
+        // 生产环境：使用 v1 版本
+        this.cloudFunctionUrl =
+          import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL ||
+          import.meta.env.PUBLIC_CLOUD_FUNCTION_URL ||
+          "https://bananaaigenerator-vs5qoxox3a-uc.a.run.app";
+        console.log("🔵 [生产环境] 使用云函数 v1");
       }
 
       this.isProcessing = false;
@@ -217,6 +224,25 @@ const { className = "" } = Astro.props;
           });
 
           // React 组件会自动显示，这里不需要手动渲染
+
+          // 如果响应包含积分信息，触发积分更新事件
+          if (
+            result.data.metadata &&
+            result.data.metadata.creditsRemaining !== undefined
+          ) {
+            console.log(
+              "💰 积分已更新，剩余:",
+              result.data.metadata.creditsRemaining
+            );
+            window.dispatchEvent(
+              new CustomEvent("creditsUpdated", {
+                detail: {
+                  credits: result.data.metadata.creditsRemaining,
+                  userId: result.data.metadata.userId,
+                },
+              })
+            );
+          }
 
           // 发送成功响应事件
           window.dispatchEvent(

@@ -610,7 +610,7 @@ export class ProgressiveLoader {
     public preloadForRoute(route: string): void {
         const routeModules: Record<string, string[]> = {
             '/editor': [
-                '/src/components/banana-editor/ImageGenerator.astro',
+                // ImageGenerator.astro 已被移除，功能已集成到新的布局中
                 '/src/components/banana-editor/ImageFusion.astro'
             ],
             '/prompts': [

@@ -19,6 +19,9 @@ import {
     verifySignature,
     isTimestampValid
 } from './encryption.js';
+import {
+    createClient
+} from '@supabase/supabase-js';
 
 // 初始化 Firebase Admin
 const app = initializeApp();
@@ -26,6 +29,19 @@ const app = initializeApp();
 // 获取项目 ID（Firebase Functions 中的标准方式）
 // Firebase 会自动设置 GCLOUD_PROJECT 环境变量
 const projectId = process.env.GCLOUD_PROJECT || 'bananaeditor-927be';
+
+// 初始化 Supabase 客户端（用于 v2 版本的积分验证）
+const getSupabaseClient = () => {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+        console.warn('⚠️ Supabase 环境变量未配置，v2 版本将无法使用');
+        return null;
+    }
+
+    return createClient(supabaseUrl, supabaseServiceKey);
+};
 
 // 初始化 Google Gen AI（延迟初始化，避免部署时的问题）
 let genAI;
@@ -865,6 +881,518 @@ export const bananaAIGenerator = onRequest({
             console.error(`请求 ${requestId} 处理失败:`, error);
 
             // 根据错误类型返回不同的状态码
+            let statusCode = 500;
+            let errorCode = 'GENERATION_FAILED';
+
+            if (error.message.includes('参数验证失败')) {
+                statusCode = 400;
+                errorCode = 'INVALID_PARAMS';
+            } else if (error.message.includes('文件上传失败')) {
+                statusCode = 400;
+                errorCode = 'UPLOAD_FAILED';
+            } else if (error.message.includes('AI服务调用失败')) {
+                statusCode = 503;
+                errorCode = 'AI_SERVICE_ERROR';
+            }
+
+            res.status(statusCode).json({
+                success: false,
+                error: {
+                    code: errorCode,
+                    message: error.message,
+                    requestId,
+                    processingTime
+                }
+            });
+        }
+    });
+});
+
+/**
+ * 辅助函数：验证 Supabase JWT 并获取用户信息
+ */
+async function verifySupabaseToken(authToken) {
+    try {
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+            throw new Error('Supabase 客户端未初始化');
+        }
+
+        // 验证 JWT token
+        const {
+            data: {
+                user
+            },
+            error
+        } = await supabase.auth.getUser(authToken);
+
+        if (error) {
+            console.error('JWT 验证失败:', error);
+            return {
+                success: false,
+                error: 'INVALID_TOKEN',
+                message: '认证令牌无效'
+            };
+        }
+
+        if (!user) {
+            return {
+                success: false,
+                error: 'USER_NOT_FOUND',
+                message: '用户不存在'
+            };
+        }
+
+        return {
+            success: true,
+            user
+        };
+    } catch (error) {
+        console.error('验证 token 异常:', error);
+        return {
+            success: false,
+            error: 'VERIFICATION_ERROR',
+            message: '验证失败'
+        };
+    }
+}
+
+/**
+ * 辅助函数：检查用户积分余额
+ */
+async function checkUserCredits(userId, requiredCredits = 1) {
+    try {
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+            throw new Error('Supabase 客户端未初始化');
+        }
+
+        const {
+            data,
+            error
+        } = await supabase
+            .from('user_credits')
+            .select('credits')
+            .eq('user_id', userId)
+            .single();
+
+        if (error) {
+            console.error('查询积分失败:', error);
+            return {
+                success: false,
+                error: 'QUERY_ERROR',
+                message: '查询积分失败'
+            };
+        }
+
+        if (!data) {
+            return {
+                success: false,
+                error: 'NO_CREDITS_RECORD',
+                message: '积分记录不存在'
+            };
+        }
+
+        const hasEnough = data.credits >= requiredCredits;
+
+        return {
+            success: true,
+            hasEnough,
+            currentCredits: data.credits,
+            requiredCredits
+        };
+    } catch (error) {
+        console.error('检查积分异常:', error);
+        return {
+            success: false,
+            error: 'CHECK_ERROR',
+            message: '检查积分失败'
+        };
+    }
+}
+
+/**
+ * 辅助函数：扣除用户积分
+ */
+async function deductUserCredits(userId, amount, reason, metadata = {}) {
+    try {
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+            throw new Error('Supabase 客户端未初始化');
+        }
+
+        const {
+            data,
+            error
+        } = await supabase.rpc('deduct_credits', {
+            p_user_id: userId,
+            p_amount: amount,
+            p_reason: reason,
+            p_metadata: metadata
+        });
+
+        if (error) {
+            console.error('扣除积分失败:', error);
+            return {
+                success: false,
+                error: 'DEDUCTION_ERROR',
+                message: '扣除积分失败'
+            };
+        }
+
+        if (!data.success) {
+            return {
+                success: false,
+                error: data.error || 'DEDUCTION_FAILED',
+                message: data.message || '扣除积分失败'
+            };
+        }
+
+        return {
+            success: true,
+            newBalance: data.new_balance
+        };
+    } catch (error) {
+        console.error('扣除积分异常:', error);
+        return {
+            success: false,
+            error: 'DEDUCTION_EXCEPTION',
+            message: '扣除积分异常'
+        };
+    }
+}
+
+/**
+ * Banana AI 生成器 Firebase 云函数 - V2 版本
+ * 包含 Supabase 认证和积分检查
+ */
+export const bananaAIGenerator_v2 = onRequest({
+    timeoutSeconds: 300,
+    memory: '1GiB',
+    maxInstances: 10,
+    cors: true
+}, async (req, res) => {
+    const startTime = Date.now();
+    let requestId = '';
+    let userId = null;
+
+    // 使用 CORS 中间件
+    return corsHandler(req, res, async () => {
+        try {
+            // 生成请求ID
+            requestId = `banana_fb_v2_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+            console.log(`🆕 [V2] 开始处理请求 ${requestId}`);
+
+            // 只允许 POST 请求
+            if (req.method !== 'POST') {
+                res.status(405).json({
+                    success: false,
+                    error: {
+                        code: 'METHOD_NOT_ALLOWED',
+                        message: '只允许 POST 请求'
+                    }
+                });
+                return;
+            }
+
+            // ==========================================
+            // 1. Supabase JWT 验证
+            // ==========================================
+            const authHeader = req.headers.authorization;
+            if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                res.status(401).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_AUTH_TOKEN',
+                        message: '缺少认证令牌'
+                    }
+                });
+                return;
+            }
+
+            const token = authHeader.substring(7); // 移除 "Bearer " 前缀
+            const authResult = await verifySupabaseToken(token);
+
+            if (!authResult.success) {
+                res.status(401).json({
+                    success: false,
+                    error: {
+                        code: authResult.error,
+                        message: authResult.message
+                    }
+                });
+                return;
+            }
+
+            userId = authResult.user.id;
+            console.log(`✅ [V2] 用户认证成功: ${userId}`);
+
+            // ==========================================
+            // 2. 检查积分余额
+            // ==========================================
+            const creditCheck = await checkUserCredits(userId, 1);
+
+            if (!creditCheck.success) {
+                res.status(500).json({
+                    success: false,
+                    error: {
+                        code: creditCheck.error,
+                        message: creditCheck.message
+                    }
+                });
+                return;
+            }
+
+            if (!creditCheck.hasEnough) {
+                console.warn(`⚠️ [V2] 用户积分不足: ${creditCheck.currentCredits}/${creditCheck.requiredCredits}`);
+                res.status(402).json({
+                    success: false,
+                    error: {
+                        code: 'INSUFFICIENT_CREDITS',
+                        message: `积分不足。当前积分: ${creditCheck.currentCredits}，需要: ${creditCheck.requiredCredits}`,
+                        currentCredits: creditCheck.currentCredits,
+                        requiredCredits: creditCheck.requiredCredits
+                    }
+                });
+                return;
+            }
+
+            console.log(`✅ [V2] 积分检查通过: ${creditCheck.currentCredits}/${creditCheck.requiredCredits}`);
+
+            // ==========================================
+            // 3. 原有的加密验证逻辑
+            // ==========================================
+            const isEncryptedRequest = req.headers['x-encrypted-request'] === 'true';
+            const signature = req.headers['x-signature'];
+            const requestTimestamp = req.headers['x-timestamp'];
+            const iv = req.headers['x-iv'];
+
+            let encryptedData = null;
+
+            if (isEncryptedRequest) {
+                try {
+                    const rawBody = req.rawBody ? req.rawBody.toString('utf8') : JSON.stringify(req.body);
+                    const bodyData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+                    encryptedData = bodyData.encrypted;
+                } catch (error) {
+                    console.error('❌ [V2] 读取加密数据失败:', error);
+                }
+            }
+
+            if (!encryptedData || !signature || !requestTimestamp || !iv) {
+                res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'MISSING_ENCRYPTION_HEADERS',
+                        message: '缺少加密请求头或加密数据'
+                    }
+                });
+                return;
+            }
+
+            // 验证时间戳
+            if (!isTimestampValid(parseInt(requestTimestamp))) {
+                res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_TIMESTAMP',
+                        message: '请求时间戳无效或已过期'
+                    }
+                });
+                return;
+            }
+
+            // 验证签名
+            if (!verifySignature(encryptedData, requestTimestamp, signature)) {
+                res.status(403).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_SIGNATURE',
+                        message: '请求签名验证失败'
+                    }
+                });
+                return;
+            }
+
+            // ==========================================
+            // 4. 解析请求并调用 AI（复用原有逻辑）
+            // ==========================================
+            const contentType = req.headers['content-type'] || '';
+            let requestBody = {};
+            let hasImage = false;
+            let imageFile = null;
+            let conversationHistory = [];
+
+            if (contentType.includes('application/json')) {
+                try {
+                    requestBody = decryptRequestBody(encryptedData, req.headers['x-iv']);
+                    console.log('✅ [V2] 请求体解密成功');
+                } catch (error) {
+                    res.status(400).json({
+                        success: false,
+                        error: {
+                            code: 'DECRYPTION_FAILED',
+                            message: '请求体解密失败'
+                        }
+                    });
+                    return;
+                }
+
+                if (requestBody.conversationHistory && Array.isArray(requestBody.conversationHistory)) {
+                    conversationHistory = requestBody.conversationHistory;
+                }
+            } else if (contentType.includes('multipart/form-data')) {
+                const parsed = await parseMultipartData(req);
+                requestBody = parsed.fields;
+                imageFile = parsed.file;
+                hasImage = !!imageFile;
+
+                if (requestBody.conversationHistory) {
+                    try {
+                        conversationHistory = JSON.parse(requestBody.conversationHistory);
+                    } catch (error) {
+                        conversationHistory = [];
+                    }
+                }
+            } else {
+                throw new Error(`不支持的 Content-Type: ${contentType}`);
+            }
+
+            // 验证请求参数
+            const errors = validateRequest(requestBody);
+            if (errors.length > 0) {
+                res.status(400).json({
+                    success: false,
+                    error: {
+                        code: 'INVALID_REQUEST_PARAMS',
+                        message: `请求参数验证失败: ${errors.join(', ')}`
+                    }
+                });
+                return;
+            }
+
+            const params = {
+                prompt: requestBody.prompt.trim(),
+                style: requestBody.style || 'creative',
+                quality: requestBody.quality || 'standard',
+                creativity: parseInt(requestBody.creativity || '50'),
+                colorTone: requestBody.colorTone || '',
+                outputFormat: requestBody.outputFormat || 'jpeg'
+            };
+
+            // 处理图片
+            let imageBase64 = null;
+            if (hasImage && imageFile) {
+                const processedImage = await processImage(imageFile.buffer);
+                imageBase64 = processedImage.base64;
+            }
+
+            // 构建提示词
+            let finalPrompt;
+            if (conversationHistory.length > 0) {
+                finalPrompt = params.prompt;
+            } else {
+                finalPrompt = buildEnhancedPrompt(params);
+            }
+
+            const currentActiveImage = requestBody.currentActiveImage || null;
+
+            // 调用 AI
+            console.log(`🤖 [V2] 调用 AI 生成...`);
+            const aiResult = await callVertexAI(finalPrompt, imageBase64, conversationHistory, currentActiveImage);
+            console.log(`✅ [V2] AI 生成完成，文本长度: ${aiResult.text.length}`);
+
+            // ==========================================
+            // 5. 扣除积分（只有成功生成后才扣除）
+            // ==========================================
+            const deductionResult = await deductUserCredits(userId, 1, 'image_generation', {
+                requestId,
+                prompt: params.prompt.substring(0, 100), // 只记录前100字符
+                hasImage
+            });
+
+            if (!deductionResult.success) {
+                console.error(`❌ [V2] 扣除积分失败:`, deductionResult);
+                // 即使扣除失败，也返回成功结果，但记录错误
+                // 可以考虑将失败记录到数据库中，稍后补扣
+            } else {
+                console.log(`✅ [V2] 积分扣除成功，新余额: ${deductionResult.newBalance}`);
+            }
+
+            // ==========================================
+            // 6. 上传图片并返回结果（复用原有逻辑）
+            // ==========================================
+            let imageBuffer;
+            if (aiResult.imageData) {
+                imageBuffer = Buffer.from(aiResult.imageData, 'base64');
+            } else {
+                imageBuffer = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64');
+            }
+
+            const bucket = getBucket();
+            const filename = `${requestId}_${Date.now()}.${params.outputFormat}`;
+            const file = bucket.file(filename);
+
+            await file.save(imageBuffer, {
+                metadata: {
+                    contentType: `image/${params.outputFormat}`,
+                    metadata: {
+                        generated: 'true',
+                        model: 'vertex-ai',
+                        timestamp: new Date().toISOString()
+                    }
+                }
+            });
+
+            await file.makePublic();
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
+
+            const updatedHistory = [
+                ...conversationHistory,
+                {
+                    role: 'user',
+                    content: params.prompt
+                },
+                {
+                    role: 'model',
+                    content: aiResult.text,
+                    imageUrl: publicUrl
+                }
+            ];
+
+            const processingTime = Date.now() - startTime;
+            const suggestions = aiResult.suggestions || [];
+
+            const response = {
+                success: true,
+                data: {
+                    text: aiResult.text,
+                    imageUrl: publicUrl,
+                    requestId,
+                    processingTime,
+                    conversationHistory: updatedHistory,
+                    metadata: {
+                        userId, // 包含用户 ID
+                        creditsRemaining: deductionResult.success ? deductionResult.newBalance : undefined,
+                        dimensions: {
+                            width: 1024,
+                            height: 1024
+                        },
+                        fileSize: imageBuffer.length,
+                        format: params.outputFormat,
+                        conversationTurns: updatedHistory.length / 2
+                    },
+                    suggestions
+                }
+            };
+
+            console.log(`✅ [V2] 请求 ${requestId} 处理完成，耗时 ${processingTime}ms，剩余积分: ${deductionResult.newBalance || 'N/A'}`);
+            res.status(200).json(response);
+
+        } catch (error) {
+            const processingTime = Date.now() - startTime;
+            console.error(`❌ [V2] 请求 ${requestId} 处理失败:`, error);
+
             let statusCode = 500;
             let errorCode = 'GENERATION_FAILED';
 

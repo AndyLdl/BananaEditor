@@ -1,0 +1,96 @@
+---
+// Astro 包装组件，用于渲染 React EditorUserInfo 组件
+---
+
+<div id="editor-user-info-root" class="editor-user-info-wrapper"></div>
+
+<script>
+  import { createRoot } from "react-dom/client";
+  import React from "react";
+  import EditorUserInfo from "./EditorUserInfo.tsx";
+
+  // 初始化计数器，用于重试
+  let initAttempts = 0;
+  const MAX_INIT_ATTEMPTS = 3;
+
+  // 优化的初始化函数，带重试机制
+  function initEditorUserInfo() {
+    initAttempts++;
+    const startTime = Date.now();
+
+    console.log(
+      `🚀 [EditorUserInfoWrapper] Init attempt ${initAttempts}/${MAX_INIT_ATTEMPTS}`
+    );
+
+    const container = document.getElementById("editor-user-info-root");
+
+    if (!container) {
+      console.warn(
+        `⚠️ [EditorUserInfoWrapper] Container not found, attempt ${initAttempts}`
+      );
+
+      // 重试机制
+      if (initAttempts < MAX_INIT_ATTEMPTS) {
+        setTimeout(() => {
+          console.log(`🔄 [EditorUserInfoWrapper] Retrying init...`);
+          initEditorUserInfo();
+        }, 100 * initAttempts); // 递增延迟：100ms, 200ms, 300ms
+      } else {
+        console.error(
+          `❌ [EditorUserInfoWrapper] Failed to find container after ${MAX_INIT_ATTEMPTS} attempts`
+        );
+      }
+      return;
+    }
+
+    if (container.hasAttribute("data-initialized")) {
+      console.log(`✅ [EditorUserInfoWrapper] Already initialized, skipping`);
+      return;
+    }
+
+    try {
+      container.setAttribute("data-initialized", "true");
+      const root = createRoot(container);
+      root.render(React.createElement(EditorUserInfo));
+
+      const elapsed = Date.now() - startTime;
+      console.log(
+        `✅ [EditorUserInfoWrapper] React component rendered in ${elapsed}ms`
+      );
+    } catch (error) {
+      console.error(`❌ [EditorUserInfoWrapper] Render error:`, error);
+      container.removeAttribute("data-initialized"); // 允许重试
+    }
+  }
+
+  // 多种初始化策略，确保组件一定能加载
+  if (document.readyState === "loading") {
+    // 如果DOM还在加载，等待DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", initEditorUserInfo);
+  } else if (document.readyState === "interactive") {
+    // DOM已经解析但资源还在加载，立即初始化或稍等一下
+    setTimeout(initEditorUserInfo, 0);
+  } else {
+    // DOM和资源都已加载完成，立即初始化
+    initEditorUserInfo();
+  }
+
+  // 备用策略：如果1秒后还没初始化，强制重试
+  setTimeout(() => {
+    const container = document.getElementById("editor-user-info-root");
+    if (container && !container.hasAttribute("data-initialized")) {
+      console.warn(
+        "⚠️ [EditorUserInfoWrapper] Fallback init triggered after 1s"
+      );
+      initAttempts = 0; // 重置计数器
+      initEditorUserInfo();
+    }
+  }, 1000);
+</script>
+
+<style>
+  .editor-user-info-wrapper {
+    display: flex;
+    align-items: center;
+  }
+</style>

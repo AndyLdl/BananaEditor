@@ -84,7 +84,7 @@ const optimizeKeywordDensity = (text: string, keywords: string[]): string => {
 
 const optimizedDescription = optimizeKeywordDensity(
   finalDescription,
-  finalKeywords,
+  finalKeywords
 );
 ---
 
@@ -233,13 +233,21 @@ const optimizedDescription = optimizeKeywordDensity(
             "@type": "ListItem",
             position: 1,
             name: "Home",
-            item: baseSEOConfig.siteUrl,
+            item: {
+              "@type": "WebPage",
+              "@id": baseSEOConfig.siteUrl,
+              url: baseSEOConfig.siteUrl,
+            },
           },
           {
             "@type": "ListItem",
             position: 2,
             name: finalTitle,
-            item: finalCanonical,
+            item: {
+              "@type": "WebPage",
+              "@id": finalCanonical,
+              url: finalCanonical,
+            },
           },
         ],
       })}
@@ -338,12 +346,18 @@ const optimizedDescription = optimizeKeywordDensity(
 </script>
 
 <!-- 搜索引擎验证 -->
-<!-- Google Search Console -->
-<meta name="google-site-verification" content="your-google-verification-code" />
-<!-- Bing Webmaster Tools -->
-<meta name="msvalidate.01" content="your-bing-verification-code" />
-<!-- Yandex Webmaster -->
-<meta name="yandex-verification" content="your-yandex-verification-code" />
+<!-- 
+  如果需要验证网站所有权，请取消注释并替换为实际的验证码：
+  
+  Google Search Console:
+  <meta name="google-site-verification" content="实际的验证码" />
+  
+  Bing Webmaster Tools:
+  <meta name="msvalidate.01" content="实际的验证码" />
+  
+  Yandex Webmaster:
+  <meta name="yandex-verification" content="实际的验证码" />
+-->
 
 <style>
   /* 关键CSS内联以提高性能 */

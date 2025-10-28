@@ -274,7 +274,7 @@ export class RouteCodeSplitter {
         this.routeComponents.set('/prompts', '/src/pages/prompts/index.astro');
 
         // AI编辑器组件
-        this.routeComponents.set('/components/image-generator', '/src/components/banana-editor/ImageGenerator.astro');
+        // ImageGenerator.astro 已被移除，功能已集成到新的布局中
         this.routeComponents.set('/components/image-fusion', '/src/components/banana-editor/ImageFusion.astro');
         this.routeComponents.set('/components/prompt-optimizer', '/src/components/banana-editor/PromptOptimizer.astro');
     }
@@ -314,7 +314,7 @@ export class RouteCodeSplitter {
                     '/src/components/banana-editor/layout/EditorLayout.astro',
                     '/src/components/banana-editor/layout/EditorToolbar.astro',
                     '/src/components/banana-editor/layout/EditorCanvas.astro',
-                    '/src/components/banana-editor/ImageGenerator.astro',
+                    // ImageGenerator.astro 已被移除
                     '/src/components/banana-editor/ImageFusion.astro'
                 );
                 break;

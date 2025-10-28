@@ -63,7 +63,8 @@ export default defineConfig({
       }
     },
     optimizeDeps: {
-      include: ['@astrojs/tailwind', 'react', 'react-dom']
+      include: ['@astrojs/tailwind', 'react', 'react-dom'],
+      exclude: ['debug'] // 排除 debug 包，避免 ESM/CommonJS 兼容性问题
     },
     // 构建配置
     build: {

@@ -36,29 +36,40 @@ const { items, className = "", separator = "/" } = Astro.props;
               itemscope
               itemtype="https://schema.org/ListItem">
               {item.href && !isLast ? (
-                <a href={item.href} class="breadcrumb-link" itemprop="item">
-                  {item.svgIcon && (
-                    <span class="breadcrumb-svg-icon" set:html={item.svgIcon} />
-                  )}
-                  {item.icon && (
-                    <span class="breadcrumb-icon">{item.icon}</span>
-                  )}
-                  <span itemprop="name">{item.label}</span>
+                <>
+                  <a href={item.href} class="breadcrumb-link" itemprop="item">
+                    {item.svgIcon && (
+                      <span
+                        class="breadcrumb-svg-icon"
+                        set:html={item.svgIcon}
+                      />
+                    )}
+                    {item.icon && (
+                      <span class="breadcrumb-icon">{item.icon}</span>
+                    )}
+                    <span itemprop="name">{item.label}</span>
+                  </a>
                   <meta itemprop="position" content={position.toString()} />
-                </a>
+                </>
               ) : (
-                <span
-                  class={`breadcrumb-current ${isLast ? "active" : ""}`}
-                  itemprop="item">
-                  {item.svgIcon && (
-                    <span class="breadcrumb-svg-icon" set:html={item.svgIcon} />
-                  )}
-                  {item.icon && (
-                    <span class="breadcrumb-icon">{item.icon}</span>
-                  )}
-                  <span itemprop="name">{item.label}</span>
+                <>
+                  <span
+                    class={`breadcrumb-current ${isLast ? "active" : ""}`}
+                    itemprop="name">
+                    {item.svgIcon && (
+                      <span
+                        class="breadcrumb-svg-icon"
+                        set:html={item.svgIcon}
+                      />
+                    )}
+                    {item.icon && (
+                      <span class="breadcrumb-icon">{item.icon}</span>
+                    )}
+                    {item.label}
+                  </span>
                   <meta itemprop="position" content={position.toString()} />
-                </span>
+                  {item.href && <link itemprop="item" href={item.href} />}
+                </>
               )}
             </li>
             {!isLast && (

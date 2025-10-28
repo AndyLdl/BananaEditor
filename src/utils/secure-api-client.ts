@@ -134,6 +134,20 @@ export async function generateRequestSignature(data: string, timestamp: number):
 }
 
 /**
+ * 获取 Supabase 访问令牌（如果可用）
+ */
+async function getSupabaseToken(): Promise<string | null> {
+    try {
+        // 动态导入 Supabase 客户端
+        const { getAccessToken } = await import('./supabase-client');
+        return await getAccessToken();
+    } catch (error) {
+        console.warn('⚠️ 无法获取 Supabase token:', error);
+        return null;
+    }
+}
+
+/**
  * 安全的API调用
  */
 export async function secureApiCall(
@@ -161,6 +175,15 @@ export async function secureApiCall(
         headers.set('X-Signature', signature);
         headers.set('X-Timestamp', timestamp.toString());
         headers.set('X-Encrypted-Request', 'true'); // 标记这是加密请求
+
+        // 添加 Supabase 认证令牌（如果可用）
+        const token = await getSupabaseToken();
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+            console.log('✅ 已添加 Supabase 认证令牌');
+        } else {
+            console.log('⚠️ 未找到 Supabase 认证令牌');
+        }
 
         // 发送请求 - 加密数据放在请求体中
         const requestBody = JSON.stringify({
@@ -193,13 +216,37 @@ export async function secureApiCall(
 }
 
 /**
+ * 获取云函数 URL（根据环境选择 v1 或 v2）
+ */
+function getCloudFunctionUrl(): string {
+    // 检查是否为开发环境
+    const isDev = import.meta.env.DEV || import.meta.env.MODE === 'development';
+
+    if (isDev) {
+        // 开发环境使用 v2（包含积分检查）
+        const devUrl = import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL_DEV;
+        if (devUrl) {
+            console.log('🟢 [开发环境] 使用云函数 v2:', devUrl);
+            return devUrl;
+        }
+    }
+
+    // 生产环境使用 v1（稳定版）
+    const prodUrl = import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL;
+    console.log('🔵 [生产环境] 使用云函数 v1:', prodUrl);
+    return prodUrl || '';
+}
+
+/**
  * 安全的 BananaAI 处理器
  */
 export class SecureBananaAIProcessor {
     private baseUrl: string;
 
     constructor(baseUrl?: string) {
-        this.baseUrl = baseUrl || import.meta.env.PUBLIC_FIREBASE_FUNCTION_URL || '';
+        // 如果提供了 baseUrl 则使用，否则根据环境自动选择
+        this.baseUrl = baseUrl || getCloudFunctionUrl();
+        console.log('📍 SecureBananaAIProcessor 初始化, URL:', this.baseUrl);
     }
 
     /**

@@ -3,6 +3,7 @@ import Container from "@components/container.astro";
 import Link from "@components/ui/link.astro";
 import Dropdown from "./dropdown.astro";
 import LanguageSwitcher from "@components/ui/LanguageSwitcher.astro";
+import NavbarAuthWrapper from "./NavbarAuthWrapper.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { getTranslations } from "../../i18n/utils";
 
@@ -44,77 +45,1081 @@ const menuitems = [
 ];
 ---
 
-<Container>
-  <header class="flex flex-col lg:flex-row justify-between items-center my-5">
-    <Astronav>
-      <div class="flex w-full lg:w-auto items-center justify-between">
-        <a href="/" class="text-lg brand-logo">
-          <span class="font-bold text-banana-dark">Banana</span><span
-            class="text-banana-primary">Editor</span
-          >
-        </a>
-        <div class="block lg:hidden">
-          <MenuIcon class="w-4 h-4 text-gray-800" />
+<header class="navbar-modern">
+  <Container>
+    <div class="navbar-content">
+      <Astronav>
+        <div class="navbar-brand">
+          <a href="/" class="brand-logo"> BananaEditor </a>
+          <div class="block lg:hidden">
+            <MenuIcon class="w-4 h-4 text-gray-800">
+              <!-- 菜单关闭时显示三横线 ≡ -->
+              <svg
+                slot="menuicon"
+                class="menu-icon-open"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+              </svg>
+              <!-- 菜单打开时显示叉号 × -->
+              <svg
+                slot="closeicon"
+                class="menu-icon-close"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </MenuIcon>
+          </div>
         </div>
-      </div>
-      <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
-        <ul class="flex flex-col lg:flex-row lg:gap-3">
-          {
-            menuitems.map((item, index) => (
-              <li>
-                <a
-                  href={item.path}
-                  class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-banana-primary transition-colors duration-200">
-                  <span>{item.title}</span>
-                  {item.badge && (
-                    <span class="ml-1 px-2 py-0.5 text-[10px] animate-pulse font-semibold uppercase text-white bg-banana-primary rounded-full">
-                      New
-                    </span>
-                  )}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-        <div class="lg:hidden flex items-center mt-3 gap-4">
+        <MenuItems class="navbar-menu">
+          <ul class="menu-list">
+            {
+              menuitems.map((item, index) => (
+                <li>
+                  <a href={item.path} class="menu-item">
+                    <span>{item.title}</span>
+                    {item.badge && <span class="menu-badge">New</span>}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <div
+            class="lg:hidden flex flex-col items-stretch mt-3 gap-3 mobile-actions">
+            <!-- 用户信息 + 语言切换（移动端，横向排列） -->
+            <div class="mobile-top-row">
+              <div class="mobile-auth-wrapper">
+                <NavbarAuthWrapper />
+              </div>
+              <div class="mobile-lang-switcher">
+                <LanguageSwitcher />
+              </div>
+            </div>
+            <!-- Start Editing按钮（移动端） -->
+            <Link href="/editor" size="md" class="start-editing-btn mobile-cta">
+              {t.buttons.startEditing}
+            </Link>
+          </div>
+        </MenuItems>
+      </Astronav>
+      <div class="navbar-actions">
+        <div class="hidden lg:flex items-center gap-3">
+          <!-- 用户信息：积分显示 + 头像 -->
+          <NavbarAuthWrapper />
+          <!-- 主要操作按钮 -->
+          <Link href="/editor" size="md" class="start-editing-btn">
+            {t.buttons.startEditing}
+          </Link>
+          <!-- 语言切换（次要功能） -->
           <LanguageSwitcher />
         </div>
-      </MenuItems>
-    </Astronav>
-    <div>
-      <div class="hidden lg:flex items-center gap-4">
-        <LanguageSwitcher />
-        <Link
-          href="/editor"
-          size="md"
-          class="bg-banana-gradient text-white hover:bg-banana-secondary">
-          {t.buttons.startEditing}
-        </Link>
       </div>
     </div>
-  </header>
-</Container>
+  </Container>
+</header>
 
 <style>
+  /* 现代化导航栏 */
+  .navbar-modern {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 0.75rem 0;
+  }
+
+  .navbar-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .navbar-content {
+      flex-direction: row;
+    }
+  }
+
+  /* Logo样式 */
+  .navbar-brand {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @media (min-width: 1024px) {
+    .navbar-brand {
+      width: auto;
+    }
+  }
+
   .brand-logo {
-    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .brand-logo::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
+    transition: width 0.3s ease;
   }
 
   .brand-logo:hover {
-    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    background: linear-gradient(135deg, #ff8800 0%, #ff6600 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    transform: translateY(-1px);
+  }
+
+  .brand-logo:hover::after {
+    width: 100%;
+  }
+
+  /* 菜单列表 - 桌面端显示，移动端通过Astronav控制 */
+  .navbar-menu {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  /* 移动端：hidden属性控制显示/隐藏 */
+  @media (max-width: 1023px) {
+    .navbar-menu[hidden] {
+      display: none !important;
+    }
+
+    .navbar-menu:not([hidden]) {
+      display: block !important;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .navbar-menu {
+      display: flex;
+      width: auto;
+      margin-top: 0;
+    }
+  }
+
+  .menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .menu-list {
+      flex-direction: row;
+      gap: 0.25rem;
+    }
+  }
+
+  /* 菜单项 */
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 1rem;
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .menu-item:hover {
+    color: #ffb800;
+    background: rgba(255, 184, 0, 0.08);
+  }
+
+  .menu-item span {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* New徽章 */
+  .menu-badge {
+    margin-left: 0.375rem;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
+    border-radius: 9999px;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    box-shadow: 0 2px 6px rgba(255, 184, 0, 0.3);
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+  }
+
+  /* 右侧操作区 */
+  .navbar-actions {
+    margin-top: 0;
+  }
+
+  /* Start Editing 按钮优化 */
+  .navbar-actions :global(.start-editing-btn) {
+    background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1.25rem !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(255, 184, 0, 0.3) !important;
+    border: none !important;
+  }
+
+  .navbar-actions :global(.start-editing-btn:hover) {
+    background: linear-gradient(135deg, #ff8800 0%, #ff7700 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(255, 184, 0, 0.4) !important;
+  }
+
+  .navbar-actions :global(.start-editing-btn:active) {
+    transform: translateY(0) !important;
+  }
+
+  /* 移动端优化 */
+  @media (max-width: 1023px) {
+    .navbar-modern {
+      padding: 0.75rem 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .navbar-content {
+      position: relative;
+    }
+
+    .navbar-brand {
+      padding: 0 1rem;
+    }
+
+    .brand-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    /* 移动端菜单按钮 - 美化升级 */
+    .navbar-brand :global(button) {
+      padding: 0.625rem;
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 184, 0, 0.1) 0%,
+        rgba(255, 136, 0, 0.08) 100%
+      );
+      border: 2px solid rgba(255, 184, 0, 0.25);
+      box-shadow: 0 2px 8px rgba(255, 184, 0, 0.15);
+    }
+
+    .navbar-brand :global(button:hover),
+    .navbar-brand :global(button:active) {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 184, 0, 0.2) 0%,
+        rgba(255, 136, 0, 0.15) 100%
+      );
+      border-color: rgba(255, 184, 0, 0.4);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(255, 184, 0, 0.25);
+    }
+
+    .navbar-brand :global(button svg) {
+      color: #ffb800;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    /* 菜单图标样式 */
+    :global(.menu-icon-open),
+    :global(.menu-icon-close) {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: #ffb800;
+      transition: transform 0.3s ease;
+    }
+
+    /* 移动端展开菜单 - 精美卡片设计 */
+    .navbar-menu {
+      position: absolute;
+      top: 100%;
+      left: 0.5rem;
+      right: 0.5rem;
+      margin-top: 0.5rem;
+      background: linear-gradient(to bottom, #ffffff 0%, #fffbf5 100%);
+      border-radius: 20px;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(255, 184, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 184, 0, 0.15);
+      padding: 1rem;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      overflow-x: visible;
+      animation: slideDownFade 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(20px);
+    }
+
+    @keyframes slideDownFade {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* 美化滚动条 */
+    .navbar-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .navbar-menu::-webkit-scrollbar-track {
+      background: rgba(255, 184, 0, 0.05);
+      border-radius: 10px;
+    }
+
+    .navbar-menu::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
+      border-radius: 10px;
+    }
+
+    .navbar-menu::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #ff8800 0%, #ff7700 100%);
+    }
+
+    .menu-list {
+      gap: 0.375rem;
+      padding-bottom: 0.5rem;
+    }
+
+    /* 美化菜单项 */
+    .menu-item {
+      padding: 1rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 500;
+      width: 100%;
+      border-radius: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
+      transform: scaleY(0);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .menu-item:hover,
+    .menu-item:active {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 184, 0, 0.12) 0%,
+        rgba(255, 136, 0, 0.08) 100%
+      );
+      color: #ff8800;
+      transform: translateX(4px);
+      box-shadow:
+        0 4px 12px rgba(255, 184, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .menu-item:hover::before {
+      transform: scaleY(1);
+    }
+
+    .menu-badge {
+      margin-left: auto;
+      padding: 0.25rem 0.625rem;
+      font-size: 0.625rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%);
+      box-shadow: 0 2px 8px rgba(255, 184, 0, 0.4);
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes badgePulse {
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(255, 184, 0, 0.4);
+      }
+      50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(255, 184, 0, 0.6);
+      }
+    }
+
+    /* 移动端操作按钮区域 - 紧凑布局 */
+    .mobile-actions {
+      padding: 0.75rem 0.75rem 0.625rem;
+      border-top: 2px solid transparent;
+      background:
+        linear-gradient(#fffbf5, #fffbf5) padding-box,
+        linear-gradient(
+            90deg,
+            rgba(255, 184, 0, 0.2) 0%,
+            rgba(255, 136, 0, 0.3) 50%,
+            rgba(255, 184, 0, 0.2) 100%
+          )
+          border-box;
+      margin-top: 0.625rem !important;
+      border-radius: 0 0 16px 16px;
+      gap: 0.625rem !important;
+      overflow: visible !important;
+    }
+
+    /* 顶部行：用户信息 + 语言切换 横向排列 */
+    .mobile-top-row {
+      display: flex;
+      flex-direction: row;
+      gap: 0.625rem;
+      width: 100%;
+      align-items: stretch;
+      overflow: visible !important;
+    }
+
+    /* 用户信息容器 - 占据剩余空间 */
+    .mobile-auth-wrapper {
+      flex: 1;
+      min-width: 0;
+      overflow: visible !important;
+      position: relative;
+    }
+
+    /* 语言切换器容器 - 紧凑设计 */
+    .mobile-lang-switcher {
+      flex-shrink: 0;
+      width: auto;
+      min-width: 110px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+      min-height: 0;
+    }
+
+    /* 主按钮样式 - 更紧凑 */
+    .mobile-lang-switcher :global(.language-switcher) {
+      width: 100%;
+      position: relative;
+    }
+
+    .mobile-lang-switcher :global(.language-switcher > div) {
+      position: static;
+    }
+
+    .mobile-lang-switcher :global(#language-menu-button) {
+      width: 100%;
+      justify-content: center;
+      background: rgba(255, 184, 0, 0.08) !important;
+      border: 2px solid rgba(255, 184, 0, 0.2) !important;
+      border-radius: 12px !important;
+      padding: 0.625rem 0.75rem !important;
+      font-weight: 600 !important;
+      font-size: 0.875rem !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      white-space: nowrap !important;
+    }
+
+    /* 语言按钮内的文字样式 */
+    .mobile-lang-switcher :global(.language-flag) {
+      font-size: 1.125rem !important;
+    }
+
+    .mobile-lang-switcher :global(.language-name) {
+      display: none !important;
+    }
+
+    .mobile-lang-switcher :global(#language-menu-button:hover) {
+      background: rgba(255, 184, 0, 0.15) !important;
+      border-color: rgba(255, 184, 0, 0.35) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 184, 0, 0.2);
+    }
+
+    /* 下拉菜单定位优化 - 浮动覆盖在菜单栏上方 */
+    .mobile-lang-switcher :global(.language-dropdown) {
+      position: fixed !important;
+      bottom: auto !important;
+      top: auto !important;
+      left: 1rem !important;
+      right: 1rem !important;
+      transform-origin: center center !important;
+      margin: 0 !important;
+      max-height: 70vh !important;
+      overflow-y: auto !important;
+      background: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        #fffbf5 100%
+      ) !important;
+      border: 2px solid rgba(255, 184, 0, 0.3) !important;
+      border-radius: 20px !important;
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.2),
+        0 8px 24px rgba(255, 184, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+      z-index: 10001 !important;
+      backdrop-filter: blur(20px) !important;
+    }
+
+    /* 隐藏时不占用任何空间 - 关键修复！ */
+    .mobile-lang-switcher :global(.language-dropdown.opacity-0),
+    .mobile-lang-switcher :global(.language-dropdown.invisible) {
+      display: none !important;
+    }
+
+    /* 显示时才用block布局 */
+    .mobile-lang-switcher :global(.language-dropdown.opacity-100.visible) {
+      display: block !important;
+    }
+
+    /* 添加半透明遮罩效果 */
+    .lang-switcher-backdrop {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      background: rgba(0, 0, 0, 0.4) !important;
+      backdrop-filter: blur(4px) !important;
+      z-index: 10000 !important;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lang-switcher-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* 语言选项紧凑化 */
+    .mobile-lang-switcher :global(.language-option) {
+      padding: 0.75rem 1rem !important;
+      border-radius: 10px !important;
+      margin: 0.25rem 0.5rem !important;
+    }
+
+    .mobile-lang-switcher :global(.language-option > div) {
+      gap: 0.25rem !important;
+    }
+
+    .mobile-lang-switcher :global(.language-option span.text-xs) {
+      font-size: 0.6875rem !important;
+    }
+
+    /* 移动端认证按钮 - 精美样式 */
+    .navbar-menu :global(.navbar-auth-button),
+    .navbar-menu :global(.navbar-user-menu) {
+      width: 100%;
+    }
+
+    .navbar-menu :global(.navbar-auth-button) {
+      justify-content: center;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 184, 0, 0.1) 0%,
+        rgba(255, 136, 0, 0.08) 100%
+      ) !important;
+      border: 2px solid rgba(255, 184, 0, 0.25) !important;
+      border-radius: 14px !important;
+      padding: 1rem !important;
+      font-weight: 600 !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .navbar-menu :global(.navbar-auth-button:hover) {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 184, 0, 0.2) 0%,
+        rgba(255, 136, 0, 0.15) 100%
+      ) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 184, 0, 0.25);
+    }
+
+    /* 移动端用户信息区域 - 优雅布局 */
+    .navbar-menu :global(.navbar-user-menu) {
+      flex-direction: column;
+      gap: 0.875rem;
+      background: rgba(255, 184, 0, 0.05);
+      padding: 1rem;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 184, 0, 0.15);
+    }
+
+    .navbar-menu :global(.navbar-credits-display) {
+      width: 100%;
+      justify-content: center;
+      background: white !important;
+      border-radius: 12px !important;
+      padding: 0.875rem !important;
+      box-shadow: 0 2px 8px rgba(255, 184, 0, 0.1);
+      font-weight: 600 !important;
+    }
+
+    .navbar-menu :global(.navbar-user-trigger) {
+      width: 100%;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%) !important;
+      border-radius: 12px !important;
+      padding: 0.875rem !important;
+      color: white !important;
+      font-weight: 600 !important;
+      box-shadow: 0 4px 12px rgba(255, 184, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .navbar-menu :global(.navbar-user-trigger:hover) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 184, 0, 0.4);
+    }
+
+    /* 横向布局优化 - 用户信息 + 语言切换 */
+    .mobile-auth-wrapper :global(.navbar-auth-button) {
+      width: 100% !important;
+      padding: 0.625rem 0.875rem !important;
+      font-size: 0.875rem !important;
+      border-radius: 12px !important;
+    }
+
+    .mobile-auth-wrapper :global(.navbar-user-menu) {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 0.5rem !important;
+      width: 100% !important;
+      align-items: center !important;
+      padding: 0.5rem 0.625rem !important;
+      border-radius: 12px !important;
+    }
+
+    .mobile-auth-wrapper :global(.navbar-credits-display) {
+      flex: 1 !important;
+      min-width: 0 !important;
+      padding: 0.5rem 0.625rem !important;
+      border-radius: 10px !important;
+      font-size: 0.8125rem !important;
+      white-space: nowrap !important;
+    }
+
+    .mobile-auth-wrapper :global(.navbar-user-trigger) {
+      flex-shrink: 0 !important;
+      width: auto !important;
+      padding: 0.5rem !important;
+      border-radius: 10px !important;
+      min-width: 36px !important;
+      height: 36px !important;
+    }
+
+    .mobile-auth-wrapper :global(.navbar-user-trigger img),
+    .mobile-auth-wrapper :global(.navbar-user-trigger > div) {
+      width: 24px !important;
+      height: 24px !important;
+    }
+
+    /* 移动端用户下拉菜单 - 简化设计，允许溢出 */
+    .mobile-auth-wrapper :global(.navbar-user-dropdown) {
+      position: absolute !important;
+      top: calc(100% + 8px) !important;
+      left: 0 !important;
+      right: auto !important;
+      width: 280px !important;
+      max-width: calc(100vw - 2rem) !important;
+      z-index: 1001 !important;
+      background: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        #fffbf5 100%
+      ) !important;
+      border: 2px solid rgba(255, 184, 0, 0.3) !important;
+      border-radius: 16px !important;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.15),
+        0 4px 12px rgba(255, 184, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    }
+
+    /* 用户下拉菜单遮罩层 */
+    .mobile-auth-wrapper :global(.menu-backdrop) {
+      z-index: 1000 !important;
+    }
+
+    /* 移动端Start Editing按钮 - 超级吸睛 */
+    .navbar-menu :global(.start-editing-btn),
+    .navbar-menu :global(.mobile-cta) {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+      padding: 0.9375rem 1.5rem !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      border-radius: 14px !important;
+      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%) !important;
+      box-shadow:
+        0 8px 24px rgba(255, 184, 0, 0.35),
+        0 2px 8px rgba(255, 136, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      border: none !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .navbar-menu :global(.start-editing-btn::before),
+    .navbar-menu :global(.mobile-cta::before) {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    .navbar-menu :global(.start-editing-btn:hover::before),
+    .navbar-menu :global(.mobile-cta:hover::before) {
+      left: 100%;
+    }
+
+    .navbar-menu :global(.start-editing-btn:hover),
+    .navbar-menu :global(.mobile-cta:hover) {
+      background: linear-gradient(135deg, #ff8800 0%, #ff7700 100%) !important;
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 12px 32px rgba(255, 184, 0, 0.45),
+        0 4px 12px rgba(255, 136, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    }
+
+    .navbar-menu :global(.start-editing-btn:active),
+    .navbar-menu :global(.mobile-cta:active) {
+      transform: translateY(-1px) scale(1);
+    }
+  }
+
+  /* 中等宽度屏幕优化 (1024px - 1280px) - 防止导航栏元素换行 */
+  @media (min-width: 1024px) and (max-width: 1280px) {
+    /* 紧凑的品牌Logo */
+    .brand-logo {
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    /* 减小菜单项间距和padding */
+    .menu-list {
+      gap: 0;
+    }
+
+    .menu-item {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    /* 紧凑的按钮样式 */
+    .navbar-actions :global(.start-editing-btn) {
+      padding: 0.5rem 1rem !important;
+      font-size: 0.875rem !important;
+    }
+
+    /* 语言切换器 - 只显示图标，隐藏文字 */
+    .navbar-actions :global(.language-name) {
+      display: none;
+    }
+
+    .navbar-actions :global(#language-menu-button) {
+      padding: 0.5rem 0.75rem !important;
+    }
+
+    .navbar-actions :global(.language-flag) {
+      margin-right: 0 !important;
+    }
+
+    /* 减小右侧操作区间距 */
+    .navbar-actions .hidden.lg\\:flex {
+      gap: 0.5rem;
+    }
+
+    /* 紧凑的认证按钮 */
+    .navbar-actions :global(.navbar-auth-button) {
+      padding: 0.5rem 0.875rem !important;
+      font-size: 0.875rem !important;
+    }
+
+    /* 紧凑的用户菜单 */
+    .navbar-actions :global(.navbar-credits-display) {
+      padding: 0.5rem 0.875rem !important;
+      font-size: 0.8125rem !important;
+    }
+
+    .navbar-actions :global(.navbar-user-trigger) {
+      padding: 0.5rem !important;
+    }
+
+    /* 徽章也缩小 */
+    .menu-badge {
+      font-size: 0.5625rem;
+      padding: 0.1rem 0.4rem;
+      margin-left: 0.25rem;
+    }
+  }
+
+  /* 过渡宽度屏幕优化 (1280px - 1440px) - 逐渐恢复正常尺寸 */
+  @media (min-width: 1280px) and (max-width: 1440px) {
+    /* 稍小的品牌Logo */
+    .brand-logo {
+      font-size: 1.375rem;
+    }
+
+    /* 适中的菜单项 */
+    .menu-list {
+      gap: 0.125rem;
+    }
+
+    .menu-item {
+      padding: 0.5625rem 0.875rem;
+      font-size: 0.9rem;
+    }
+
+    /* 适中的按钮 */
+    .navbar-actions :global(.start-editing-btn) {
+      padding: 0.5rem 1.125rem !important;
+      font-size: 0.9375rem !important;
+    }
+
+    /* 语言切换器显示完整内容但紧凑 */
+    .navbar-actions :global(#language-menu-button) {
+      padding: 0.5rem 0.875rem !important;
+    }
+
+    .navbar-actions :global(.language-flag) {
+      margin-right: 0.375rem !important;
+    }
+
+    /* 适中的右侧操作区间距 */
+    .navbar-actions .hidden.lg\\:flex {
+      gap: 0.625rem;
+    }
+
+    /* 适中的认证按钮 */
+    .navbar-actions :global(.navbar-auth-button) {
+      padding: 0.5625rem 1rem !important;
+      font-size: 0.9375rem !important;
+    }
+
+    /* 适中的用户菜单 */
+    .navbar-actions :global(.navbar-credits-display) {
+      padding: 0.5625rem 1rem !important;
+      font-size: 0.875rem !important;
+    }
+
+    .navbar-actions :global(.navbar-user-trigger) {
+      padding: 0.5625rem !important;
+    }
+
+    /* 徽章适中 */
+    .menu-badge {
+      font-size: 0.5938rem;
+      padding: 0.125rem 0.4375rem;
+      margin-left: 0.3125rem;
+    }
+  }
+
+  /* 平板优化 */
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .brand-logo {
+      font-size: 1.5rem;
+    }
+
+    .navbar-menu {
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  /* 小屏幕手机优化 */
+  @media (max-width: 374px) {
+    .brand-logo {
+      font-size: 1.25rem;
+    }
+
+    .menu-item {
+      padding: 0.625rem 0.875rem;
+      font-size: 0.875rem;
+    }
   }
 </style>
 
 <script>
+  // 确保移动端菜单初始隐藏
+  function initMobileMenu() {
+    const menu = document.querySelector(".navbar-menu");
+    if (menu && window.innerWidth < 1024) {
+      menu.setAttribute("hidden", "");
+    }
+  }
+
+  // 页面加载时立即执行
+  initMobileMenu();
+
+  // 修复Astronav菜单按钮点击事件
+  function initAstronavFix() {
+    // 使用更可靠的选择器
+    let menuButton = document.querySelector(
+      ".navbar-brand button"
+    ) as HTMLButtonElement | null;
+    const menuItems = document.querySelector(
+      ".navbar-menu"
+    ) as HTMLElement | null;
+
+    // 如果Astronav的按钮不存在，尝试查找MenuIcon组件
+    if (!menuButton) {
+      // 查找包含SVG的任何按钮
+      const buttons = document.querySelectorAll(
+        '.navbar-brand button, .navbar-brand [role="button"]'
+      );
+      if (buttons.length > 0) {
+        menuButton = buttons[0] as HTMLButtonElement;
+      }
+    }
+
+    if (menuButton && menuItems) {
+      console.log("[Navbar] Menu button and items found, initializing...");
+
+      // 移除现有的事件监听器（如果有）
+      const newButton = menuButton.cloneNode(true) as HTMLButtonElement;
+      if (menuButton.parentNode) {
+        menuButton.parentNode.replaceChild(newButton, menuButton);
+        menuButton = newButton;
+      }
+
+      // 添加新的点击事件处理器
+      menuButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("[Navbar] Menu button clicked");
+
+        // 切换hidden属性
+        const isHidden = menuItems.hasAttribute("hidden");
+        console.log("[Navbar] Current state - hidden:", isHidden);
+
+        if (isHidden) {
+          menuItems.removeAttribute("hidden");
+          // 添加动画类
+          if (menuItems instanceof HTMLElement) {
+            menuItems.style.display = "block";
+          }
+          console.log("[Navbar] Menu opened");
+        } else {
+          menuItems.setAttribute("hidden", "");
+          console.log("[Navbar] Menu closed");
+        }
+
+        // 更新按钮的aria-expanded属性
+        if (menuButton) {
+          menuButton.setAttribute("aria-expanded", isHidden ? "true" : "false");
+        }
+      });
+
+      // 确保按钮有正确的属性
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Toggle navigation menu");
+
+      console.log("[Navbar] Click handler attached successfully");
+
+      // 点击菜单外部关闭菜单
+      document.addEventListener("click", function (e) {
+        const target = e.target as Node;
+        if (
+          menuButton &&
+          menuItems &&
+          !menuButton.contains(target) &&
+          !menuItems.contains(target)
+        ) {
+          if (!menuItems.hasAttribute("hidden")) {
+            menuItems.setAttribute("hidden", "");
+            menuButton.setAttribute("aria-expanded", "false");
+            console.log("[Navbar] Menu closed by clicking outside");
+          }
+        }
+      });
+    } else {
+      console.warn("[Navbar] Menu button or items not found", {
+        button: !!menuButton,
+        items: !!menuItems,
+        allButtons: document.querySelectorAll(".navbar-brand button").length,
+      });
+
+      // 延迟重试
+      setTimeout(initAstronavFix, 500);
+    }
+  }
+
   // 客户端语言检测和更新
   function updateNavigationLanguage() {
     // 获取当前语言
@@ -139,14 +1144,105 @@ const menuitems = [
       currentLang = "en";
     }
 
-    // 如果当前语言不是英文，更新页面
-    if (currentLang !== "en") {
-      const url = new URL(window.location.href);
+    // 只有当 URL 参数中没有 lang 参数，且当前语言不是英文时，才更新页面
+    const url = new URL(window.location.href);
+    const urlLang = url.searchParams.get("lang");
+
+    if (currentLang !== "en" && !urlLang) {
       url.searchParams.set("lang", currentLang);
       window.location.href = url.toString();
     }
   }
 
   // 页面加载完成后执行
-  document.addEventListener("DOMContentLoaded", updateNavigationLanguage);
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log("[Navbar] DOM loaded, initializing navbar...");
+    initAstronavFix();
+    updateNavigationLanguage();
+  });
+
+  // 也在astro:page-load事件时执行（用于Astro的视图过渡）
+  document.addEventListener("astro:page-load", () => {
+    console.log("[Navbar] Astro page loaded, re-initializing navbar...");
+    initMobileMenu();
+    initAstronavFix();
+  });
+
+  // 优化移动端语言切换器
+  function optimizeMobileLanguageSwitcher() {
+    if (window.innerWidth >= 1024) return; // 仅在移动端执行
+
+    const langDropdown = document.querySelector(
+      ".mobile-lang-switcher .language-dropdown"
+    ) as HTMLElement;
+    const langButton = document.querySelector(
+      ".mobile-lang-switcher #language-menu-button"
+    ) as HTMLElement;
+
+    if (langDropdown && langButton) {
+      // 确保下拉菜单初始是隐藏的，并且不占空间
+      langDropdown.classList.add("opacity-0", "invisible", "scale-95");
+      langDropdown.classList.remove("opacity-100", "visible", "scale-100");
+      // 强制使用display: none，确保不占空间
+      if (!langDropdown.classList.contains("opacity-100")) {
+        langDropdown.style.display = "none";
+      }
+
+      // 创建或获取遮罩层
+      let backdrop = document.querySelector(
+        ".lang-switcher-backdrop"
+      ) as HTMLElement;
+      if (!backdrop) {
+        backdrop = document.createElement("div");
+        backdrop.className = "lang-switcher-backdrop";
+        document.body.appendChild(backdrop);
+
+        // 点击遮罩关闭下拉框
+        backdrop.addEventListener("click", () => {
+          if (langDropdown.classList.contains("opacity-100")) {
+            langButton.click();
+          }
+        });
+      }
+
+      // 动态计算下拉菜单位置（浮动在屏幕中央）
+      langButton.addEventListener("click", () => {
+        setTimeout(() => {
+          const isVisible = langDropdown.classList.contains("opacity-100");
+
+          if (isVisible) {
+            // 显示时：移除display: none，显示下拉菜单
+            langDropdown.style.display = "block";
+            backdrop.classList.add("active");
+
+            // 计算下拉框位置 - 居中显示
+            setTimeout(() => {
+              const dropdownHeight = langDropdown.offsetHeight;
+              const viewportHeight = window.innerHeight;
+
+              // 垂直居中，稍微偏上一点
+              const topPosition = (viewportHeight - dropdownHeight) / 2 - 30;
+              langDropdown.style.top = `${Math.max(topPosition, 40)}px`;
+              langDropdown.style.bottom = "auto";
+            }, 10);
+          } else {
+            // 隐藏时：设置display: none，不占空间
+            langDropdown.style.display = "none";
+            backdrop.classList.remove("active");
+          }
+        }, 0);
+      });
+
+      console.log("[Navbar] Mobile language switcher optimized");
+    }
+  }
+
+  // 页面加载时优化语言切换器
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(optimizeMobileLanguageSwitcher, 100);
+  });
+
+  document.addEventListener("astro:page-load", () => {
+    setTimeout(optimizeMobileLanguageSwitcher, 100);
+  });
 </script>
