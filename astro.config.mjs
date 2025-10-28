@@ -63,7 +63,7 @@ export default defineConfig({
       }
     },
     optimizeDeps: {
-      include: ['@astrojs/tailwind', 'react', 'react-dom'],
+      include: ['@astrojs/tailwind', 'react', 'react-dom', 'tslib'],
       exclude: ['debug'] // 排除 debug 包，避免 ESM/CommonJS 兼容性问题
     },
     // 构建配置
@@ -75,6 +75,21 @@ export default defineConfig({
           drop_debugger: true, // 生产环境移除 debugger 语句
           pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'] // 移除特定的console函数
         }
+      },
+      rollupOptions: {
+        external: [],
+        output: {
+          manualChunks: undefined
+        }
+      },
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true
+      }
+    },
+    resolve: {
+      alias: {
+        tslib: 'tslib'
       }
     }
   }
