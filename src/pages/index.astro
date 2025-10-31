@@ -8,8 +8,8 @@ import Layout from "@layouts/Layout.astro";
 import SEOHead from "@components/seo/SEOHead.astro";
 import BananaHero from "@components/banana-editor/BananaHero.astro";
 import BananaFeatures from "@components/banana-editor/BananaFeatures.astro";
+import ProductFeaturesDetail from "@components/banana-editor/ProductFeaturesDetail.astro";
 import BananaDemo from "@components/banana-editor/BananaDemo.astro";
-import InteractiveDemo from "@components/banana-editor/InteractiveDemo.astro";
 import BananaUseCases from "@components/banana-editor/BananaUseCases.astro";
 import BananaFAQ from "@components/banana-editor/BananaFAQ.astro";
 import UserGuide from "@components/banana-editor/UserGuide.astro";
@@ -44,9 +44,9 @@ const seoConfig = {
   structuredData: {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "BananaEditor - Nano Banana AI Image Generator",
+    name: "Nano Banana AI Image Editor - BananaEditor",
     description:
-      "Ultra-fast AI image generator powered by Google's Gemini 2.5 Flash Image (nano banana). Generate 1024×1024 images in 2.3 seconds with perfect element consistency.",
+      "Nano banana AI Image Editor delivers perfect element consistency across all scenes. Ultra-fast AI image generator powered by Google's Gemini 2.5 Flash Image. Generate 1024×1024 images in 2.3 seconds with 100% character and object consistency.",
     applicationCategory: "DesignApplication",
     operatingSystem: "Web Browser",
     url: Astro.site?.toString(),
@@ -56,17 +56,20 @@ const seoConfig = {
       priceCurrency: "USD",
     },
     keywords:
-      "nano banana, nano banana ai, gemini 2.5 flash image, fast ai image generator, element consistency, banana ai, image editor, ai tools",
+      "nano banana, nano banana AI Image Editor, AI Image Editor, nano banana ai, gemini 2.5 flash image, fast ai image generator, element consistency, perfect consistency, character consistency, banana ai, image editor, ai tools",
     creator: {
       "@type": "Organization",
       name: "BananaEditor Team",
     },
     featureList: [
+      "Perfect Element Consistency with Nano Banana (100%)",
       "Ultra-Fast Image Generation (2.3 seconds)",
-      "Perfect Element Consistency (100%)",
+      "Nano Banana AI Image Editor",
+      "Smart Iterative Editing",
       "Smart Image Fusion",
       "Commercial-Ready Quality",
       "E-commerce Product Images",
+      "Context-Aware Image Refinement",
       "Multi-language Support",
     ],
     aggregateRating: {
@@ -91,8 +94,8 @@ const seoConfig = {
     <!-- 功能特性展示 -->
     <BananaFeatures />
 
-    <!-- 交互演示区域 -->
-    <InteractiveDemo />
+    <!-- 产品功能详细介绍 -->
+    <ProductFeaturesDetail />
 
     <!-- 行业应用场景 -->
     <BananaUseCases />
@@ -149,6 +152,68 @@ const seoConfig = {
   }
 </script>
 
+<!-- HowTo 结构化数据 - 如何使用Nano Banana AI Image Editor -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Use Nano Banana AI Image Editor for Perfect Element Consistency",
+    "description": "Learn how to create images with nano banana AI Image Editor while maintaining perfect element consistency across different scenes.",
+    "image": "https://bananaeditor.net/images/opengraph-banana-home.jpg",
+    "totalTime": "PT2M",
+    "tool": [
+      {
+        "@type": "HowToTool",
+        "name": "Nano Banana AI Image Editor"
+      }
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Access Nano Banana AI Image Editor",
+        "text": "Visit BananaEditor and access the nano banana AI Image Editor. No registration required.",
+        "url": "https://bananaeditor.net/editor"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Describe Your Image Idea",
+        "text": "Use the chat interface to describe the image you want to create. Nano banana AI Image Editor understands natural language and will generate your image with perfect element consistency.",
+        "image": "https://bananaeditor.net/images/editor-chat.jpg"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Generate Image with Consistency",
+        "text": "Nano banana AI Image Editor generates 1024×1024 high-quality images in just 2.3 seconds. The AI ensures perfect consistency of characters, objects, and styles.",
+        "image": "https://bananaeditor.net/images/editor-result.jpg"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Edit or Refine Images",
+        "text": "Select any image from your gallery and use smart iterative editing to refine it. Nano banana AI Image Editor maintains consistency while applying your modifications.",
+        "image": "https://bananaeditor.net/images/editor-gallery.jpg"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Generate Variations with Consistency",
+        "text": "Create multiple scene variations (spring, summer, fall, winter) while maintaining 100% consistency of core elements using nano banana AI Image Editor's consistency technology.",
+        "image": "https://bananaeditor.net/images/editor-variations.jpg"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 6,
+        "name": "Download Your Images",
+        "text": "Download your professional-quality images generated with nano banana AI Image Editor. All images are commercial-ready and watermark-free.",
+        "image": "https://bananaeditor.net/images/editor-download.jpg"
+      }
+    ]
+  }
+</script>
+
 <!-- FAQ 结构化数据 -->
 <script type="application/ld+json">
   {
@@ -157,26 +222,90 @@ const seoConfig = {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What is Nano Banana AI?",
+        "name": "What is Nano Banana AI Image Editor?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nano Banana is Google's Gemini 2.5 Flash Image model - a lightweight, ultra-fast AI image generation technology that creates high-quality 1024×1024 images in just 2.3 seconds while maintaining perfect element consistency across multiple scenes."
+          "text": "Nano Banana AI Image Editor is powered by Google's Gemini 2.5 Flash Image model - a lightweight, ultra-fast AI image generation technology that creates high-quality 1024×1024 images in just 2.3 seconds while maintaining perfect element consistency across multiple scenes."
         }
       },
       {
         "@type": "Question",
-        "name": "How fast is nano banana compared to other AI models?",
+        "name": "What makes nano banana AI Image Editor's consistency special?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nano banana AI generates images in 2.3 seconds, making it approximately 10x faster than traditional AI image generation models, while maintaining comparable or superior quality. This makes it ideal for time-sensitive projects and high-volume content creation."
+          "text": "Nano banana AI Image Editor maintains 100% element consistency - unlike other AI models that struggle with character consistency, nano banana AI acts like your personal AI designer, preserving characters, objects, and styles across different scenes, poses, and environments. Generate seasonal variations with perfect visual coherence."
         }
       },
       {
         "@type": "Question",
-        "name": "Can I use nano banana AI images for commercial purposes?",
+        "name": "How does nano banana maintain element consistency in AI image editing?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes! Images generated with nano banana AI through BananaEditor are commercial-ready and optimized for e-commerce, advertising, social media, and marketing materials. The technology includes accurate text rendering and understands commercial visual requirements."
+          "text": "Nano banana AI Image Editor uses advanced context-aware technology to understand and preserve all visual elements. When you generate variations or edit existing images, the AI maintains consistent characters, objects, backgrounds, and styles across all outputs, ensuring perfect visual coherence."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How fast is nano banana AI Image Editor compared to other editors?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nano banana AI Image Editor generates images in 2.3 seconds, making it approximately 10x faster than traditional AI image generation models, while maintaining comparable or superior quality. This speed advantage makes it ideal for time-sensitive projects and high-volume content creation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can nano banana AI Image Editor preserve consistency across different scenes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Nano banana AI Image Editor excels at maintaining perfect consistency across multiple scenes. You can generate the same character or object in different environments (spring, summer, fall, winter, day, night) while preserving 100% visual consistency of the core elements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why choose nano banana for consistent AI image generation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nano banana AI Image Editor is specifically designed for perfect element consistency - the core strength that sets it apart from other AI image editors. Whether you need consistent product photos, character variations, or branded content, nano banana delivers 100% visual coherence every time."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I edit previously generated images with nano banana AI Image Editor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! Nano banana AI Image Editor features smart iterative editing. Simply select any image from your gallery and describe your desired changes in the chat interface. The AI understands context and modifies your image precisely, maintaining consistency while applying targeted refinements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use nano banana AI Image Editor images for commercial purposes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Images generated with nano banana AI Image Editor are commercial-ready and optimized for e-commerce, advertising, social media, and marketing materials. The technology includes accurate text rendering and understands commercial visual requirements."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is nano banana AI Image Editor suitable for professional work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Nano banana AI Image Editor (Gemini 2.5 Flash Image) delivers professional-grade quality with high FID scores, accurate text rendering, and exceptional visual fidelity. It's trusted by businesses for e-commerce, advertising agencies, and content creators worldwide."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does nano banana AI Image Editor ensure element consistency?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nano banana AI Image Editor uses advanced context understanding to track and maintain visual elements across generations. The AI remembers characters, objects, colors, and styles, ensuring that every variation maintains 100% consistency with the original elements while allowing creative scene and pose changes."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes nano banana AI Image Editor different from other AI image tools?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nano banana AI Image Editor combines three key advantages: ultra-fast 2.3-second generation, perfect element consistency across scenes, and smart iterative editing capabilities. This unique combination makes it ideal for professional content creation where consistency and speed are crucial."
         }
       }
     ]

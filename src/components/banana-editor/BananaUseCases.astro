@@ -2,6 +2,7 @@
 /**
  * BananaEditor行业应用场景组件
  * 展示nano banana AI在不同行业的应用
+ * 美化版本：数据驱动卡片 + 行业主题色 + 增强动画
  */
 
 import { Icon } from "astro-icon/components";
@@ -22,15 +23,60 @@ const iconMap = {
   "megaphone": "heroicons:megaphone",
   "pencil": "heroicons:pencil-square"
 };
+
+// 行业主题色配置
+const industryThemes = [
+  {
+    id: "ecommerce",
+    gradient: "from-blue-500 via-indigo-500 to-purple-500",
+    bgGradient: "from-blue-50 via-indigo-50 to-purple-50",
+    iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600",
+    borderColor: "border-blue-200",
+    hoverBorderColor: "hover:border-blue-300",
+    shadowColor: "shadow-blue-500/20"
+  },
+  {
+    id: "social",
+    gradient: "from-pink-500 via-rose-500 to-orange-500",
+    bgGradient: "from-pink-50 via-rose-50 to-orange-50",
+    iconBg: "bg-gradient-to-br from-pink-500 to-rose-600",
+    borderColor: "border-pink-200",
+    hoverBorderColor: "hover:border-pink-300",
+    shadowColor: "shadow-pink-500/20"
+  },
+  {
+    id: "advertising",
+    gradient: "from-amber-500 via-yellow-500 to-orange-500",
+    bgGradient: "from-amber-50 via-yellow-50 to-orange-50",
+    iconBg: "bg-gradient-to-br from-amber-500 to-yellow-600",
+    borderColor: "border-amber-200",
+    hoverBorderColor: "hover:border-amber-300",
+    shadowColor: "shadow-amber-500/20"
+  },
+  {
+    id: "content",
+    gradient: "from-emerald-500 via-teal-500 to-cyan-500",
+    bgGradient: "from-emerald-50 via-teal-50 to-cyan-50",
+    iconBg: "bg-gradient-to-br from-emerald-500 to-teal-600",
+    borderColor: "border-emerald-200",
+    hoverBorderColor: "hover:border-emerald-300",
+    shadowColor: "shadow-emerald-500/20"
+  }
+];
 ---
 
-<section class="py-20 sm:py-32 bg-gradient-to-br from-banana-light/30 via-white to-banana-light/20">
-  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+<section class="py-20 sm:py-32 bg-gradient-to-br from-white via-gray-50 to-banana-light/30 relative overflow-hidden">
+  <!-- 背景装饰 -->
+  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
+  <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+  
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
     
     <!-- 标题区域 -->
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-banana-gradient/10 rounded-full text-banana-primary font-medium text-sm mb-6">
-        <Icon name="heroicons:rocket-launch" class="w-4 h-4" />
+    <div class="text-center mb-20">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-banana-primary/10">
+        <Icon name="heroicons:rocket-launch" class="w-4 h-4 text-orange-500" />
         <span>Industry Applications</span>
       </div>
       
@@ -43,70 +89,125 @@ const iconMap = {
     </div>
 
     <!-- 应用场景网格 -->
-    <div class="grid md:grid-cols-2 gap-8">
-      {(t('useCases.items') || []).map((useCase: any) => (
-        <div class="group relative">
-          <div class="relative bg-white rounded-2xl p-8 border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-2xl overflow-hidden">
+    <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
+      {(t('useCases.items') || []).map((useCase: any, index: number) => {
+        const theme = industryThemes[index % industryThemes.length];
+        return (
+          <div 
+            class="group relative"
+            data-usecase={useCase.icon}>
             
-            <!-- 背景渐变 -->
-            <div class="absolute inset-0 bg-banana-gradient opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
-            
-            <!-- 内容 -->
-            <div class="relative z-10">
+            <!-- 主卡片 -->
+            <div class={`relative h-full bg-gradient-to-br ${theme.bgGradient} rounded-3xl p-6 lg:p-8 border-2 ${theme.borderColor} hover:border-white transition-all duration-500 hover:shadow-2xl ${theme.shadowColor} transform hover:-translate-y-2 overflow-hidden`}>
+              
+              <!-- 背景装饰 -->
+              <div class={`absolute inset-0 bg-gradient-to-br ${theme.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+              <div class={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${theme.gradient} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
+              
               <!-- 图标 -->
-              <div class="flex items-start gap-4 mb-4">
-                <div class="w-14 h-14 bg-banana-gradient rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div class="relative mb-6">
+                <div class={`w-16 h-16 ${theme.iconBg} rounded-2xl flex items-center justify-center shadow-xl transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
                   <Icon 
                     name={iconMap[useCase.icon as keyof typeof iconMap]} 
-                    class="w-7 h-7 text-white" 
+                    class="w-8 h-8 text-white" 
                   />
                 </div>
-                
-                <div class="flex-1">
-                  <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-banana-primary transition-colors">
-                    {useCase.title}
-                  </h3>
-                </div>
+                <!-- 图标光晕 -->
+                <div class={`absolute inset-0 ${theme.iconBg} rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`}></div>
               </div>
+
+              <!-- 标题 -->
+              <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-gray-800 transition-colors">
+                {useCase.title}
+              </h3>
               
-              <p class="text-gray-600 leading-relaxed">
+              <!-- 描述 -->
+              <p class="text-gray-600 leading-relaxed text-sm mb-4">
                 {useCase.description}
               </p>
 
-              <!-- 右下角装饰 -->
-              <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Icon name="heroicons:arrow-right" class="w-5 h-5 text-banana-primary" />
+              <!-- 底部装饰线 -->
+              <div class={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${theme.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+
+              <!-- 悬停装饰 -->
+              <div class="absolute top-4 right-4 w-8 h-8 bg-white/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform group-hover:rotate-180 transition-all duration-500">
+                <Icon name="heroicons:sparkles" class="w-4 h-4 text-white" />
+              </div>
+
+              <!-- 箭头装饰 -->
+              <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class={`w-10 h-10 ${theme.iconBg} rounded-full flex items-center justify-center shadow-lg transform group-hover:translate-x-1 transition-transform`}>
+                  <Icon name="heroicons:arrow-right" class="w-5 h-5 text-white" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
 
     <!-- 底部CTA -->
-    <div class="text-center mt-12">
+    <div class="text-center mt-16">
       <a 
         href="/editor" 
-        class="inline-flex items-center gap-2 px-6 py-3 bg-banana-gradient text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105"
+        class="group/cta relative inline-flex items-center gap-3 px-8 py-4 bg-banana-gradient text-white font-semibold rounded-2xl hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden"
       >
-        <Icon name="heroicons:sparkles" class="w-5 h-5" />
-        <span>Try Nano Banana AI Now</span>
-        <Icon name="heroicons:arrow-right" class="w-5 h-5" />
+        <!-- 背景光晕 -->
+        <div class="absolute inset-0 bg-gradient-to-r from-banana-primary via-banana-secondary to-banana-primary bg-[length:200%_auto] animate-gradient-flow opacity-0 group-hover/cta:opacity-100 transition-opacity duration-300"></div>
+        
+        <div class="relative z-10 flex items-center gap-3">
+          <Icon name="heroicons:sparkles" class="w-5 h-5 group-hover/cta:animate-spin transition-transform" />
+          <span>Try Nano Banana AI Now</span>
+          <Icon name="heroicons:arrow-right" class="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
+        </div>
       </a>
+      <p class="text-gray-500 text-sm mt-4">
+        No registration required • Instant access
+      </p>
     </div>
   </div>
 </section>
 
 <style>
-  /* 卡片悬停效果 */
-  .group:hover {
-    transform: translateY(-2px);
+  /* 卡片进入动画 */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-usecase] {
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    [data-usecase="shopping-bag"] { animation-delay: 0.1s; }
+    [data-usecase="photo"] { animation-delay: 0.2s; }
+    [data-usecase="megaphone"] { animation-delay: 0.3s; }
+    [data-usecase="pencil"] { animation-delay: 0.4s; }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
 
-  /* 移动端优化 */
-  @media (max-width: 768px) {
-    .group:hover {
-      transform: none;
+  /* 渐变流光动画 */
+  @keyframes gradient-flow {
+    0%, 100% {
+      background-position: 0% 50%;
     }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient-flow {
+    animation: gradient-flow 3s ease infinite;
+  }
+
+  /* 悬停时的光晕效果 */
+  .group:hover [class*="bg-gradient-to-br"] {
+    filter: brightness(1.1);
   }
 </style>

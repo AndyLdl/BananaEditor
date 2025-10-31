@@ -1,8 +1,8 @@
 {
     "hero": {
-        "title": "专业AI图片编辑器",
-        "subtitle": "基于Nano Banana技术驱动",
-        "description": "使用nano banana AI技术创建令人惊艳的图片。像专业人士一样使用我们先进的AI工具生成、融合和编辑图片。",
+        "title": "Nano Banana AI图片编辑器",
+        "subtitle": "完美元素一致性，基于Nano Banana技术驱动",
+        "description": "Nano banana AI图片编辑器在所有场景中实现完美的元素一致性。使用Google Gemini 2.5 Flash Image在2.3秒内创建令人惊艳的1024×1024图片。保持100%的角色、对象和风格一致性 - 您的专业AI设计师。",
         "cta": {
             "primary": "立即开始编辑",
             "secondary": "查看提示词库"
@@ -13,6 +13,31 @@
             "提示词优化",
             "多语言支持"
         ]
+    },
+    "advantages": {
+        "badge": "核心优势",
+        "title": "为什么选择Nano Banana AI图片编辑器？",
+        "subtitle": "让nano banana AI从其他图片编辑器中脱颖而出的强大优势",
+        "consistency": {
+            "title": "完美元素一致性",
+            "description": "就像拥有您的个人AI设计师 - nano banana确保在所有场景中保持100%的角色、对象和风格一致性。",
+            "highlight": "vs 其他AI <50%"
+        },
+        "speed": {
+            "title": "超快生成",
+            "description": "仅需2.3秒即可生成高质量1024×1024图片。为时间敏感的项目提供闪电般快速的结果。",
+            "highlight": "闪电速度"
+        },
+        "faster": {
+            "title": "快10倍",
+            "description": "比传统AI图片生成模型快约10倍，同时保持卓越质量。",
+            "highlight": "vs 传统AI"
+        },
+        "quality": {
+            "title": "商业级质量",
+            "description": "专业级、无水印图片，针对电商、广告和营销材料进行了优化。",
+            "highlight": "即用即取"
+        }
     },
     "features": {
         "title": "为什么选择BananaEditor？",
@@ -37,6 +62,11 @@
                 "title": "专业工具",
                 "description": "访问完整的专业编辑工具套件。nano banana AI图片创作所需的一切都在一个地方。",
                 "icon": "tools"
+            },
+            {
+                "title": "智能迭代编辑",
+                "description": "轻松精修之前生成的图片。只需从右侧画廊选择任意图片，在左侧聊天框描述您的修改需求，nano banana AI会基于图片上下文进行精确调整，无需从头开始。",
+                "icon": "sparkles"
             }
         ]
     },
@@ -67,5 +97,142 @@
         "description": "立即开始使用BananaEditor强大的nano banana AI工具创建专业品质的图片。",
         "button": "免费开始使用",
         "note": "无需注册 • 即时访问"
+    },
+    "detailedFeatures": {
+        "badge": "完整功能套件",
+        "title": "Nano Banana AI图片编辑器完整产品功能",
+        "subtitle": "探索所有强大功能，让nano banana AI图片编辑器成为完美一致性专业图片创作的最佳选择",
+        "cta": "立即试用Nano Banana AI图片编辑器",
+        "ctaNote": "无需注册 • 秒速开始创作",
+        "consistency": {
+            "title": "Nano Banana完美元素一致性",
+            "description": "Nano banana AI图片编辑器在所有场景和变化中实现100%的元素一致性。与其他在角色一致性方面有困难的AI图片工具不同，nano banana AI就像您的个人AI设计师——在多个场景、姿势和环境中保持角色、对象、背景和风格的完美视觉连贯性。生成春夏秋冬版本，同时保持核心元素100%的一致性。",
+            "highlights": [
+                "跨场景100%角色一致性",
+                "所有变化中完美保留对象",
+                "跨代生成保持风格连贯性",
+                "多场景支持，视觉连贯"
+            ]
+        },
+        "speed": {
+            "title": "超快2.3秒生成",
+            "description": "Nano banana AI图片编辑器在2.3秒内生成高质量1024×1024图片——比传统AI图片生成模型快约10倍。由Google的Gemini 2.5 Flash Image技术驱动，nano banana在不影响质量的情况下提供即时结果，非常适合时间敏感的项目和大批量内容创作工作流。",
+            "highlights": [
+                "2.3秒生成时间",
+                "比传统模型快10倍",
+                "1024×1024高分辨率输出",
+                "实时生成反馈"
+            ]
+        },
+        "conversational": {
+            "title": "对话式图片编辑界面",
+            "description": "通过nano banana AI图片编辑器的自然聊天式交互来编辑图片。只需用简单的语言描述您想要的，AI就能理解您的意图。无需复杂的提示词或技术专业知识——只需自然地谈论您的想法，nano banana AI图片编辑器就能在几秒钟内将其实现。",
+            "highlights": [
+                "自然语言聊天界面",
+                "无需复杂提示词",
+                "理解对话上下文",
+                "智能意图识别"
+            ]
+        },
+        "iterative": {
+            "title": "智能迭代编辑",
+            "description": "使用nano banana AI图片编辑器的智能迭代编辑功能轻松精修之前生成的图片。只需从画廊选择任意图片，在聊天界面描述您想要的修改。Nano banana AI理解上下文并精确修改您的图片，在应用针对性调整的同时保持一致性——无需从头开始。",
+            "highlights": [
+                "从画廊历史中选择",
+                "上下文感知图片精修",
+                "编辑时保持一致性",
+                "精确的针对性修改"
+            ]
+        },
+        "fusion": {
+            "title": "智能图片融合",
+            "description": "使用nano banana AI图片编辑器的智能融合技术无缝混合两张图片。通过精确控制风格转移、对象放置和艺术效果，创建独特的构图。Nano banana AI融合在保持视觉连贯性的同时，允许无限创意可能性来组合图片。",
+            "highlights": [
+                "无缝图片混合",
+                "高级风格转移",
+                "精确对象放置",
+                "创意构图控制"
+            ]
+        },
+        "quality": {
+            "title": "商业级质量输出",
+            "description": "Nano banana AI图片编辑器提供专业级输出，针对电商、广告、社交媒体和营销材料进行了优化。所有图片都可用于商业用途，具有准确的文本渲染、高视觉保真度，以及nano banana AI对商业视觉要求的高级理解。非常适合专业营销和商业使用。",
+            "highlights": [
+                "包含商业许可",
+                "准确的文本渲染",
+                "高视觉保真度",
+                "营销优化输出"
+            ]
+        },
+        "interactive": {
+            "title": "增强的交互体验",
+            "description": "体验nano banana AI图片编辑器的直观界面，具有实时预览、拖放支持和无缝工作流。交互式设计使高级图片编辑像对话一样简单，在您的创作过程中提供即时反馈和流畅的用户体验。",
+            "highlights": [
+                "实时预览",
+                "拖放支持",
+                "无缝工作流",
+                "直观用户界面"
+            ]
+        },
+        "resolution": {
+            "title": "高分辨率无水印图片",
+            "description": "使用nano banana AI图片编辑器生成专业的无水印图片，分辨率为1024×1024。所有输出都是高质量的，可立即用于商业用途，无水印或限制。非常适合需要原始图片质量和商业许可的专业项目。",
+            "highlights": [
+                "1024×1024分辨率",
+                "无水印",
+                "专业质量",
+                "商业就绪格式"
+            ]
+        }
+    },
+    "faq": {
+        "title": "常见问题",
+        "subtitle": "关于nano banana AI图片编辑器的一切",
+        "items": [
+            {
+                "question": "什么是Nano Banana AI图片编辑器？",
+                "answer": "Nano Banana AI图片编辑器由Google的Gemini 2.5 Flash Image模型驱动 - 一个轻量级、超快速的AI图片生成技术，可在2.3秒内创建高质量1024×1024图片，同时在多个场景中保持完美的元素一致性。"
+            },
+            {
+                "question": "nano banana AI图片编辑器的一致性有什么特别之处？",
+                "answer": "Nano banana AI图片编辑器保持100%的元素一致性 - 与其他在角色一致性方面有困难的AI模型不同，nano banana AI就像您的个人AI设计师，在不同场景、姿势和环境中保持角色、对象和风格的一致性。生成具有完美视觉连贯性的季节变化版本。"
+            },
+            {
+                "question": "nano banana如何在AI图片编辑中保持元素一致性？",
+                "answer": "Nano banana AI图片编辑器使用先进的上下文感知技术来理解和保留所有视觉元素。当您生成变化或编辑现有图片时，AI在所有输出中保持一致的角色、对象、背景和风格，确保完美的视觉连贯性。"
+            },
+            {
+                "question": "nano banana AI图片编辑器与其他编辑器相比有多快？",
+                "answer": "Nano banana AI图片编辑器在2.3秒内生成图片，比传统AI图片生成模型快约10倍，同时保持相当或更优的质量。这种速度优势使其非常适合时间敏感的项目和大批量内容创作。"
+            },
+            {
+                "question": "nano banana AI图片编辑器能在不同场景中保持一致性吗？",
+                "answer": "是的！Nano banana AI图片编辑器在保持多个场景的一致性方面表现出色。您可以在不同环境（春夏秋冬、白天黑夜）中生成相同的角色或对象，同时保持核心元素100%的视觉一致性。"
+            },
+            {
+                "question": "为什么选择nano banana进行一致的AI图片生成？",
+                "answer": "Nano banana AI图片编辑器专门为完美元素一致性而设计 - 这是它与其他AI图片编辑器区别开来的核心优势。无论您需要一致的产品照片、角色变化还是品牌内容，nano banana每次都提供100%的视觉连贯性。"
+            },
+            {
+                "question": "我可以用nano banana AI图片编辑器编辑之前生成的图片吗？",
+                "answer": "完全可以！Nano banana AI图片编辑器具有智能迭代编辑功能。只需从画廊选择任意图片，在聊天界面描述您想要的修改。AI理解上下文并精确修改您的图片，在应用针对性调整的同时保持一致性。"
+            },
+            {
+                "question": "我可以将nano banana AI图片编辑器生成的图片用于商业用途吗？",
+                "answer": "是的！使用nano banana AI图片编辑器生成的图片可直接用于商业，并针对电商、广告、社交媒体和营销材料进行了优化。该技术包括准确的文本渲染，并理解商业视觉要求。"
+            },
+            {
+                "question": "nano banana AI图片编辑器适合专业工作吗？",
+                "answer": "绝对适合。Nano banana AI图片编辑器（Gemini 2.5 Flash Image）提供专业级质量，具有高FID分数、准确的文本渲染和卓越的视觉保真度。它被全球的电商企业、广告机构和内容创作者所信赖。"
+            },
+            {
+                "question": "nano banana AI图片编辑器如何确保元素一致性？",
+                "answer": "Nano banana AI图片编辑器使用先进的上下文理解来跟踪和维护跨代生成的视觉元素。AI记住角色、对象、颜色和风格，确保每次变化都与原始元素保持100%的一致性，同时允许创意场景和姿势变化。"
+            },
+            {
+                "question": "nano banana AI图片编辑器与其他AI图片工具有什么不同？",
+                "answer": "Nano banana AI图片编辑器结合了三个关键优势：超快速的2.3秒生成、跨场景的完美元素一致性，以及智能迭代编辑功能。这种独特组合使其非常适合一致性和速度至关重要的专业内容创作。"
+            }
+        ]
     }
 }

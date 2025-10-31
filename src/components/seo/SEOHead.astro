@@ -47,6 +47,33 @@ const keywordsString = keywords.join(", ");
 const currentUrl =
   canonical || new URL(Astro.url.pathname, Astro.site).toString();
 
+// 生成多语言alternate链接
+const languages = [
+  { code: "en", name: "English" },
+  { code: "zh", name: "Chinese" },
+  { code: "es", name: "Spanish" },
+  { code: "fr", name: "French" },
+];
+
+const baseUrl = Astro.site?.toString() || "https://bananaeditor.net";
+const currentPath = Astro.url.pathname;
+
+const generateAlternateUrl = (langCode: string) => {
+  if (langCode === "en") {
+    return `${baseUrl}${currentPath}`;
+  }
+  const url = new URL(currentPath, baseUrl);
+  url.searchParams.set("lang", langCode);
+  return url.toString();
+};
+
+const alternateLanguages = languages
+  .filter((lang) => lang.code !== language)
+  .map((lang) => ({
+    lang: lang.code,
+    url: generateAlternateUrl(lang.code),
+  }));
+
 // 构建完整的图片URL
 const fullOgImage = new URL(ogImage, Astro.site).toString();
 
@@ -81,6 +108,18 @@ const finalStructuredData = structuredData || defaultStructuredData;
 <meta name="keywords" content={keywordsString} />
 <meta name="language" content={language} />
 <link rel="canonical" href={currentUrl} />
+
+<!-- 多语言hreflang标签 -->
+{
+  alternateLanguages.map(({ lang, url }) => (
+    <link rel="alternate" hreflang={lang} href={url} />
+  ))
+}
+<link
+  rel="alternate"
+  hreflang="x-default"
+  href={`${baseUrl}${currentPath}`}
+/>
 
 <!-- Open Graph 标签 -->
 <meta property="og:title" content={fullTitle} />
@@ -126,3 +165,6 @@ const finalStructuredData = structuredData || defaultStructuredData;
 />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Sitemap引用 -->
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />

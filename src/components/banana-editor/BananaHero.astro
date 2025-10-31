@@ -2,6 +2,7 @@
 /**
  * BananaEditor专用Hero组件
  * 突出"nano banana"关键词和品牌展示
+ * 方案一：增强视觉层次，现代化设计
  */
 
 import { Picture } from "astro:assets";
@@ -24,320 +25,275 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
 
 <section
   class="relative overflow-hidden bg-gradient-to-br from-banana-light via-white to-banana-light/50 pt-16 pb-20 sm:pt-24 sm:pb-32">
-  <!-- 背景装饰 -->
-  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5">
+  
+  <!-- 背景装饰 - 增强 -->
+  <div class="absolute inset-0">
+    <!-- 网格图案 - 更明显 -->
+    <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-[0.08]"></div>
+    
+    <!-- 动态渐变光晕 -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-banana-primary/10 rounded-full blur-3xl animate-pulse-slow"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-banana-secondary/10 rounded-full blur-3xl animate-pulse-slow-delayed"></div>
+    
+    <!-- 移动光斑 -->
+    <div class="absolute top-1/2 left-0 w-72 h-72 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-full blur-3xl animate-move-horizontal"></div>
+    
+    <!-- 粒子效果 -->
+    <div class="absolute inset-0">
+      {[...Array(6)].map((_, i) => (
+        <div
+          class={`absolute w-2 h-2 bg-banana-primary/30 rounded-full blur-sm animate-float-particle`}
+          style={`left: ${20 + i * 15}%; top: ${30 + (i % 3) * 20}%; animation-delay: ${i * 0.5}s;`}>
+        </div>
+      ))}
+    </div>
   </div>
 
-  <!-- 浮动的香蕉元素装饰 -->
+  <!-- 浮动的香蕉元素装饰 - 增强 -->
   <div
-    class="absolute top-20 left-10 w-8 h-8 text-banana-primary/20 animate-float">
+    class="absolute top-20 left-10 w-10 h-10 text-banana-primary/25 animate-float text-2xl filter drop-shadow-lg">
     🍌
   </div>
   <div
-    class="absolute top-40 right-20 w-6 h-6 text-banana-secondary/30 animate-float-delayed">
+    class="absolute top-40 right-20 w-8 h-8 text-banana-secondary/30 animate-float-delayed text-xl filter drop-shadow-lg">
     🍌
   </div>
   <div
-    class="absolute bottom-32 left-1/4 w-4 h-4 text-banana-accent/20 animate-float-slow">
+    class="absolute bottom-32 left-1/4 w-6 h-6 text-banana-accent/25 animate-float-slow text-lg filter drop-shadow-lg">
     🍌
   </div>
 
-  <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-8 z-10">
+    <div class="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
       <!-- 左侧内容 -->
       <div class="text-center lg:text-left">
-        <!-- 投票提示横幅 -->
-        <div class="mb-6">
-          <div
-            class="inline-flex items-center gap-4 px-6 py-3 bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <!-- Fazier官方badge -->
-            <a
-              href="https://fazier.com/launches/bananaeditor.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex-shrink-0">
-              <img
-                src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=light"
-                width="120"
-                alt="Fazier Launch Badge"
-                loading="lazy"
-                class="h-auto hover:scale-105 transition-transform duration-200"
-              />
-            </a>
-
-            <!-- 投票文字和按钮 -->
-            <div class="flex items-center gap-3">
-              <div class="text-left">
-                <p class="text-sm font-semibold text-gray-800">
-                  Vote for BananaEditor!
-                </p>
-                <p class="text-xs text-gray-600">Help us win the competition</p>
-              </div>
-              <a
-                href="https://fazier.com/launches/bananaeditor.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="px-4 py-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-sm font-bold rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-105">
-                Vote Now →
-              </a>
-            </div>
-          </div>
-        </div>
-
         <!-- 品牌标识 -->
-        <div class="mb-6">
+        <div class="mb-8">
           <div
-            class="inline-flex items-center gap-3 px-4 py-2 bg-banana-gradient rounded-full text-white font-semibold text-sm shadow-lg">
-            <span class="text-lg">🍌</span>
+            class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/70 backdrop-blur-md rounded-full text-banana-primary font-medium text-sm shadow-lg border border-banana-primary/20 hover:shadow-xl hover:scale-105 transition-all duration-300">
+            <span class="text-base animate-bounce-subtle">🍌</span>
             <span>Nano Banana AI Technology</span>
           </div>
         </div>
 
-        <!-- 主标题 -->
-        <h1
-          class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-gray-900 mb-6">
-          <span class="block">{t("hero.title")}</span>
-          <span
-            class="block text-transparent bg-clip-text bg-banana-gradient mt-2">
-            {t("hero.subtitle")}
-          </span>
-        </h1>
+        <!-- 主标题 - 增强视觉效果 -->
+        <div class="relative mb-4">
+          <!-- 标题背景光晕 -->
+          <div class="absolute -inset-4 bg-banana-gradient/20 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          
+          <h1
+            class="relative text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
+            <span class="block drop-shadow-sm">{t("hero.title")}</span>
+          </h1>
+        </div>
 
-        <!-- 描述文本 -->
+        <!-- 副标题 - 动态渐变 -->
+        <div class="relative mb-6">
+          <p
+            class="text-xl sm:text-2xl lg:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-banana-primary via-orange-500 to-banana-secondary bg-[length:200%_auto] animate-gradient-flow">
+            {t("hero.subtitle")}
+          </p>
+        </div>
+
+        <!-- 核心数据展示条 -->
+        <div class="flex flex-wrap items-center gap-4 justify-center lg:justify-start mb-8">
+          <div class="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl border border-orange-200 shadow-md hover:shadow-lg transition-shadow">
+            <Icon name="heroicons:bolt" class="w-5 h-5 text-orange-500" />
+            <span class="text-2xl font-black text-orange-600">2.3</span>
+            <span class="text-sm text-gray-600 font-medium">seconds</span>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl border border-green-200 shadow-md hover:shadow-lg transition-shadow">
+            <Icon name="heroicons:check-circle" class="w-5 h-5 text-green-600" />
+            <span class="text-2xl font-black text-green-600">100%</span>
+            <span class="text-sm text-gray-600 font-medium">consistency</span>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl border border-purple-200 shadow-md hover:shadow-lg transition-shadow">
+            <Icon name="heroicons:rocket-launch" class="w-5 h-5 text-purple-600" />
+            <span class="text-2xl font-black text-purple-600">10x</span>
+            <span class="text-sm text-gray-600 font-medium">faster</span>
+          </div>
+        </div>
+
+        <!-- 描述文本 - 简化 -->
         <p
-          class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+          class="text-base sm:text-lg text-gray-600 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
           {t("hero.description")}
         </p>
 
-        <!-- 特性标签 -->
-        <div class="flex flex-wrap gap-3 justify-center lg:justify-start mb-8">
-          <span
-            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
-            <Icon name="heroicons:user" class="w-4 h-4 text-banana-primary" />
-            Your Personal AI Designer
-          </span>
-          <span
-            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
-            <Icon
-              name="heroicons:check-circle"
-              class="w-4 h-4 text-banana-primary"
-            />
-            Perfect Element Consistency
-          </span>
-          <span
-            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
-            <Icon
-              name="heroicons:sparkles"
-              class="w-4 h-4 text-banana-primary"
-            />
-            Characters & Objects
-          </span>
-          <span
-            class="inline-flex items-center gap-2 px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 border border-banana-primary/20">
-            <Icon
-              name="heroicons:light-bulb"
-              class="w-4 h-4 text-banana-primary"
-            />
-            Styles & Quality
-          </span>
+        <!-- CTA按钮 - 流光动画增强 -->
+        <div class="flex justify-center lg:justify-start mb-12">
+          <div class="relative group/cta">
+            <!-- 背景光晕 -->
+            <div class="absolute -inset-1 bg-banana-gradient rounded-xl blur opacity-0 group-hover/cta:opacity-50 transition-opacity duration-500"></div>
+            
+            <BananaButton
+              href="/editor"
+              size="lg"
+              variant="primary"
+              class="relative group touch-friendly shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
+              aria-label="Start using Nano Banana AI Image Editor">
+              
+              <!-- 流光效果 -->
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              
+              <Icon
+                name="heroicons:sparkles"
+                class="w-5 h-5 mr-2 relative z-10 group-hover:animate-pulse"
+              />
+              <span class="relative z-10">{t("hero.cta.primary")}</span>
+            </BananaButton>
+          </div>
         </div>
 
-        <!-- CTA按钮 -->
-        <div
-          class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-          <BananaButton
-            href="/editor"
-            size="lg"
-            variant="primary"
-            class="group touch-friendly">
-            <Icon
-              name="heroicons:sparkles"
-              class="w-5 h-5 mr-2 group-hover:animate-pulse"
-            />
-            {t("hero.cta.primary")}
-          </BananaButton>
-
-          <button
-            disabled
-            class="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 text-gray-400 rounded-xl cursor-not-allowed opacity-60">
-            <Icon name="heroicons:book-open" class="w-5 h-5" />
-            <span>Prompt Library</span>
-            <span
-              class="ml-2 px-2 py-1 bg-gray-200 text-gray-500 text-xs rounded-full"
-              >Coming Soon</span
-            >
-          </button>
-        </div>
-
-        <!-- 社会证明 -->
-        <div class="mt-12 pt-8 border-t border-gray-200">
-          <p class="text-sm text-gray-500 mb-4">
-            Trusted by creators worldwide
-          </p>
-          <div class="flex items-center gap-6 justify-center lg:justify-start">
-            <div class="flex items-center gap-2">
-              <div class="flex -space-x-2">
-                <div class="w-8 h-8 rounded-full bg-banana-gradient"></div>
-                <div class="w-8 h-8 rounded-full bg-banana-secondary"></div>
-                <div class="w-8 h-8 rounded-full bg-banana-accent"></div>
-              </div>
-              <span class="text-sm font-medium text-gray-700"
-                >10,000+ users</span
-              >
+        <!-- 社会证明 - 简化但增强视觉效果 -->
+        <div class="flex items-center justify-center lg:justify-start gap-6 text-sm">
+          <div class="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
+            <div class="flex -space-x-2">
+              <div class="w-6 h-6 rounded-full bg-banana-gradient border-2 border-white shadow-md"></div>
+              <div class="w-6 h-6 rounded-full bg-banana-secondary border-2 border-white shadow-md"></div>
+              <div class="w-6 h-6 rounded-full bg-banana-accent border-2 border-white shadow-md"></div>
             </div>
-            <div class="flex items-center gap-1">
-              {
-                [...Array(5)].map((_, i) => (
-                  <Icon
-                    name="heroicons:star-solid"
-                    class="w-4 h-4 text-yellow-400"
-                  />
-                ))
-              }
-              <span class="text-sm font-medium text-gray-700 ml-1">4.9/5</span>
-            </div>
+            <span class="font-semibold text-gray-700">10,000+</span>
+          </div>
+          <div class="flex items-center gap-1 bg-white/60 backdrop-blur-sm px-3 py-2 rounded-lg border border-gray-200 shadow-sm">
+            {
+              [...Array(5)].map((_, i) => (
+                <Icon
+                  name="heroicons:star-solid"
+                  class="w-3.5 h-3.5 text-yellow-400 drop-shadow-sm"
+                />
+              ))
+            }
+            <span class="font-semibold text-gray-700 ml-1">4.9</span>
           </div>
         </div>
       </div>
 
       <!-- 右侧演示区域 -->
       <div class="relative">
-        <!-- 一致性展示区域 -->
+        <!-- 一致性展示区域 - 3D效果和光晕 -->
         <div
-          class="bg-white rounded-2xl shadow-2xl border border-banana-primary/10 overflow-hidden">
-          <!-- 标题区域 -->
+          class="group/card relative bg-white rounded-3xl shadow-2xl border-2 border-gray-200/50 overflow-hidden transform hover:scale-[1.02] hover:-rotate-1 transition-all duration-500">
+          
+          <!-- 边框光晕效果 -->
+          <div class="absolute inset-0 rounded-3xl bg-gradient-to-r from-banana-primary/20 via-orange-500/20 to-banana-secondary/20 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 blur-xl"></div>
+          
+          <!-- 顶部标题区域 - 渐变动画 -->
           <div
-            class="bg-gradient-to-r from-banana-primary to-banana-secondary p-4">
-            <div class="flex items-center gap-3">
+            class="relative bg-gradient-to-r from-banana-primary via-orange-500 to-banana-secondary p-5 overflow-hidden">
+            <!-- 流动背景 -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+            
+            <div class="relative flex items-center gap-3 z-10">
               <div
-                class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                class="w-10 h-10 bg-white/25 backdrop-blur-md rounded-xl flex items-center justify-center shadow-lg transform group-hover/card:rotate-12 transition-transform duration-300">
                 <Icon
                   name="heroicons:check-circle"
-                  class="w-5 h-5 text-white"
+                  class="w-6 h-6 text-white drop-shadow-lg"
                 />
               </div>
-              <div>
-                <h3 class="text-white font-bold text-lg">
+              <div class="flex-1">
+                <h3 class="text-white font-bold text-lg mb-1 drop-shadow-md">
                   Perfect Element Consistency
                 </h3>
-                <p class="text-white/80 text-sm">
-                  Like your personal AI designer - consistent across all
-                  elements
+                <p class="text-white/90 text-sm drop-shadow-sm">
+                  Consistent across all scenes and seasons
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- 4个季节展示 -->
-          <div class="p-4">
-            <div class="grid grid-cols-2 gap-3">
+          <!-- 4个季节展示 - 增强交互 -->
+          <div class="p-5">
+            <div class="grid grid-cols-2 gap-4">
               <!-- 春季 -->
               <div
-                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                class="group/image aspect-square rounded-xl overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <img
                   src="/images/hero-example-original.png"
-                  alt="Spring portrait - Cherry blossom garden"
-                  class="w-full h-full object-cover"
+                  alt="Nano banana AI Image Editor - Perfect element consistency example: Spring portrait with cherry blossom garden"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
                   loading="lazy"
                 />
+                <!-- 渐变遮罩 -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
                 <div
-                  class="absolute top-2 right-2 bg-pink-100 text-pink-700 rounded-full px-2 py-1 text-xs font-medium">
+                  class="absolute top-2 right-2 bg-pink-100/90 backdrop-blur-sm text-pink-700 rounded-full px-3 py-1 text-xs font-bold shadow-lg border border-white/50">
                   Spring
                 </div>
               </div>
 
               <!-- 夏季 -->
               <div
-                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                class="group/image aspect-square rounded-xl overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <img
                   src="/images/hero-example-summer.png"
-                  alt="Summer portrait - Beach and ocean"
-                  class="w-full h-full object-cover"
+                  alt="Nano banana AI Image Editor - Perfect element consistency example: Summer portrait with beach and ocean"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
                 <div
-                  class="absolute top-2 right-2 bg-blue-100 text-blue-700 rounded-full px-2 py-1 text-xs font-medium">
+                  class="absolute top-2 right-2 bg-blue-100/90 backdrop-blur-sm text-blue-700 rounded-full px-3 py-1 text-xs font-bold shadow-lg border border-white/50">
                   Summer
                 </div>
               </div>
 
               <!-- 秋季 -->
               <div
-                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                class="group/image aspect-square rounded-xl overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <img
                   src="/images/hero-example-autumn.png"
-                  alt="Autumn portrait - Maple forest"
-                  class="w-full h-full object-cover"
+                  alt="Nano banana AI Image Editor - Perfect element consistency example: Autumn portrait with maple forest"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
                 <div
-                  class="absolute top-2 right-2 bg-orange-100 text-orange-700 rounded-full px-2 py-1 text-xs font-medium">
+                  class="absolute top-2 right-2 bg-orange-100/90 backdrop-blur-sm text-orange-700 rounded-full px-3 py-1 text-xs font-bold shadow-lg border border-white/50">
                   Autumn
                 </div>
               </div>
 
               <!-- 冬季 -->
               <div
-                class="aspect-square rounded-lg overflow-hidden relative shadow-lg">
+                class="group/image aspect-square rounded-xl overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                 <img
                   src="/images/hero-example-winter.png"
-                  alt="Winter portrait - Snow garden"
-                  class="w-full h-full object-cover"
+                  alt="Nano banana AI Image Editor - Perfect element consistency example: Winter portrait with snow garden"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
                   loading="lazy"
                 />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
                 <div
-                  class="absolute top-2 right-2 bg-blue-50 text-blue-600 rounded-full px-2 py-1 text-xs font-medium">
+                  class="absolute top-2 right-2 bg-blue-50/90 backdrop-blur-sm text-blue-600 rounded-full px-3 py-1 text-xs font-bold shadow-lg border border-white/50">
                   Winter
                 </div>
               </div>
             </div>
 
-            <!-- 一致性保证 -->
-            <div class="mt-4 bg-banana-light/30 rounded-lg p-3">
-              <div class="flex items-center gap-2 mb-2">
-                <Icon
-                  name="heroicons:check-circle"
-                  class="w-4 h-4 text-green-500"
-                />
-                <span class="font-medium text-gray-700 text-sm"
-                  >Perfect Consistency Guaranteed</span
-                >
-              </div>
-              <div class="grid grid-cols-2 gap-1 text-xs text-gray-600">
-                <div class="flex items-center gap-1">
-                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
-                  <span>Characters</span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
-                  <span>Objects</span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
-                  <span>Styles</span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <Icon name="heroicons:check" class="w-3 h-3 text-green-500" />
-                  <span>Quality</span>
-                </div>
-              </div>
+            <!-- 一致性保证 - 简化但增强 -->
+            <div class="mt-5 flex items-center justify-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 border-2 border-green-300 shadow-md hover:shadow-lg transition-shadow">
+              <Icon
+                name="heroicons:check-circle"
+                class="w-5 h-5 text-green-600 animate-pulse-slow"
+              />
+              <span class="font-bold text-gray-800 text-sm">
+                100% Consistency Guaranteed
+              </span>
             </div>
           </div>
         </div>
 
-        <!-- 浮动元素 -->
+        <!-- 浮动装饰元素 - AI徽章增强 -->
         <div
-          class="absolute -top-6 -right-6 w-12 h-12 bg-banana-primary rounded-full flex items-center justify-center text-white font-bold shadow-lg ai-button-glow">
-          AI
+          class="absolute -top-4 -right-4 w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center text-white font-bold shadow-2xl ai-button-glow border-2 border-white/50 transform hover:rotate-12 hover:scale-110 transition-all duration-300">
+          <span class="text-sm drop-shadow-lg">AI</span>
         </div>
 
-        <div
-          class="absolute -bottom-4 -left-4 w-20 h-20 bg-white rounded-full shadow-lg flex items-center justify-center border-4 border-banana-secondary/20">
-          <Icon
-            name="heroicons:paint-brush"
-            class="w-8 h-8 text-banana-primary"
-          />
-        </div>
+        <!-- 连接线装饰 -->
+        <div class="absolute top-1/2 -left-8 w-16 h-0.5 bg-gradient-to-r from-transparent via-banana-primary/30 to-transparent hidden lg:block"></div>
+        <div class="absolute bottom-1/4 -right-8 w-16 h-0.5 bg-gradient-to-r from-transparent via-banana-primary/30 to-transparent hidden lg:block"></div>
       </div>
     </div>
   </div>
@@ -367,10 +323,85 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
   @keyframes float-slow {
     0%,
     100% {
-      transform: translateY(0px) rotate(0deg);
+      transform: translateY(0px) rotate(3deg);
     }
     50% {
-      transform: translateY(-8px) rotate(3deg);
+      transform: translateY(-8px) rotate(-3deg);
+    }
+  }
+
+  @keyframes float-particle {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateY(-20px) translateX(10px);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes pulse-slow-delayed {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes move-horizontal {
+    0% {
+      transform: translateX(-100px);
+    }
+    50% {
+      transform: translateX(100px);
+    }
+    100% {
+      transform: translateX(-100px);
+    }
+  }
+
+  @keyframes gradient-flow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
     }
   }
 
@@ -386,6 +417,34 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
     animation: float-slow 5s ease-in-out infinite 2s;
   }
 
+  .animate-float-particle {
+    animation: float-particle 4s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow-delayed {
+    animation: pulse-slow-delayed 5s ease-in-out infinite 1s;
+  }
+
+  .animate-move-horizontal {
+    animation: move-horizontal 20s ease-in-out infinite;
+  }
+
+  .animate-gradient-flow {
+    animation: gradient-flow 3s ease infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s linear infinite;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+
   /* AI按钮优雅动画 */
   .ai-button-glow {
     animation: aiGlow 3s ease-in-out infinite;
@@ -393,19 +452,19 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
   }
 
   .ai-button-glow:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(217, 119, 6, 0.4);
+    transform: scale(1.1) rotate(12deg);
+    box-shadow: 0 10px 30px rgba(217, 119, 6, 0.5);
   }
 
   @keyframes aiGlow {
     0%,
     100% {
       transform: translateY(0px) scale(1);
-      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
     }
     50% {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.5);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(217, 119, 6, 0.6);
     }
   }
 
@@ -424,10 +483,14 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
     .animate-float,
     .animate-float-delayed,
     .animate-float-slow {
-      display: none; /* 在移动端隐藏装饰动画以提升性能 */
+      display: none;
     }
 
-    /* 移动端AI按钮动画优化 */
+    .animate-move-horizontal,
+    .animate-float-particle {
+      display: none;
+    }
+
     .ai-button-glow {
       animation: aiGlowMobile 4s ease-in-out infinite;
     }
@@ -444,49 +507,25 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
       }
     }
 
-    /* 移动端标题调整 */
     h1 {
       font-size: 2.5rem !important;
       line-height: 1.1;
     }
 
-    /* 移动端按钮优化 */
     .touch-friendly {
       padding: 16px 24px;
       font-size: 16px;
       font-weight: 600;
     }
-
-    /* 移动端演示区域调整 */
-    .relative > div:first-child {
-      padding: 1rem;
-    }
-
-    /* 移动端社会证明简化 */
-    .mt-12 {
-      margin-top: 2rem;
-    }
   }
 
   @media (max-width: 480px) {
-    /* 小屏幕进一步优化 */
     h1 {
       font-size: 2rem !important;
     }
 
     .text-lg {
       font-size: 1rem;
-    }
-
-    /* 移动端特性标签堆叠 */
-    .flex-wrap {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .flex-wrap > span {
-      width: 100%;
-      justify-content: center;
     }
   }
 
@@ -510,6 +549,13 @@ const heroImageUrl = "/images/banana-hero-demo.jpg";
     .animate-float-slow,
     .animate-pulse,
     .animate-bounce,
+    .animate-float-particle,
+    .animate-pulse-slow,
+    .animate-pulse-slow-delayed,
+    .animate-move-horizontal,
+    .animate-gradient-flow,
+    .animate-shimmer,
+    .animate-bounce-subtle,
     .ai-button-glow {
       animation: none;
     }

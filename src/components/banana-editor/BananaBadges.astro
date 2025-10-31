@@ -2,223 +2,178 @@
 /**
  * BananaBadges - Badge Showcase Component
  * Displays project badges and recognitions
+ * 美化版本：现代化卡片设计 + 增强动画效果
  */
+
+import { Icon } from "astro-icon/components";
 ---
 
-<section
-  class="badge-showcase py-12 bg-gradient-to-b from-transparent to-slate-50/50">
-  <div class="max-w-6xl mx-auto px-4">
-    <div class="text-center mb-8">
-      <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">
-        Community Recognition & Badges
+<section class="py-16 sm:py-24 bg-gradient-to-br from-white via-gray-50 to-banana-light/20 relative overflow-hidden">
+  <!-- 背景装饰 -->
+  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
+  <div class="absolute top-0 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl"></div>
+  
+  <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+    <!-- 标题区域 -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-banana-primary/10">
+        <Icon name="heroicons:sparkles" class="w-4 h-4 text-orange-500" />
+        <span>Community Recognition</span>
+      </div>
+      
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-4">
+        Trusted & Featured by Leading Platforms
       </h2>
-      <p class="text-slate-600 text-sm md:text-base">
-        Trusted and featured by the community
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Recognized by top AI tool directories and product launch platforms
       </p>
     </div>
 
-    <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+    <!-- 徽章展示区域 -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 mb-10">
       <!-- Fazier Launch Badge -->
-      <div class="badge-item">
-        <a
-          href="https://fazier.com/launches/bananaeditor.net"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block transition-transform hover:scale-110 hover:shadow-lg rounded-lg p-2"
-          aria-label="Fazier Launch Badge">
-          <img
-            src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=light"
-            width="120"
-            alt="Fazier Launch Badge"
-            loading="lazy"
-            class="h-auto"
-          />
-        </a>
-      </div>
+      <a
+        href="https://fazier.com/launches/bananaeditor.net"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group/badge relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/60 hover:border-orange-300 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
+        aria-label="Fazier Launch Badge"
+        data-badge="fazier">
+        <img
+          src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=launched&theme=light"
+          alt="Fazier Launch Badge"
+          loading="lazy"
+          class="h-10 w-auto max-w-full opacity-80 group-hover/badge:opacity-100 transition-opacity"
+        />
+        <!-- 悬停装饰 -->
+        <div class="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-2xl"></div>
+      </a>
 
       <!-- Dang.ai Badge -->
-      <div class="badge-item">
-        <a
-          href="https://dang.ai/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block transition-transform hover:scale-110 hover:shadow-lg rounded-lg p-2"
-          aria-label="Dang.ai Badge">
-          <img
-            src="https://cdn.prod.website-files.com/63d8afd87da01fb58ea3fbcb/6487e2868c6c8f93b4828827_dang-badge.png"
-            width="150"
-            height="54"
-            alt="Dang.ai Badge"
-            loading="lazy"
-            class="h-auto"
-          />
-        </a>
-      </div>
+      <a
+        href="https://dang.ai/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group/badge relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/60 hover:border-blue-300 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
+        aria-label="Dang.ai Badge"
+        data-badge="dang">
+        <img
+          src="https://cdn.prod.website-files.com/63d8afd87da01fb58ea3fbcb/6487e2868c6c8f93b4828827_dang-badge.png"
+          alt="Dang.ai Badge"
+          loading="lazy"
+          class="h-10 w-auto max-w-full opacity-80 group-hover/badge:opacity-100 transition-opacity"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-2xl"></div>
+      </a>
 
       <!-- ToolPilot Badge -->
-      <div class="badge-item">
-        <a
-          href="https://www.toolpilot.ai/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block transition-transform hover:scale-110 hover:shadow-lg rounded-lg p-2"
-          aria-label="ToolPilot AI Tools Directory Badge">
-          <img
-            src="/images/badge/tool-pilot.png"
-            width="150"
-            height="54"
-            alt="ToolPilot AI Tools Directory Badge"
-            loading="lazy"
-            class="h-auto"
-          />
-        </a>
-      </div>
+      <a
+        href="https://www.toolpilot.ai/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group/badge relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/60 hover:border-purple-300 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
+        aria-label="ToolPilot AI Tools Directory Badge"
+        data-badge="toolpilot">
+        <img
+          src="/images/badge/tool-pilot.png"
+          alt="ToolPilot AI Tools Directory Badge"
+          loading="lazy"
+          class="h-10 w-auto max-w-full opacity-80 group-hover/badge:opacity-100 transition-opacity"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-2xl"></div>
+      </a>
 
       <!-- Turbo0 Badge -->
-      <div class="badge-item">
-        <a
-          href="https://turbo0.com/item/bananaeditor-nanobanana-ai"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block transition-transform hover:scale-110 hover:shadow-lg rounded-lg p-2"
-          aria-label="Listed on Turbo0 Badge">
-          <img
-            src="https://img.turbo0.com/badge-listed-light.svg"
-            height="54"
-            alt="Listed on Turbo0"
-            loading="lazy"
-            class="h-auto"
-          />
-        </a>
-      </div>
+      <a
+        href="https://turbo0.com/item/bananaeditor-nanobanana-ai"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group/badge relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/60 hover:border-green-300 transition-all duration-300 hover:shadow-xl hover:shadow-green-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
+        aria-label="Listed on Turbo0 Badge"
+        data-badge="turbo0">
+        <img
+          src="https://img.turbo0.com/badge-listed-light.svg"
+          alt="Listed on Turbo0"
+          loading="lazy"
+          class="h-10 w-auto max-w-full opacity-80 group-hover/badge:opacity-100 transition-opacity"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-2xl"></div>
+      </a>
 
       <!-- Findly.tools Badge -->
-      <div class="badge-item">
-        <a
-          href="https://findly.tools/bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai?utm_source=bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block transition-transform hover:scale-110 hover:shadow-lg rounded-lg p-2"
-          aria-label="Featured on findly.tools Badge">
-          <img
-            src="https://findly.tools/badges/findly-tools-badge-light.svg"
-            width="150"
-            alt="Featured on findly.tools"
-            loading="lazy"
-            class="h-auto"
-          />
-        </a>
-      </div>
+      <a
+        href="https://findly.tools/bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai?utm_source=bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group/badge relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/60 hover:border-indigo-300 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
+        aria-label="Featured on findly.tools Badge"
+        data-badge="findly">
+        <img
+          src="https://findly.tools/badges/findly-tools-badge-light.svg"
+          alt="Featured on findly.tools"
+          loading="lazy"
+          class="h-10 w-auto max-w-full opacity-80 group-hover/badge:opacity-100 transition-opacity"
+        />
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover/badge:opacity-100 transition-opacity rounded-2xl"></div>
+      </a>
     </div>
 
-    <!-- Additional Information -->
-    <div class="mt-8 text-center">
-      <p class="text-xs text-slate-500">
-        🎉 Featured on <a
-          href="https://fazier.com/launches/bananaeditor.net"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-orange-500 hover:text-orange-600 font-medium">Fazier</a
-        >, <a
-          href="https://dang.ai/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-blue-500 hover:text-blue-600 font-medium">Dang.ai</a
-        >, <a
-          href="https://www.toolpilot.ai/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-purple-500 hover:text-purple-600 font-medium">ToolPilot</a
-        >, <a
-          href="https://turbo0.com/item/bananaeditor-nanobanana-ai"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-green-500 hover:text-green-600 font-medium">Turbo0</a
-        >, and <a
-          href="https://findly.tools/bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai?utm_source=bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-indigo-500 hover:text-indigo-600 font-medium"
-          >Findly.tools</a
-        >
-      </p>
+    <!-- 底部信息 -->
+    <div class="text-center mt-12">
+      <div class="inline-flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200/50 shadow-md">
+        <Icon name="heroicons:star" class="w-5 h-5 text-yellow-500" />
+        <p class="text-sm text-gray-700">
+          Featured on{" "}
+          <a href="https://fazier.com/launches/bananaeditor.net" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:text-orange-700 font-semibold transition-colors">Fazier</a>
+          {", "}
+          <a href="https://dang.ai/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors">Dang.ai</a>
+          {", "}
+          <a href="https://www.toolpilot.ai/" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-700 font-semibold transition-colors">ToolPilot</a>
+          {", "}
+          <a href="https://turbo0.com/item/bananaeditor-nanobanana-ai" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:text-green-700 font-semibold transition-colors">Turbo0</a>
+          {", and "}
+          <a href="https://findly.tools/bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai?utm_source=bananaeditor-high-quality-ai-image-editing-in-2-3-seconds-with-nanobanana-ai" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">Findly.tools</a>
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .badge-showcase {
-    position: relative;
-    overflow: hidden;
+  /* 徽章卡片进入动画 */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-badge] {
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    [data-badge="fazier"] { animation-delay: 0.1s; }
+    [data-badge="dang"] { animation-delay: 0.2s; }
+    [data-badge="toolpilot"] { animation-delay: 0.3s; }
+    [data-badge="turbo0"] { animation-delay: 0.4s; }
+    [data-badge="findly"] { animation-delay: 0.5s; }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
 
-  .badge-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 60px;
-  }
-
-  .badge-item a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-  }
-
-  .badge-item img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* Hover effect */
-  .badge-item a:hover {
-    transform: translateY(-2px);
-  }
-
-  /* Responsive adjustments */
+  /* 响应式调整 */
   @media (max-width: 640px) {
-    .badge-showcase {
-      padding: 2rem 0;
+    [data-badge] {
+      padding: 1rem;
+      min-height: 80px;
     }
-
-    .badge-item img {
-      max-width: 100px;
+    
+    [data-badge] img {
+      max-height: 32px;
     }
-  }
-
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    .badge-showcase {
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(15, 23, 42, 0.5)
-      );
-    }
-
-    .badge-showcase h2 {
-      color: #f1f5f9;
-    }
-
-    .badge-showcase p {
-      color: #cbd5e1;
-    }
-  }
-
-  /* Subtle animation effect */
-  @keyframes badge-float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-  }
-
-  .badge-item:hover {
-    animation: badge-float 2s ease-in-out infinite;
   }
 </style>

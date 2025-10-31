@@ -1,96 +1,164 @@
 ---
 /**
- * BananaEditor功能展示组件
- * 展示核心AI功能和优势
+ * BananaEditor核心优势展示组件
+ * 数据驱动的优势展示 + 情感化表达
+ * 展示为什么选择BananaEditor的核心卖点
  */
 
 import { Icon } from "astro-icon/components";
 import { loadTranslations, createTranslator } from "../../i18n/utils";
-
-// 获取当前语言
 import { detectLanguageFromRequest } from "../../utils/language-detector";
-const currentLang = detectLanguageFromRequest(Astro.request);
 
-// 加载翻译
+const currentLang = detectLanguageFromRequest(Astro.request);
 const homeTranslations = await loadTranslations(currentLang, 'home');
 const t = createTranslator(currentLang, homeTranslations);
 
-// 图标映射
-const iconMap = {
-  magic: "heroicons:sparkles",
-  layers: "heroicons:squares-2x2", 
-  sparkles: "heroicons:light-bulb",
-  tools: "heroicons:wrench-screwdriver"
-};
+// 核心优势数据
+const advantages = [
+  {
+    id: "consistency",
+    number: "100%",
+    unit: "",
+    icon: "heroicons:check-circle",
+    title: t('advantages.consistency.title'),
+    description: t('advantages.consistency.description'),
+    gradient: "from-green-500 via-emerald-400 to-teal-500",
+    bgGradient: "from-green-50 via-emerald-50 to-teal-50",
+    iconBg: "bg-gradient-to-br from-green-500 to-emerald-600",
+    numberColor: "text-green-600",
+    highlight: t('advantages.consistency.highlight')
+  },
+  {
+    id: "speed",
+    number: "2.3",
+    unit: "s",
+    icon: "heroicons:bolt",
+    title: t('advantages.speed.title'),
+    description: t('advantages.speed.description'),
+    gradient: "from-yellow-400 via-orange-500 to-red-500",
+    bgGradient: "from-yellow-50 via-orange-50 to-red-50",
+    iconBg: "bg-gradient-to-br from-yellow-500 to-orange-600",
+    numberColor: "text-orange-600",
+    highlight: t('advantages.speed.highlight')
+  },
+  {
+    id: "faster",
+    number: "10x",
+    unit: "",
+    icon: "heroicons:rocket-launch",
+    title: t('advantages.faster.title'),
+    description: t('advantages.faster.description'),
+    gradient: "from-purple-500 via-pink-500 to-red-500",
+    bgGradient: "from-purple-50 via-pink-50 to-red-50",
+    iconBg: "bg-gradient-to-br from-purple-500 to-pink-600",
+    numberColor: "text-purple-600",
+    highlight: t('advantages.faster.highlight')
+  },
+  {
+    id: "quality",
+    number: "∞",
+    unit: "",
+    icon: "heroicons:sparkles",
+    title: t('advantages.quality.title'),
+    description: t('advantages.quality.description'),
+    gradient: "from-blue-500 via-cyan-500 to-teal-500",
+    bgGradient: "from-blue-50 via-cyan-50 to-teal-50",
+    iconBg: "bg-gradient-to-br from-blue-500 to-cyan-600",
+    numberColor: "text-blue-600",
+    highlight: t('advantages.quality.highlight')
+  }
+];
 ---
 
-<section class="py-20 sm:py-32 bg-white">
-  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+<section class="py-20 sm:py-32 bg-gradient-to-br from-white via-gray-50 to-banana-light/30 relative overflow-hidden">
+  <!-- 背景装饰 -->
+  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
+  <div class="absolute top-0 left-1/4 w-96 h-96 bg-banana-primary/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-banana-secondary/5 rounded-full blur-3xl"></div>
+  
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
     
     <!-- 标题区域 -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-20">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-banana-primary/10">
+        <Icon name="heroicons:star" class="w-4 h-4 text-yellow-500" />
+        <span>{t('advantages.badge')}</span>
+      </div>
+      
       <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
-        {t('features.title')}
+        {t('advantages.title')}
       </h2>
       <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-        {t('features.subtitle')}
+        {t('advantages.subtitle')}
       </p>
     </div>
 
-    <!-- 功能网格 -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {(t('features.items') || []).map((feature: any, index: number) => (
-        <div class="group relative">
-          <!-- 卡片 -->
-          <div class="relative bg-white rounded-2xl p-8 border border-gray-200 hover:border-banana-primary/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <!-- 优势卡片网格 -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+      {advantages.map((advantage, index) => (
+        <div 
+          class="group relative"
+          data-advantage={advantage.id}>
+          
+          <!-- 主卡片 -->
+          <div class={`relative h-full bg-gradient-to-br ${advantage.bgGradient} rounded-3xl p-8 border-2 border-white/50 hover:border-white transition-all duration-500 hover:shadow-2xl hover:shadow-${advantage.numberColor.split('-')[1]}-500/20 transform hover:-translate-y-2 overflow-hidden`}>
+            
+            <!-- 背景装饰 -->
+            <div class={`absolute inset-0 bg-gradient-to-br ${advantage.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+            <div class={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${advantage.gradient} rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500`}></div>
             
             <!-- 图标 -->
-            <div class="mb-6">
-              <div class="w-12 h-12 bg-banana-gradient rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div class="relative mb-6">
+              <div class={`w-16 h-16 ${advantage.iconBg} rounded-2xl flex items-center justify-center shadow-xl transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
                 <Icon 
-                  name={iconMap[feature.icon as keyof typeof iconMap]} 
-                  class="w-6 h-6 text-white" 
+                  name={advantage.icon} 
+                  class="w-8 h-8 text-white" 
                 />
               </div>
+              <!-- 图标光晕 -->
+              <div class={`absolute inset-0 ${advantage.iconBg} rounded-2xl blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500`}></div>
             </div>
 
-            <!-- 内容 -->
-            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-banana-primary transition-colors">
-              {feature.title}
+            <!-- 大数字 -->
+            <div class="relative mb-4">
+              <div class="flex items-baseline gap-2">
+                <span class={`text-5xl lg:text-6xl font-black ${advantage.numberColor} leading-none transform group-hover:scale-110 transition-transform duration-300`}>
+                  {advantage.number}
+                </span>
+                {advantage.unit && (
+                  <span class={`text-2xl lg:text-3xl font-bold ${advantage.numberColor} opacity-80`}>
+                    {advantage.unit}
+                  </span>
+                )}
+              </div>
+              {advantage.highlight && (
+                <div class="mt-2 inline-flex items-center gap-1 px-3 py-1 bg-white/60 backdrop-blur-sm rounded-full text-xs font-semibold text-gray-700 border border-white/80">
+                  <Icon name="heroicons:arrow-trending-up" class="w-3 h-3 text-green-600" />
+                  <span>{advantage.highlight}</span>
+                </div>
+              )}
+            </div>
+
+            <!-- 标题 -->
+            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-gray-800 transition-colors">
+              {advantage.title}
             </h3>
             
-            <p class="text-gray-600 leading-relaxed mb-4">
-              {feature.description}
+            <!-- 描述 -->
+            <p class="text-gray-600 leading-relaxed text-sm mb-4">
+              {advantage.description}
             </p>
 
-            <!-- 技术规格 -->
-            {feature.specs && (
-              <div class="mt-4 pt-4 border-t border-gray-100">
-                <p class="text-xs text-banana-primary font-medium flex items-center gap-1">
-                  <Icon name="heroicons:check-badge" class="w-3.5 h-3.5" />
-                  {feature.specs}
-                </p>
-              </div>
-            )}
+            <!-- 底部装饰线 -->
+            <div class={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${advantage.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
 
-            <!-- 装饰元素 -->
-            <div class="absolute top-4 right-4 w-8 h-8 bg-banana-primary/5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Icon name="heroicons:arrow-top-right-on-square" class="w-4 h-4 text-banana-primary" />
+            <!-- 悬停装饰 -->
+            <div class="absolute top-4 right-4 w-8 h-8 bg-white/30 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform group-hover:rotate-180 transition-all duration-500">
+              <Icon name="heroicons:sparkles" class="w-4 h-4 text-white" />
             </div>
           </div>
-
-          <!-- 背景装饰 -->
-          <div class="absolute inset-0 bg-banana-gradient opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300 -z-10"></div>
         </div>
       ))}
-    </div>
-
-    <!-- 底部CTA -->
-    <div class="text-center mt-16">
-      <div class="inline-flex items-center gap-2 px-6 py-3 bg-banana-light/50 rounded-full text-banana-primary font-medium">
-        <Icon name="heroicons:information-circle" class="w-5 h-5" />
-        <span>All features powered by nano banana AI technology</span>
-      </div>
     </div>
   </div>
 </section>
@@ -101,10 +169,52 @@ const iconMap = {
     <div class="w-full border-t border-gray-200"></div>
   </div>
   <div class="relative flex justify-center">
-    <div class="bg-white px-6">
-      <div class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center">
+    <div class="bg-gradient-to-br from-white via-gray-50 to-banana-light/30 px-6">
+      <div class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform duration-300">
         <span class="text-white text-xl">🍌</span>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  /* 数字动画 */
+  @keyframes countUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* 卡片进入动画 */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-advantage] {
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+    
+    [data-advantage="consistency"] { animation-delay: 0.1s; }
+    [data-advantage="speed"] { animation-delay: 0.2s; }
+    [data-advantage="faster"] { animation-delay: 0.3s; }
+    [data-advantage="quality"] { animation-delay: 0.4s; }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+  
+  /* 悬停时的光晕效果 */
+  .group:hover [class*="bg-gradient-to-br"] {
+    filter: brightness(1.1);
+  }
+</style>
