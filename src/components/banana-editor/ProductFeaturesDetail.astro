@@ -20,7 +20,7 @@ const detailedFeatures = [
   {
     id: "consistency",
     icon: "heroicons:check-circle",
-    image: "/images/hero-example-original.png", // 使用现有图片或占位符
+    image: "https://picture.bananaeditor.net/feature-image/consistency_mastered.png", // 使用现有图片或占位符
     imageAlt: "Nano banana AI Image Editor - Perfect element consistency across seasons",
     title: t("detailedFeatures.consistency.title"),
     description: t("detailedFeatures.consistency.description"),
@@ -30,7 +30,7 @@ const detailedFeatures = [
   {
     id: "speed",
     icon: "heroicons:bolt",
-    image: "/images/hero-example-summer.png",
+    image: "https://picture.bananaeditor.net/feature-image/extremely_fast_generation.png",
     imageAlt: "Nano banana AI Image Editor - Ultra-fast 2.3 second generation",
     title: t("detailedFeatures.speed.title"),
     description: t("detailedFeatures.speed.description"),
@@ -40,7 +40,7 @@ const detailedFeatures = [
   {
     id: "conversational",
     icon: "heroicons:chat-bubble-left-right",
-    image: "/images/hero-example-autumn.png",
+    image: "https://picture.bananaeditor.net/feature-image/conversational_image_editing_interface.png",
     imageAlt: "Nano banana AI Image Editor - Conversational image editing interface",
     title: t("detailedFeatures.conversational.title"),
     description: t("detailedFeatures.conversational.description"),
@@ -50,7 +50,7 @@ const detailedFeatures = [
   {
     id: "iterative",
     icon: "heroicons:arrow-path",
-    image: "/images/hero-example-winter.png",
+    image: "https://picture.bananaeditor.net/feature-image/smart_iterative_editing.png",
     imageAlt: "Nano banana AI Image Editor - Smart iterative editing feature",
     title: t("detailedFeatures.iterative.title"),
     description: t("detailedFeatures.iterative.description"),
@@ -58,19 +58,9 @@ const detailedFeatures = [
     seoKeywords: ["nano banana", "smart iterative editing", "context-aware", "image refinement"]
   },
   {
-    id: "fusion",
-    icon: "heroicons:squares-2x2",
-    image: "/images/hero-example-original.png",
-    imageAlt: "Nano banana AI Image Editor - Intelligent image fusion technology",
-    title: t("detailedFeatures.fusion.title"),
-    description: t("detailedFeatures.fusion.description"),
-    highlights: t("detailedFeatures.fusion.highlights"),
-    seoKeywords: ["nano banana", "image fusion", "style transfer", "intelligent blending"]
-  },
-  {
     id: "quality",
     icon: "heroicons:sparkles",
-    image: "/images/hero-example-summer.png",
+    image: "https://picture.bananaeditor.net/feature-image/commercial_ready_quality_output.png",
     imageAlt: "Nano banana AI Image Editor - Commercial-ready quality output",
     title: t("detailedFeatures.quality.title"),
     description: t("detailedFeatures.quality.description"),
@@ -118,8 +108,8 @@ const detailedFeatures = [
               <!-- 图片区域 - 桌面端根据isLeft决定位置，移动端始终在上 -->
               <div class={`w-full lg:w-1/2 ${isLeft ? 'lg:order-1' : 'lg:order-2'}`}>
                 <div class="relative rounded-2xl overflow-hidden shadow-2xl group-hover:shadow-banana-primary/20 transition-all duration-500 transform group-hover:scale-[1.02]">
-                  <!-- 图片容器 -->
-                  <div class="aspect-[4/3] bg-gradient-to-br from-banana-light to-gray-100 relative overflow-hidden">
+                  <!-- 图片容器 - 宽高比 1138:764 -->
+                  <div class="aspect-[1138/764] bg-gradient-to-br from-banana-light to-gray-100 relative overflow-hidden">
                     <img
                       src={feature.image}
                       alt={feature.imageAlt}
@@ -129,14 +119,6 @@ const detailedFeatures = [
                     
                     <!-- 渐变遮罩 -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
-                    <!-- 图标装饰 -->
-                    <div class="absolute top-6 left-6 w-14 h-14 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300">
-                      <Icon 
-                        name={feature.icon} 
-                        class="w-7 h-7 text-banana-primary" 
-                      />
-                    </div>
                     
                     <!-- 浮动装饰元素 -->
                     <div class="absolute bottom-6 right-6 w-20 h-20 bg-banana-gradient/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
