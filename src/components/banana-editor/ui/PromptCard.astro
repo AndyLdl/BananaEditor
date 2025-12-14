@@ -758,9 +758,18 @@ function getCategoryIcon(category: string): string {
                 // 获取提示词内容
                 const promptContent = this.card.querySelector('.preview-text').textContent;
                 
-                // 跳转到编辑器
-                const editorUrl = `/editor?prompt=${encodeURIComponent(promptContent)}`;
-                window.open(editorUrl, '_blank');
+                // 跳转到首页 hero 区域并传递 prompt
+                const heroUrl = `/#hero?prompt=${encodeURIComponent(promptContent)}`;
+                if (window.location.pathname === '/') {
+                  // 如果已经在首页，直接滚动到 hero 并设置 prompt
+                  window.location.hash = `hero?prompt=${encodeURIComponent(promptContent)}`;
+                  const heroElement = document.getElementById('hero');
+                  if (heroElement) {
+                    heroElement.scrollIntoView({ behavior: 'smooth' });
+                  }
+                } else {
+                  window.location.href = heroUrl;
+                }
 
                 // 更新使用次数显示
                 const usageElement = this.card.querySelector('.meta-item.usage span');

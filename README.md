@@ -1,32 +1,29 @@
-# Astroship - Astro SAAS Starter Website Template
+# Z-Image - Advanced AI Image Generation Foundation Model
 
-Astroship is a free starter astro website template for saas, startups, marketing websites, landing pages & blogs. Built with Astro & TailwindCSS.
+Z-Image is an advanced AI image generation foundation model with 6B parameters, featuring single-stream diffusion transformer technology. This website showcases Z-Image's capabilities and provides tools for image generation and editing.
 
-## 🚀 新增功能：Firebase 云函数支持
+## 🚀 Z-Image Features
 
-现在支持 Firebase 云函数部署，提供更好的 AI 图片生成服务集成！
+### Core Technology
+- ✅ **6B Parameters**: Large-scale foundation model for high-quality image generation
+- ✅ **Single-Stream Diffusion Transformer**: Revolutionary architecture for efficient processing
+- ✅ **Z-Image-Turbo**: Ultra-fast variant with sub-second inference (8 NFEs)
+- ✅ **Z-Image-Base**: Foundation model for general-purpose generation
+- ✅ **Z-Image-Edit**: Specialized variant for image editing tasks
 
-### 主要特性
-- ✅ Firebase Functions v2 支持
-- ✅ Vertex AI 集成
-- ✅ Cloud Storage 自动管理
-- ✅ 本地开发模拟器
-- ✅ 一键部署脚本
-- ✅ 完整的监控和日志
+### Advanced Capabilities
+- ✅ **Bilingual Text Rendering**: Perfect support for English and Chinese text
+- ✅ **Strong Instruction Following**: Excellent adherence to complex prompts
+- ✅ **High-Resolution Generation**: Support for 1024x1024 and higher resolutions
+- ✅ **Commercial-Ready Outputs**: Optimized for professional and commercial use
 
-This Free Template is sponsored by [Web3Templates](https://web3templates.com)
+This project is based on the official Z-Image model from [Tongyi-MAI](https://github.com/Tongyi-MAI/Z-Image)
 
 ## Live Demo
 
-**[https://astroship.web3templates.com/](https://astroship.web3templates.com/)**
+**[Z-Image Official Repository](https://github.com/Tongyi-MAI/Z-Image)**
 
-**[Download Astroship Template](https://web3templates.com/templates/astroship-starter-website-template-for-astro)**
-
-## Upgrade to Astroship Pro Version
-
-**[https://astroship-pro.web3templates.com/](https://astroship-pro.web3templates.com/)**
-
-**[Purchase Astroship Pro — $49](https://web3templates.com/templates/astroship-pro-astro-saas-website-template)**
+**[Z-Image Technical Report](https://arxiv.org/abs/2511.22699)**
 
 
 <!-- prettier-ignore -->
@@ -51,35 +48,73 @@ This Free Template is sponsored by [Web3Templates](https://web3templates.com)
 | Pricing| Free|**$49**|
 | &nbsp; | [Deploy for free](https://vercel.com/new/surjithctly/clone?demo-description=Starter%20template%20for%20startups%2C%20marketing%20websites%20%26%20blogs%20built%20with%20Astro%20and%20TailwindCSS.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F5dB0dDqBr1BfvIoNOmffVB%2F784984a8d3fe5e3db123e7c655166046%2Fastroship_-_Tony_Sullivan.jpg&demo-title=Astroship&demo-url=https%3A%2F%2Fastroship.web3templates.com%2F&from=templates&project-name=Astroship&repository-name=astroship&repository-url=https%3A%2F%2Fgithub.com%2Fsurjithctly%2Fastroship&skippable-integrations=1) | [Purchase Pro](https://web3templates.com/templates/astroship-pro-astro-saas-website-template) |
 
-<a href="https://web3templates.com/templates/astroship-pro-astro-saas-website-template">
-<img width="160" alt="Upgrade to Pro" src="https://user-images.githubusercontent.com/1884712/199181300-37c2128e-d033-4145-a906-16fa5263a53b.png">
-</a>
+<!-- prettier-ignore -->
+| Model Variant | Parameters | Inference Speed | Best For |
+| --- | ------ | --- | --- |
+| Z-Image-Turbo | 6B | Sub-second (8 NFEs) | Fast generation, real-time applications |
+| Z-Image-Base | 6B | Standard | General-purpose generation, research |
+| Z-Image-Edit | 6B | Optimized | Image editing and refinement tasks |
+| &nbsp; | &nbsp;| &nbsp;| &nbsp;|
+| Key Features | ✅ Bilingual Text | ✅ High Resolution | ✅ Commercial Use |
+| Architecture | Single-Stream Diffusion Transformer | 6B Parameters | Open Source |
+| &nbsp; | &nbsp;| &nbsp;| &nbsp;|
+| License | Apache-2.0 | Research & Commercial | Community Driven |
 
-## Deploy this template
+## Model Performance
 
-You can instantly clone this to your GitHub and deploy the site by clicking the below buttons to deploy to your chosen providers!
+Z-Image has achieved outstanding results on leading benchmarks:
+- **8th overall** on Artificial Analysis Text-to-Image Leaderboard
+- **#1 Open-Source Model** outperforming all other open-source alternatives
+- State-of-the-art results on Alibaba AI Arena leaderboard
 
-Click here to deploy on Vercel:
+## Getting Started with Z-Image
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsurjithctly%2Fastroship&project-name=astroship&repository-name=astroship&demo-title=Astroship%20-%20Astro%20Starter%20Template&demo-description=Astroship%20is%20a%20starter%20template%20for%20startups%2C%20marketing%20websites%20%26%20landing%20pages.%20Built%20with%20Astro%2C%20TailwindCSS&demo-url=https%3A%2F%2Fastroship.web3templates.com%2F&demo-image=https%3A%2F%2Fuser-images.githubusercontent.com%2F1884712%2F200831799-10ef2456-a02e-4068-b580-4b5326f0b33b.png)
+### Installation
 
-Click here to deploy on Netlify:
+```bash
+# Clone the official Z-Image repository
+git clone https://github.com/Tongyi-MAI/Z-Image.git
+cd Z-Image
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/surjithctly/astroship)
+# Install dependencies
+pip install -e .
+
+# For PyTorch Native Inference
+python inference.py
+
+# For Diffusers Integration
+pip install git+https://github.com/huggingface/diffusers
+```
+
+### Quick Inference Example
+
+```python
+import torch
+from diffusers import ZImagePipeline
+
+# Load Z-Image-Turbo for fastest inference
+pipe = ZImagePipeline.from_pretrained(
+    "Tongyi-MAI/Z-Image-Turbo",
+    torch_dtype=torch.bfloat16,
+)
+
+pipe.to("cuda")
+
+# Generate image with sub-second latency
+image = pipe(
+    prompt="A beautiful landscape with mountains and lake",
+    height=1024,
+    width=1024,
+    num_inference_steps=8,  # Only 8 NFEs needed!
+    guidance_scale=0.0,
+).images[0]
+
+image.save("generated_image.png")
+```
 
 ## Preview
 
-![image](https://user-images.githubusercontent.com/1884712/200831799-10ef2456-a02e-4068-b580-4b5326f0b33b.png)
-
-
-## Pro Version Preview
-
-![preview](https://github.com/surjithctly/astroship/assets/1884712/25665c02-d2a7-43dc-89b2-34a8ae37ade9)
-
-
-### Pagespeed Score
-
-[![pagespeed](https://user-images.githubusercontent.com/1884712/210250214-7aa98167-7993-4b90-8138-326b8fa0c223.png)](https://pagespeed.web.dev/report?url=https%3A%2F%2Fastroship.web3templates.com%2F)
+![Z-Image Architecture](https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/architecture.png)
 
 
 ## Installation
@@ -179,189 +214,93 @@ Feel free to check out [Astro Docs](https://docs.astro.build) or jump into our [
 
 ---
 
-## 🔥 Firebase 云函数集成
+## 🚀 Z-Image Integration Options
 
-本项目现在支持 Firebase 云函数，为 AI 图片生成提供强大的后端服务。
+This website template can be integrated with Z-Image models through various deployment options:
 
-### 🚀 快速开始
+### Direct Model Integration
 
-#### 1. 配置 Firebase 项目
-
-```bash
-# 自动配置（推荐）
-node firebase-functions/configure.js
-
-# 或手动配置
-firebase login
-firebase use your-project-id
-cd firebase-functions/functions
-cp .env.example .env
-# 编辑 .env 文件
-```
-
-#### 2. 一键部署
+#### 1. Local Development Setup
 
 ```bash
-./firebase-functions/deploy.sh
+# Install Z-Image dependencies
+pip install torch diffusers transformers accelerate
+
+# Download model weights
+from diffusers import ZImagePipeline
+pipe = ZImagePipeline.from_pretrained("Tongyi-MAI/Z-Image-Turbo")
 ```
 
-#### 3. 更新前端配置
+#### 2. Cloud Deployment Options
 
-在项目根目录的 `.env` 文件中添加：
+- **Google Cloud Vertex AI**: Deploy Z-Image models on Vertex AI for scalable inference
+- **AWS SageMaker**: Use SageMaker endpoints for production deployment
+- **Hugging Face Inference**: Leverage Hugging Face's inference API
+- **Replicate**: Use Replicate's infrastructure for easy deployment
 
-```env
-FIREBASE_FUNCTION_URL=https://us-central1-your-project-id.cloudfunctions.net/bananaAIGenerator
+### API Integration Example
+
+```python
+import requests
+
+# Example API call to Z-Image service
+response = requests.post(
+    "https://your-z-image-api.com/generate",
+    json={
+        "prompt": "A beautiful sunset over mountains in Chinese landscape style",
+        "model": "Z-Image-Turbo",
+        "width": 1024,
+        "height": 1024,
+        "num_inference_steps": 8
+    }
+)
+
+if response.status_code == 200:
+    with open("generated_image.png", "wb") as f:
+        f.write(response.content)
 ```
 
-### 📋 功能特性
+### 🔧 Configuration Options
 
-- **🤖 AI 图片生成**: 基于 Vertex AI 的智能图片生成
-- **📁 自动存储**: Cloud Storage 自动管理生成的图片
-- **🔒 安全验证**: 完整的输入验证和安全检查
-- **📊 实时监控**: Firebase Console 集成监控
-- **🧪 本地测试**: 完整的本地开发环境
-- **⚡ 高性能**: 优化的冷启动和并发处理
+#### Model Parameters
 
-### 🛠️ 本地开发
+- **model**: Model variant (`Z-Image-Turbo`, `Z-Image-Base`, `Z-Image-Edit`)
+- **prompt**: Text prompt for image generation (supports English and Chinese)
+- **width/height**: Image dimensions (up to 1024x1024 recommended)
+- **num_inference_steps**: Number of diffusion steps (8 for Turbo, higher for Base)
+- **guidance_scale**: How closely to follow the prompt (0.0 for Turbo models)
+- **negative_prompt**: What to avoid in the generated image
 
-```bash
-# 启动 Firebase 模拟器
-firebase emulators:start --only functions
+### 📈 Performance Optimization
 
-# 测试云函数
-cd firebase-functions/functions
-npm test
+Z-Image models are optimized for various deployment scenarios:
 
-# 启动前端开发服务器
-npm run dev
-```
+#### Z-Image-Turbo Optimizations
+- **8 NFEs**: Only 8 function evaluations needed for high-quality results
+- **Sub-second latency**: Optimized for real-time applications
+- **Memory efficient**: Fits in 16GB VRAM consumer GPUs
+- **Flash Attention**: Support for Flash-Attention-2/3 acceleration
 
-### 📊 API 接口
+#### Production Deployment Tips
+- **Model caching**: Keep models loaded in memory for faster inference
+- **Batch processing**: Process multiple requests simultaneously
+- **GPU optimization**: Use appropriate precision (bf16/float16) for speed/quality balance
+- **Load balancing**: Distribute requests across multiple model instances
 
-#### POST /bananaAIGenerator
+### 🎯 Benchmark Results
 
-生成 AI 图片的主要接口。
+Z-Image has achieved top rankings on major leaderboards:
 
-**请求示例：**
+- **Artificial Analysis T2I Leaderboard**: 8th overall, #1 open-source model
+- **Alibaba AI Arena**: State-of-the-art among open-source models
+- **Technical Report**: Available on arXiv (coming soon)
 
-```bash
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "一只可爱的橙色小猫坐在花园里",
-    "style": "realistic",
-    "quality": "high",
-    "creativity": 70
-  }' \
-  https://us-central1-your-project-id.cloudfunctions.net/bananaAIGenerator
-```
+### 📚 Related Documentation
 
-**响应示例：**
-
-```json
-{
-  "success": true,
-  "data": {
-    "imageUrl": "https://storage.googleapis.com/...",
-    "thumbnailUrl": "https://storage.googleapis.com/...",
-    "generatedPrompt": "使用nano banana AI技术生成的增强提示词...",
-    "metadata": {
-      "requestId": "banana_fb_1234567890_abcd",
-      "processingTime": 2500,
-      "model": "gemini-pro",
-      "style": "realistic",
-      "quality": "high"
-    },
-    "suggestions": [
-      "尝试在realistic风格基础上添加更多细节描述",
-      "可以指定具体的光线效果"
-    ]
-  }
-}
-```
-
-### 🔧 配置选项
-
-#### 支持的参数
-
-- **prompt** (必需): 图片生成提示词
-- **style**: 艺术风格 (`realistic`, `artistic`, `cartoon`, 等)
-- **quality**: 图片质量 (`standard`, `high`, `ultra`)
-- **creativity**: 创意程度 (0-100)
-- **colorTone**: 色调偏好 (`warm`, `cool`, `vibrant`, 等)
-- **outputFormat**: 输出格式 (`jpeg`, `png`, `webp`)
-
-#### 环境变量
-
-```env
-# Firebase 项目配置
-GOOGLE_CLOUD_PROJECT=your-firebase-project-id
-VERTEX_AI_LOCATION=us-central1
-STORAGE_BUCKET_NAME=your-firebase-project-id.appspot.com
-```
-
-### 📈 性能优化
-
-- **内存配置**: 1GB 内存分配，适合 AI 处理
-- **超时设置**: 5分钟超时，确保复杂请求完成
-- **并发控制**: 最大10个并发实例，防止资源过载
-- **冷启动优化**: 使用 Firebase Functions v2 减少冷启动时间
-
-### 💰 费用估算
-
-Firebase Functions 费用透明，包含免费额度：
-
-- **调用次数**: 前 200 万次免费
-- **计算时间**: 前 40 万 GB-秒免费
-- **网络流量**: 前 5GB 免费
-
-**典型使用场景：**
-- 轻度使用 (1000次/月): 免费
-- 中度使用 (10000次/月): $1-5/月
-- 重度使用 (100000次/月): $10-50/月
-
-### 🔍 监控和调试
-
-#### Firebase Console
-
-访问 [Firebase Console](https://console.firebase.google.com/) 查看：
-- 函数调用统计和性能指标
-- 实时错误日志和调试信息
-- 资源使用情况和费用分析
-
-#### 命令行工具
-
-```bash
-# 查看函数日志
-firebase functions:log
-
-# 查看特定函数日志
-firebase functions:log --only bananaAIGenerator
-
-# 实时日志监控
-firebase functions:log --follow
-```
-
-### 🚨 故障排除
-
-#### 常见问题
-
-1. **部署失败**: 确保已升级到 Blaze 计费计划
-2. **权限错误**: 检查 Vertex AI API 是否已启用
-3. **超时问题**: 增加函数超时时间配置
-4. **CORS 错误**: 确保函数配置中启用了 CORS
-
-#### 获取帮助
-
-- [Firebase 文档](https://firebase.google.com/docs/functions)
-- [项目 Issues](https://github.com/your-repo/issues)
-- [Firebase 社区](https://firebase.google.com/support)
-
-### 📚 相关文档
-
-- [Firebase Functions 快速开始](./firebase-functions/QUICK_START.md)
-- [迁移指南](./firebase-functions/MIGRATION_GUIDE.md)
-- [详细文档](./firebase-functions/README.md)
+- [Z-Image Official Repository](https://github.com/Tongyi-MAI/Z-Image)
+- [Technical Report: Decoupled-DMD](https://arxiv.org/abs/2511.22677)
+- [Technical Report: DMDR](https://arxiv.org/abs/2511.13649)
+- [Hugging Face Model Cards](https://huggingface.co/Tongyi-MAI)
 
 ---
 

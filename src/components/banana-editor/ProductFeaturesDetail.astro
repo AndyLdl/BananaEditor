@@ -1,7 +1,7 @@
 ---
 /**
  * 产品功能详细介绍组件
- * 展示BananaEditor所有核心功能的详细说明
+ * 展示Z-Image Studio所有核心功能的详细说明
  * 桌面端：左右交替布局（截图+文字）
  * 移动端：上图下文固定布局
  * 针对SEO优化，包含关键词自然分布
@@ -20,48 +20,48 @@ const detailedFeatures = [
   {
     id: "consistency",
     icon: "heroicons:check-circle",
-    image: "https://picture.bananaeditor.net/feature-image/consistency_mastered.png", // 使用现有图片或占位符
-    imageAlt: "Nano banana AI Image Editor - Perfect element consistency across seasons",
+    image: "/images/hero-example-original.png", // 使用现有图片或占位符
+    imageAlt: "Z-Image - Single-Stream Diffusion Transformer Architecture",
     title: t("detailedFeatures.consistency.title"),
     description: t("detailedFeatures.consistency.description"),
     highlights: t("detailedFeatures.consistency.highlights"),
-    seoKeywords: ["nano banana", "element consistency", "perfect consistency", "character consistency"]
+    seoKeywords: ["Z-Image", "single-stream diffusion transformer", "element consistency", "advanced AI"]
   },
   {
     id: "speed",
     icon: "heroicons:bolt",
-    image: "https://picture.bananaeditor.net/feature-image/extremely_fast_generation.png",
-    imageAlt: "Nano banana AI Image Editor - Ultra-fast 2.3 second generation",
+    image: "/images/hero-example-summer.png",
+    imageAlt: "Z-Image-Turbo - 8 NFEs Ultra-Fast Inference",
     title: t("detailedFeatures.speed.title"),
     description: t("detailedFeatures.speed.description"),
     highlights: t("detailedFeatures.speed.highlights"),
-    seoKeywords: ["nano banana", "2.3 seconds", "fast ai image generator", "ultra-fast"]
+    seoKeywords: ["Z-Image-Turbo", "8 NFEs", "ultra-fast inference", "sub-second latency"]
   },
   {
     id: "conversational",
     icon: "heroicons:chat-bubble-left-right",
-    image: "https://picture.bananaeditor.net/feature-image/conversational_image_editing_interface.png",
-    imageAlt: "Nano banana AI Image Editor - Conversational image editing interface",
+    image: "/images/hero-example-autumn.png",
+    imageAlt: "Z-Image - Bilingual Text Rendering (English & Chinese)",
     title: t("detailedFeatures.conversational.title"),
     description: t("detailedFeatures.conversational.description"),
     highlights: t("detailedFeatures.conversational.highlights"),
-    seoKeywords: ["nano banana", "conversational editing", "chat interface", "natural language"]
+    seoKeywords: ["Z-Image", "instruction following", "advanced AI", "natural language"]
   },
   {
     id: "iterative",
     icon: "heroicons:arrow-path",
-    image: "https://picture.bananaeditor.net/feature-image/smart_iterative_editing.png",
-    imageAlt: "Nano banana AI Image Editor - Smart iterative editing feature",
+    image: "/images/hero-example-winter.png",
+    imageAlt: "Z-Image-Edit - Advanced Image Editing Variant",
     title: t("detailedFeatures.iterative.title"),
     description: t("detailedFeatures.iterative.description"),
     highlights: t("detailedFeatures.iterative.highlights"),
-    seoKeywords: ["nano banana", "smart iterative editing", "context-aware", "image refinement"]
+    seoKeywords: ["Z-Image-Edit", "advanced editing", "context-aware", "image refinement"]
   },
   {
     id: "quality",
     icon: "heroicons:sparkles",
-    image: "https://picture.bananaeditor.net/feature-image/commercial_ready_quality_output.png",
-    imageAlt: "Nano banana AI Image Editor - Commercial-ready quality output",
+    image: "/images/demo-generated-landscape.png",
+    imageAlt: "Z-Image - #1 Open-Source Model Performance",
     title: t("detailedFeatures.quality.title"),
     description: t("detailedFeatures.quality.description"),
     highlights: t("detailedFeatures.quality.highlights"),
@@ -70,119 +70,132 @@ const detailedFeatures = [
 ];
 ---
 
-<section class="py-20 sm:py-32 bg-gradient-to-br from-gray-50 via-white to-banana-light/20 relative overflow-hidden">
+<section class="py-20 sm:py-32 bg-z-bg relative overflow-hidden">
   <!-- 背景装饰 -->
-  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
+  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-[0.03] pointer-events-none"></div>
+  <div class="absolute top-0 left-1/4 w-96 h-96 bg-banana-primary/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-banana-secondary/5 rounded-full blur-3xl"></div>
   
   <div class="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
     
     <!-- 标题区域 -->
-    <div class="text-center mb-20">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-banana-light/50 rounded-full text-banana-primary font-medium text-sm mb-6 shadow-sm">
-        <Icon name="heroicons:sparkles" class="w-4 h-4" />
+    <div class="text-center mb-16 md:mb-24">
+      <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-banana-primary/10 via-banana-secondary/10 to-banana-primary/10 rounded-full text-banana-primary font-semibold text-sm mb-6 shadow-lg border border-banana-primary/20 backdrop-blur-sm">
+        <Icon name="heroicons:sparkles" class="w-4 h-4 animate-pulse" />
         <span>{t("detailedFeatures.badge")}</span>
       </div>
       
-      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+      <h2 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text">
         {t("detailedFeatures.title")}
       </h2>
-      <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+      <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
         {t("detailedFeatures.subtitle")}
       </p>
     </div>
 
-    <!-- 详细功能列表 - 交替布局 -->
-    <div class="space-y-24 lg:space-y-32">
+    <!-- 详细功能列表 - 卡片式设计 -->
+    <div class="space-y-8 md:space-y-12">
       {detailedFeatures.map((feature, index) => {
         const isEven = index % 2 === 0;
-        const isLeft = isEven; // 偶数项：图片在左，文字在右；奇数项：文字在左，图片在右
         
         return (
           <article 
-            class="group relative"
+            class="feature-card group relative"
+            data-index={index}
             itemscope 
             itemtype="https://schema.org/SoftwareApplication">
             
-            <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <!-- 主卡片容器 -->
+            <div class="relative bg-gradient-to-br from-z-surface via-z-surface to-z-surface_hover rounded-3xl p-6 md:p-8 lg:p-10 border border-white/10 hover:border-banana-primary/30 transition-all duration-500 overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-banana-primary/10">
               
-              <!-- 图片区域 - 桌面端根据isLeft决定位置，移动端始终在上 -->
-              <div class={`w-full lg:w-1/2 ${isLeft ? 'lg:order-1' : 'lg:order-2'}`}>
-                <div class="relative rounded-2xl overflow-hidden shadow-2xl group-hover:shadow-banana-primary/20 transition-all duration-500 transform group-hover:scale-[1.02]">
-                  <!-- 图片容器 - 宽高比 1138:764 -->
-                  <div class="aspect-[1138/764] bg-gradient-to-br from-banana-light to-gray-100 relative overflow-hidden">
-                    <img
-                      src={feature.image}
-                      alt={feature.imageAlt}
-                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      loading="lazy"
-                    />
-                    
-                    <!-- 渐变遮罩 -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
-                    <!-- 浮动装饰元素 -->
-                    <div class="absolute bottom-6 right-6 w-20 h-20 bg-banana-gradient/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  </div>
-                  
-                  <!-- 边框装饰 -->
-                  <div class="absolute inset-0 border-2 border-banana-primary/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                </div>
-              </div>
-
-              <!-- 文字内容区域 - 桌面端根据isLeft决定位置，移动端始终在下 -->
-              <div class={`w-full lg:w-1/2 ${isLeft ? 'lg:order-2' : 'lg:order-1'}`}>
-                <div class="space-y-6">
-                  <!-- 标题和图标 -->
-                  <div class="flex items-start gap-4">
-                    <div class="w-14 h-14 bg-banana-gradient rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                      <Icon 
-                        name={feature.icon} 
-                        class="w-7 h-7 text-white" 
+              <!-- 背景光效 -->
+              <div class="absolute inset-0 bg-gradient-to-br from-banana-primary/5 via-transparent to-banana-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div class="absolute -top-20 -right-20 w-40 h-40 bg-banana-gradient rounded-full blur-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
+              
+              <div class="relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                
+                <!-- 图片区域 -->
+                <div class={`w-full lg:w-1/2 ${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
+                  <div class="relative rounded-2xl overflow-hidden group/image">
+                    <!-- 图片容器 -->
+                    <div class="aspect-[4/3] bg-gradient-to-br from-z-surface_hover to-z-surface relative overflow-hidden rounded-xl">
+                      <img
+                        src={feature.image}
+                        alt={feature.imageAlt}
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-110"
+                        loading="lazy"
                       />
+                      
+                      <!-- 渐变遮罩 -->
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"></div>
+                      
+                      <!-- 序号标签 -->
+                      <div class="absolute top-4 left-4 w-12 h-12 bg-banana-gradient rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-xl backdrop-blur-sm border-2 border-white/20">
+                        {String(index + 1).padStart(2, '0')}
+                      </div>
+                      
+                      <!-- 图标悬浮效果 -->
+                      <div class="absolute bottom-4 right-4 w-16 h-16 bg-banana-gradient/80 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-2xl transform group-hover/image:scale-110 group-hover/image:rotate-12 transition-all duration-500 border border-white/20">
+                        <Icon 
+                          name={feature.icon} 
+                          class="w-8 h-8 text-white" 
+                        />
+                      </div>
                     </div>
-                    <div class="flex-1">
+                    
+                    <!-- 边框光效 -->
+                    <div class="absolute inset-0 rounded-xl border-2 border-banana-primary/0 group-hover:border-banana-primary/50 transition-all duration-500 pointer-events-none"></div>
+                  </div>
+                </div>
+
+                <!-- 文字内容区域 -->
+                <div class={`w-full lg:w-1/2 ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
+                  <div class="space-y-6">
+                    <!-- 标题 -->
+                    <div>
                       <h3 
-                        class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 group-hover:text-banana-primary transition-colors"
+                        class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 group-hover:text-banana-primary transition-colors duration-300 leading-tight"
                         itemprop="name">
                         {feature.title}
                       </h3>
-                      <div class="h-1 w-20 bg-banana-gradient rounded-full transform group-hover:w-32 transition-all duration-300"></div>
+                      <!-- 装饰线 -->
+                      <div class="h-1 w-24 bg-banana-gradient rounded-full transform group-hover:w-40 transition-all duration-500"></div>
                     </div>
-                  </div>
 
-                  <!-- 描述 -->
-                  <p 
-                    class="text-lg text-gray-700 leading-relaxed"
-                    itemprop="description">
-                    {feature.description}
-                  </p>
+                    <!-- 描述 -->
+                    <p 
+                      class="text-base sm:text-lg text-gray-300 leading-relaxed"
+                      itemprop="description">
+                      {feature.description}
+                    </p>
 
-                  <!-- 功能亮点 -->
-                  {feature.highlights && feature.highlights.length > 0 && (
-                    <div class="grid sm:grid-cols-2 gap-3 pt-4">
-                      {feature.highlights.map((highlight: string) => (
-                        <div class="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200 hover:border-banana-primary/30 hover:shadow-md transition-all duration-200 group/item">
-                          <Icon 
-                            name="heroicons:check-circle" 
-                            class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5 transform group-hover/item:scale-110 transition-transform" 
-                          />
-                          <span class="text-gray-700 font-medium text-sm leading-snug">{highlight}</span>
-                        </div>
-                      ))}
+                    <!-- 功能亮点 -->
+                    {feature.highlights && feature.highlights.length > 0 && (
+                      <div class="grid sm:grid-cols-2 gap-3 pt-2">
+                        {feature.highlights.map((highlight: string) => (
+                          <div class="flex items-start gap-3 p-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 hover:border-banana-primary/30 transition-all duration-300 group/item backdrop-blur-sm">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 group-hover/item:bg-green-500/30 transition-colors">
+                              <Icon 
+                                name="heroicons:check" 
+                                class="w-4 h-4 text-green-400 transform group-hover/item:scale-110 transition-transform" 
+                              />
+                            </div>
+                            <span class="text-gray-300 font-medium text-sm leading-snug group-hover/item:text-white transition-colors">{highlight}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <!-- SEO关键词（隐藏，供搜索引擎识别） -->
+                    <div class="sr-only">
+                      {feature.seoKeywords.join(", ")}
                     </div>
-                  )}
-
-                  <!-- SEO关键词（隐藏，供搜索引擎识别） -->
-                  <div class="sr-only">
-                    {feature.seoKeywords.join(", ")}
                   </div>
                 </div>
               </div>
-            </div>
-
-            <!-- 序号装饰 -->
-            <div class="hidden lg:block absolute -left-8 top-1/2 -translate-y-1/2 w-16 h-16 bg-banana-gradient/10 rounded-full flex items-center justify-center text-banana-primary font-bold text-xl border-4 border-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {String(index + 1).padStart(2, '0')}
+              
+              <!-- 底部装饰线 -->
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-banana-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
           </article>
         );
@@ -190,43 +203,50 @@ const detailedFeatures = [
     </div>
 
     <!-- 底部CTA -->
-    <div class="text-center mt-24">
+    <div class="text-center mt-20 md:mt-28">
       <div class="inline-block transform hover:scale-105 transition-transform duration-300">
         <a 
-          href="/editor" 
-          class="inline-flex items-center gap-3 px-8 py-4 bg-banana-gradient text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group/cta"
-          title="Start using Nano Banana AI Image Editor">
+          href="/#hero" 
+          class="inline-flex items-center gap-3 px-10 py-5 bg-banana-gradient text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-banana-primary/50 transition-all duration-300 relative overflow-hidden group/cta"
+          title="Start using Z-Image Studio">
+          <!-- 背景光效 -->
           <span class="absolute inset-0 bg-gradient-to-r from-banana-primary via-banana-secondary to-banana-primary bg-[length:200%_100%] animate-[shimmer_3s_ease-in-out_infinite] opacity-0 group-hover/cta:opacity-100 transition-opacity"></span>
-          <Icon name="heroicons:rocket-launch" class="w-6 h-6 relative z-10" />
+          <!-- 内容 -->
+          <Icon name="heroicons:rocket-launch" class="w-6 h-6 relative z-10 group-hover/cta:animate-bounce" />
           <span class="relative z-10">{t("detailedFeatures.cta")}</span>
-          <Icon name="heroicons:arrow-right" class="w-5 h-5 relative z-10 transform group-hover/cta:translate-x-1 transition-transform" />
+          <Icon name="heroicons:arrow-right" class="w-5 h-5 relative z-10 transform group-hover/cta:translate-x-2 transition-transform" />
         </a>
       </div>
-      <p class="mt-4 text-gray-600 text-sm">
+      <p class="mt-6 text-gray-400 text-sm">
         {t("detailedFeatures.ctaNote")}
       </p>
     </div>
   </div>
 </section>
 
-<!-- 分隔线装饰 -->
-<div class="relative">
-  <div class="absolute inset-0 flex items-center">
-    <div class="w-full border-t border-gray-200"></div>
-  </div>
-  <div class="relative flex justify-center">
-    <div class="bg-gradient-to-br from-gray-50 via-white to-banana-light/20 px-6">
-      <div class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform duration-300">
-        <span class="text-white text-xl">🍌</span>
-      </div>
-    </div>
-  </div>
-</div>
-
 <style>
-  /* 确保语义化标签样式正确 */
-  article {
-    position: relative;
+  /* 卡片进入动画 */
+  @media (prefers-reduced-motion: no-preference) {
+    .feature-card {
+      animation: fadeInUp 0.8s ease-out backwards;
+    }
+    
+    .feature-card[data-index="0"] { animation-delay: 0.1s; }
+    .feature-card[data-index="1"] { animation-delay: 0.2s; }
+    .feature-card[data-index="2"] { animation-delay: 0.3s; }
+    .feature-card[data-index="3"] { animation-delay: 0.4s; }
+    .feature-card[data-index="4"] { animation-delay: 0.5s; }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
   
   /* 图片缩放动画 */
@@ -241,44 +261,27 @@ const detailedFeatures = [
   
   /* 移动端优化 */
   @media (max-width: 1024px) {
-    article {
-      padding: 0;
+    .feature-card {
+      margin-bottom: 2rem;
     }
     
     /* 确保移动端图片在上 */
-    article > div > div:first-child {
+    .feature-card > div > div > div:first-child {
       order: 1 !important;
     }
     
-    article > div > div:last-child {
+    .feature-card > div > div > div:last-child {
       order: 2 !important;
     }
   }
   
-  /* 平滑滚动到元素时的动画 */
-  @media (prefers-reduced-motion: no-preference) {
-    article {
-      animation: fadeInUp 0.6s ease-out backwards;
-    }
-    
-    article:nth-child(1) { animation-delay: 0.1s; }
-    article:nth-child(2) { animation-delay: 0.2s; }
-    article:nth-child(3) { animation-delay: 0.3s; }
-    article:nth-child(4) { animation-delay: 0.4s; }
-    article:nth-child(5) { animation-delay: 0.5s; }
-    article:nth-child(6) { animation-delay: 0.6s; }
-    article:nth-child(7) { animation-delay: 0.7s; }
-    article:nth-child(8) { animation-delay: 0.8s; }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+  /* 卡片悬停效果增强 */
+  .feature-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* 平滑过渡 */
+  .feature-card {
+    transition: transform 0.3s ease-out;
   }
 </style>

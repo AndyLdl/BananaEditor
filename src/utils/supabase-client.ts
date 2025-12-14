@@ -137,11 +137,13 @@ export async function getCurrentUser(): Promise<User | null> {
 
             if (error) {
                 // AuthSessionMissingError 是正常的未登录状态，不需要报错
-                if (error.name === 'AuthSessionMissingError') {
+                if (error.name === 'AuthSessionMissingError' || error.message?.includes('session')) {
+                    // 静默处理未登录状态，不输出错误
                     cachedUser = null;
                     lastUserFetch = Date.now();
                     return null;
                 }
+                // 其他错误才输出
                 console.error('获取用户信息失败:', error);
                 cachedUser = null;
                 lastUserFetch = Date.now();

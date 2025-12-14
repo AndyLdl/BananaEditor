@@ -13,13 +13,13 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
 
 <Layout
   title={seoTranslations.about?.title ||
-    "About | Nano Banana - AI Image Editor Technology"}>
+    "About | Z-Image Studio - AI Image Generation Platform"}>
   <Container>
     <!-- Hero 区域 -->
-    <div class="relative py-20 sm:py-32 overflow-hidden">
+    <div class="relative py-20 sm:py-32 overflow-hidden bg-z-bg">
       <!-- 背景装饰 -->
       <div
-        class="absolute inset-0 bg-gradient-to-br from-banana-light/20 via-white to-banana-secondary/10">
+        class="absolute inset-0 bg-gradient-to-br from-z-surface/30 via-z-bg to-z-surface/20">
       </div>
       <div
         class="absolute top-20 left-10 w-16 h-16 bg-banana-primary/10 rounded-full animate-float">
@@ -30,79 +30,82 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
 
       <div class="relative text-center max-w-4xl mx-auto">
         <div
-          class="inline-flex items-center gap-2 px-4 py-2 bg-banana-gradient/10 rounded-full text-banana-primary font-medium text-sm mb-6">
+          class="inline-flex items-center gap-2 px-4 py-2 bg-banana-gradient/20 rounded-full text-banana-primary font-medium text-sm mb-6 border border-banana-primary/30">
           <Icon name="heroicons:information-circle" class="w-4 h-4" />
-          <span>About BananaEditor</span>
+          <span>About Z-Image Studio</span>
         </div>
 
         <h1
-          class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6">
+          class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
           <span class="block">Revolutionizing AI Image Creation</span>
           <span
             class="block text-transparent bg-clip-text bg-banana-gradient mt-2">
-            with Nano Banana Technology
+            with Z-Image Technology
           </span>
         </h1>
 
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          BananaEditor is building the future of AI-powered image generation,
+        <p class="text-xl text-z-text_muted max-w-3xl mx-auto leading-relaxed">
+          Z-Image Studio is building the future of AI-powered image generation,
           making professional-quality visual content accessible to everyone
-          through Google's cutting-edge Gemini 2.5 Flash Image technology.
+          through advanced 6B-parameter foundation models with single-stream
+          diffusion transformer technology.
         </p>
       </div>
     </div>
 
     <!-- 我们的使命 -->
-    <div class="py-20 bg-white">
+    <div class="py-20 bg-z-surface">
       <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
           Our Mission
         </h2>
-        <p class="text-lg text-gray-600 leading-relaxed mb-12">
-          BananaEditor's mission is to democratize professional image creation
-          by making nano banana AI technology accessible to creators,
-          businesses, and individuals worldwide. We believe everyone deserves
-          access to cutting-edge AI tools that can bring their creative visions
-          to life.
+        <p class="text-lg text-z-text_muted leading-relaxed mb-12">
+          Z-Image Studio's mission is to democratize professional image creation
+          by making advanced AI image generation technology accessible to
+          creators, businesses, and individuals worldwide. We believe everyone
+          deserves access to cutting-edge AI tools that can bring their creative
+          visions to life.
         </p>
 
         <div class="grid md:grid-cols-3 gap-8">
-          <div class="text-center p-6">
+          <div
+            class="text-center p-6 bg-z-bg/50 rounded-xl border border-z-border">
             <div
               class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Icon name="heroicons:bolt" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
-              Lightning Fast
+            <h3 class="text-xl font-semibold text-white mb-2">
+              Ultra-Fast Inference
             </h3>
-            <p class="text-gray-600">
-              Generate 1024×1024 images in just 2.3 seconds with nano banana AI
+            <p class="text-z-text_muted">
+              Generate 1024×1024 images with sub-second latency using
+              Z-Image-Turbo (8 NFEs)
             </p>
           </div>
 
-          <div class="text-center p-6">
+          <div
+            class="text-center p-6 bg-z-bg/50 rounded-xl border border-z-border">
             <div
               class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Icon name="heroicons:check-circle" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            <h3 class="text-xl font-semibold text-white mb-2">
               Perfect Consistency
             </h3>
-            <p class="text-gray-600">
+            <p class="text-z-text_muted">
               Maintain 100% element consistency across multiple scenes and
               variations
             </p>
           </div>
 
-          <div class="text-center p-6">
+          <div
+            class="text-center p-6 bg-z-bg/50 rounded-xl border border-z-border">
             <div
               class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Icon name="heroicons:globe-alt" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
-              Global Access
-            </h3>
-            <p class="text-gray-600">
+            <h3 class="text-xl font-semibold text-white mb-2">Global Access</h3>
+            <p class="text-z-text_muted">
               Free, accessible AI tools for creators worldwide
             </p>
           </div>
@@ -111,24 +114,22 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
     </div>
 
     <!-- 技术优势 -->
-    <div class="py-20 bg-gradient-to-br from-banana-light/10 to-white">
+    <div class="py-20 bg-z-bg">
       <div class="max-w-6xl mx-auto">
         <div class="text-center mb-16">
-          <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
-            Powered by Google's Gemini 2.5 Flash Image
+          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
+            Powered by Z-Image Foundation Model
           </h2>
-          <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-            BananaEditor's nano banana AI technology is built on Google's most
-            advanced image generation model, delivering unprecedented speed and
-            quality.
+          <p class="text-lg text-z-text_muted max-w-3xl mx-auto">
+            Z-Image Studio is built on the advanced 6B-parameter foundation
+            model with single-stream diffusion transformer technology,
+            delivering unprecedented speed and quality.
           </p>
         </div>
 
         <div class="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">
-              Why Nano Banana AI?
-            </h3>
+            <h3 class="text-2xl font-bold text-white mb-6">Why Z-Image?</h3>
             <div class="space-y-6">
               <div class="flex items-start gap-4">
                 <div
@@ -136,12 +137,12 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
                   <Icon name="heroicons:clock" class="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 mb-2">
+                  <h4 class="font-semibold text-white mb-2">
                     Ultra-Fast Generation
                   </h4>
-                  <p class="text-gray-600">
-                    10x faster than traditional AI models, perfect for
-                    high-volume content creation
+                  <p class="text-z-text_muted">
+                    Sub-second inference with Z-Image-Turbo (8 NFEs), perfect
+                    for high-volume content creation
                   </p>
                 </div>
               </div>
@@ -152,12 +153,12 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
                   <Icon name="heroicons:sparkles" class="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 mb-2">
-                    Element Consistency
+                  <h4 class="font-semibold text-white mb-2">
+                    Bilingual Text Rendering
                   </h4>
-                  <p class="text-gray-600">
-                    Like having your personal AI designer - maintain perfect
-                    character and object consistency
+                  <p class="text-z-text_muted">
+                    Perfect support for English and Chinese text rendering in
+                    generated images
                   </p>
                 </div>
               </div>
@@ -171,10 +172,10 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
                   />
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900 mb-2">
+                  <h4 class="font-semibold text-white mb-2">
                     Commercial Ready
                   </h4>
-                  <p class="text-gray-600">
+                  <p class="text-z-text_muted">
                     Professional-grade output optimized for e-commerce,
                     advertising, and marketing
                   </p>
@@ -184,33 +185,37 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
           </div>
 
           <div
-            class="bg-white rounded-2xl p-8 shadow-xl border border-gray-200">
+            class="bg-z-surface rounded-2xl p-8 shadow-xl border border-z-border">
             <div class="text-center">
               <div
                 class="w-20 h-20 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-6">
-                <span class="text-3xl">🍌</span>
+                <span class="text-3xl">🚀</span>
               </div>
-              <h4 class="text-xl font-bold text-gray-900 mb-4">
-                Nano Banana AI Stats
-              </h4>
+              <h4 class="text-xl font-bold text-white mb-4">Z-Image Stats</h4>
               <div class="grid grid-cols-2 gap-4">
-                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
-                  <div class="text-2xl font-bold text-banana-primary">2.3s</div>
-                  <div class="text-sm text-gray-600">Generation Time</div>
+                <div
+                  class="text-center p-4 bg-z-bg rounded-lg border border-z-border">
+                  <div class="text-2xl font-bold text-banana-primary">
+                    8 NFEs
+                  </div>
+                  <div class="text-sm text-z-text_muted">Inference Steps</div>
                 </div>
-                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
+                <div
+                  class="text-center p-4 bg-z-bg rounded-lg border border-z-border">
                   <div class="text-2xl font-bold text-banana-primary">
                     1024×1024
                   </div>
-                  <div class="text-sm text-gray-600">Resolution</div>
+                  <div class="text-sm text-z-text_muted">Resolution</div>
                 </div>
-                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
-                  <div class="text-2xl font-bold text-banana-primary">100%</div>
-                  <div class="text-sm text-gray-600">Consistency</div>
+                <div
+                  class="text-center p-4 bg-z-bg rounded-lg border border-z-border">
+                  <div class="text-2xl font-bold text-banana-primary">6B</div>
+                  <div class="text-sm text-z-text_muted">Parameters</div>
                 </div>
-                <div class="text-center p-4 bg-banana-light/20 rounded-lg">
-                  <div class="text-2xl font-bold text-banana-primary">10K+</div>
-                  <div class="text-sm text-gray-600">Active Users</div>
+                <div
+                  class="text-center p-4 bg-z-bg rounded-lg border border-z-border">
+                  <div class="text-2xl font-bold text-banana-primary">#1</div>
+                  <div class="text-sm text-z-text_muted">Open-Source</div>
                 </div>
               </div>
             </div>
@@ -220,53 +225,57 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
     </div>
 
     <!-- 团队介绍 -->
-    <div class="py-20 bg-white">
+    <div class="py-20 bg-z-bg">
       <div class="max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
           Meet Our Team
         </h2>
-        <p class="text-lg text-gray-600 mb-12">
-          The BananaEditor team consists of passionate AI researchers,
+        <p class="text-lg text-z-text_muted mb-12">
+          The Z-Image Studio team consists of passionate AI researchers,
           developers, and designers working to make professional image creation
           accessible to everyone.
         </p>
 
         <div class="grid md:grid-cols-3 gap-8">
-          <div class="text-center">
+          <div
+            class="text-center p-6 bg-gradient-to-br from-z-surface via-z-surface to-z-surface_hover backdrop-blur-sm rounded-xl border border-white/10 hover:border-banana-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-banana-primary/10">
             <div
               class="w-24 h-24 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">👨‍💻</span>
+              <Icon name="heroicons:cpu-chip" class="w-12 h-12 text-white" />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            <h3 class="text-xl font-semibold text-white mb-2">
               AI Research Team
             </h3>
-            <p class="text-gray-600">
+            <p class="text-z-text_muted">
               Leading experts in machine learning and computer vision
             </p>
           </div>
 
-          <div class="text-center">
+          <div
+            class="text-center p-6 bg-gradient-to-br from-z-surface via-z-surface to-z-surface_hover backdrop-blur-sm rounded-xl border border-white/10 hover:border-banana-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-banana-primary/10">
             <div
               class="w-24 h-24 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">👩‍🎨</span>
+              <Icon name="heroicons:paint-brush" class="w-12 h-12 text-white" />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
-              Design Team
-            </h3>
-            <p class="text-gray-600">
+            <h3 class="text-xl font-semibold text-white mb-2">Design Team</h3>
+            <p class="text-z-text_muted">
               Creative professionals focused on user experience
             </p>
           </div>
 
-          <div class="text-center">
+          <div
+            class="text-center p-6 bg-gradient-to-br from-z-surface via-z-surface to-z-surface_hover backdrop-blur-sm rounded-xl border border-white/10 hover:border-banana-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-banana-primary/10">
             <div
               class="w-24 h-24 bg-banana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-              <span class="text-2xl">🚀</span>
+              <Icon
+                name="heroicons:rocket-launch"
+                class="w-12 h-12 text-white"
+              />
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+            <h3 class="text-xl font-semibold text-white mb-2">
               Engineering Team
             </h3>
-            <p class="text-gray-600">
+            <p class="text-z-text_muted">
               Building scalable, reliable AI infrastructure
             </p>
           </div>
@@ -275,19 +284,18 @@ const seoTranslations = await loadTranslations(currentLang, "seo");
     </div>
 
     <!-- CTA 区域 -->
-    <div
-      class="py-20 bg-gradient-to-br from-banana-primary to-banana-secondary">
-      <div class="max-w-4xl mx-auto text-center">
+    <div class="relative py-16 sm:py-20 md:py-24 overflow-hidden bg-z-bg">
+      <div class="max-w-4xl mx-auto text-center relative z-10">
         <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
-          Ready to Experience Nano Banana AI?
+          Ready to Experience Z-Image?
         </h2>
-        <p class="text-xl text-white/90 mb-8">
-          Join thousands of creators already using BananaEditor's nano banana AI
+        <p class="text-xl text-z-text_muted mb-8">
+          Join thousands of creators already using Z-Image Studio's advanced AI
           technology to bring their ideas to life.
         </p>
         <a
-          href="/editor"
-          class="inline-flex items-center gap-2 px-8 py-4 bg-white text-banana-primary font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+          href="/#hero"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-banana-gradient text-black font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
           <Icon name="heroicons:rocket-launch" class="w-5 h-5" />
           <span>Start Creating Now</span>
           <Icon name="heroicons:arrow-right" class="w-5 h-5" />

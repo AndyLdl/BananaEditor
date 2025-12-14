@@ -1,7 +1,7 @@
 ---
 /**
  * SEO优化头部组件
- * 专门为BananaEditor和"nano banana"关键词优化
+ * 专门为Z-Image Studio和"Z-Image"关键词优化
  */
 
 export interface SEOProps {
@@ -17,8 +17,8 @@ export interface SEOProps {
 }
 
 const {
-  title = "Nano Banana - Professional AI Image Editor | BananaEditor",
-  description = "Create stunning images with nano banana AI technology. Professional image generation and fusion tools powered by advanced AI. Try BananaEditor now!",
+  title = "Z-Image Studio - Advanced AI Image Generation Platform",
+  description = "Experience Z-Image Studio, the ultimate platform for advanced AI image generation. Powered by Z-Image foundation models with single-stream diffusion transformer technology.",
   keywords = [
     "nano banana",
     "nano banana ai",
@@ -29,16 +29,16 @@ const {
   ],
   language = "en",
   canonical,
-  ogImage = "/opengraph-banana.jpg",
+  ogImage = "/images/hero-example-original.png",
   ogType = "website",
   twitterCard = "summary_large_image",
   structuredData,
 } = Astro.props as SEOProps;
 
 // 构建完整的标题
-const fullTitle = title.includes("BananaEditor")
+const fullTitle = title.includes("Z-Image Studio")
   ? title
-  : `${title} | BananaEditor`;
+  : `${title} | Z-Image Studio`;
 
 // 构建关键词字符串
 const keywordsString = keywords.join(", ");
@@ -55,7 +55,7 @@ const languages = [
   { code: "fr", name: "French" },
 ];
 
-const baseUrl = Astro.site?.toString() || "https://bananaeditor.net";
+const baseUrl = Astro.site?.toString() || "https://zimagestudio.com";
 const currentPath = Astro.url.pathname;
 
 const generateAlternateUrl = (langCode: string) => {
@@ -81,7 +81,7 @@ const fullOgImage = new URL(ogImage, Astro.site).toString();
 const defaultStructuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "BananaEditor",
+  name: "Z-Image Studio",
   description: "Professional AI image editor powered by nano banana technology",
   applicationCategory: "DesignApplication",
   operatingSystem: "Web Browser",
@@ -95,7 +95,7 @@ const defaultStructuredData = {
   image: fullOgImage,
   creator: {
     "@type": "Organization",
-    name: "BananaEditor Team",
+    name: "Z-Image Studio Team",
   },
 };
 
@@ -129,9 +129,9 @@ const finalStructuredData = structuredData || defaultStructuredData;
 <meta property="og:image" content={fullOgImage} />
 <meta
   property="og:image:alt"
-  content="BananaEditor - Nano Banana AI Image Editor"
+  content="Z-Image Studio - Advanced AI Image Generation Platform"
 />
-<meta property="og:site_name" content="BananaEditor" />
+<meta property="og:site_name" content="Z-Image Studio" />
 <meta property="og:locale" content={language === "zh" ? "zh_CN" : "en_US"} />
 
 <!-- Twitter Card 标签 -->
@@ -141,12 +141,12 @@ const finalStructuredData = structuredData || defaultStructuredData;
 <meta name="twitter:image" content={fullOgImage} />
 <meta
   name="twitter:image:alt"
-  content="BananaEditor - Nano Banana AI Image Editor"
+  content="Z-Image Studio - Advanced AI Image Generation Platform"
 />
 
 <!-- 额外的SEO标签 -->
 <meta name="robots" content="index, follow" />
-<meta name="author" content="BananaEditor Team" />
+<meta name="author" content="Z-Image Studio Team" />
 <meta name="theme-color" content="#FFD700" />
 
 <!-- 结构化数据 -->

@@ -1,12 +1,13 @@
 ---
 /**
- * BananaEditor首页 - SEO优化，突出"nano banana"关键词
+ * Z-Image Studio首页 - SEO优化，突出"Z-Image"关键词
  * 重新设计的专业AI图片编辑器首页
  */
 
 import Layout from "@layouts/Layout.astro";
 import SEOHead from "@components/seo/SEOHead.astro";
 import BananaHero from "@components/banana-editor/BananaHero.astro";
+import BananaGallery from "@components/banana-editor/BananaGallery.astro";
 import BananaFeatures from "@components/banana-editor/BananaFeatures.astro";
 import ProductFeaturesDetail from "@components/banana-editor/ProductFeaturesDetail.astro";
 import BananaDemo from "@components/banana-editor/BananaDemo.astro";
@@ -29,24 +30,28 @@ const homeTranslations = await loadTranslations(currentLang, "home");
 const seoConfig = {
   title:
     seoTranslations.home?.title ||
-    "Nano Banana - Professional AI Image Editor | BananaEditor",
+    "Z-Image Studio - Advanced AI Image Generation Platform",
   description:
     seoTranslations.home?.description ||
-    "Create stunning images with nano banana AI technology. Professional image generation and fusion tools powered by advanced AI. Try BananaEditor now!",
+    "Experience the power of Z-Image, a 6B-parameter AI image generation foundation model with single-stream diffusion transformer. Ultra-fast inference with Z-Image-Turbo variant.",
   keywords: seoTranslations.home?.keywords || [
-    "nano banana",
-    "nano banana ai",
-    "banana ai",
-    "ai image editor",
+    "Z-Image",
+    "Z-Image-Turbo",
+    "AI image generation",
+    "diffusion transformer",
+    "single-stream",
+    "6B parameters",
+    "ultra-fast inference",
+    "bilingual text rendering",
   ],
   language: currentLang,
-  ogImage: "/images/opengraph-banana-home.jpg",
+  ogImage: "/images/hero-example-original.png",
   structuredData: {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Nano Banana AI Image Editor - BananaEditor",
+    name: "Z-Image - Advanced AI Image Generation Foundation Model",
     description:
-      "Nano banana AI Image Editor delivers perfect element consistency across all scenes. Ultra-fast AI image generator powered by Google's Gemini 2.5 Flash Image. Generate 1024×1024 images in 2.3 seconds with 100% character and object consistency.",
+      "Z-Image is a powerful 6B-parameter AI image generation foundation model with single-stream diffusion transformer technology. Features ultra-fast Z-Image-Turbo variant with sub-second inference and excellent bilingual text rendering.",
     applicationCategory: "DesignApplication",
     operatingSystem: "Web Browser",
     url: Astro.site?.toString(),
@@ -56,21 +61,21 @@ const seoConfig = {
       priceCurrency: "USD",
     },
     keywords:
-      "nano banana, nano banana AI Image Editor, AI Image Editor, nano banana ai, gemini 2.5 flash image, fast ai image generator, element consistency, perfect consistency, character consistency, banana ai, image editor, ai tools",
+      "Z-Image, Z-Image-Turbo, AI image generation, diffusion transformer, single-stream, 6B parameters, ultra-fast inference, bilingual text rendering, instruction following, image editing",
     creator: {
       "@type": "Organization",
-      name: "BananaEditor Team",
+      name: "Tongyi-MAI Team",
     },
     featureList: [
-      "Perfect Element Consistency with Nano Banana (100%)",
-      "Ultra-Fast Image Generation (2.3 seconds)",
-      "Nano Banana AI Image Editor",
-      "Smart Iterative Editing",
-      "Smart Image Fusion",
-      "Commercial-Ready Quality",
-      "E-commerce Product Images",
-      "Context-Aware Image Refinement",
-      "Multi-language Support",
+      "6B Parameter Foundation Model",
+      "Single-Stream Diffusion Transformer",
+      "Z-Image-Turbo (Sub-second Inference)",
+      "Bilingual Text Rendering (English & Chinese)",
+      "Strong Instruction Following",
+      "High-Resolution Generation (1024x1024)",
+      "Multiple Model Variants",
+      "Open-Source & Commercial Ready",
+      "State-of-the-Art Performance",
     ],
     aggregateRating: {
       "@type": "AggregateRating",
@@ -91,6 +96,9 @@ const seoConfig = {
     <!-- Hero区域 - 突出nano banana关键词 -->
     <BananaHero />
 
+    <!-- Gallery区域 -->
+    <BananaGallery />
+
     <!-- 功能特性展示 -->
     <BananaFeatures />
 
@@ -107,7 +115,7 @@ const seoConfig = {
     <BananaCTA />
 
     <!-- Badge展示区域 -->
-    <BananaBadges />
+    <!-- <BananaBadges /> -->
   </main>
 </Layout>
 
@@ -136,79 +144,79 @@ const seoConfig = {
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "BananaEditor",
-    "url": "https://bananaeditor.net",
-    "logo": "https://bananaeditor.net/images/logo-banana.png",
-    "description": "Ultra-fast AI image generator powered by Google's Gemini 2.5 Flash Image (nano banana). Generate professional images in 2.3 seconds with perfect element consistency.",
+    "name": "Tongyi-MAI",
+    "url": "https://github.com/Tongyi-MAI/Z-Image",
+    "logo": "https://github.com/Tongyi-MAI.png",
+    "description": "Advanced AI image generation foundation model with 6B parameters and single-stream diffusion transformer technology. Features Z-Image-Turbo for ultra-fast inference.",
     "sameAs": [
-      "https://twitter.com/bananaeditor",
-      "https://github.com/bananaeditor"
+      "https://github.com/Tongyi-MAI/Z-Image",
+      "https://huggingface.co/Tongyi-MAI"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
-      "contactType": "customer service",
-      "availableLanguage": ["English", "Chinese", "Spanish", "French"]
+      "contactType": "technical support",
+      "availableLanguage": ["English", "Chinese"]
     }
   }
 </script>
 
-<!-- HowTo 结构化数据 - 如何使用Nano Banana AI Image Editor -->
+<!-- HowTo 结构化数据 - 如何使用Z-Image AI模型 -->
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": "How to Use Nano Banana AI Image Editor for Perfect Element Consistency",
-    "description": "Learn how to create images with nano banana AI Image Editor while maintaining perfect element consistency across different scenes.",
-    "image": "https://bananaeditor.net/images/opengraph-banana-home.jpg",
-    "totalTime": "PT2M",
+    "name": "How to Use Z-Image for Advanced AI Image Generation",
+    "description": "Learn how to use Z-Image, a 6B-parameter AI image generation foundation model with single-stream diffusion transformer technology.",
+    "image": "https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/architecture.png",
+    "totalTime": "PT5M",
     "tool": [
       {
         "@type": "HowToTool",
-        "name": "Nano Banana AI Image Editor"
+        "name": "Z-Image AI Model"
       }
     ],
     "step": [
       {
         "@type": "HowToStep",
         "position": 1,
-        "name": "Access Nano Banana AI Image Editor",
-        "text": "Visit BananaEditor and access the nano banana AI Image Editor. No registration required.",
-        "url": "https://bananaeditor.net/editor"
+        "name": "Install Z-Image",
+        "text": "Clone the Z-Image repository and install dependencies. Choose between PyTorch native or Diffusers integration.",
+        "url": "https://github.com/Tongyi-MAI/Z-Image"
       },
       {
         "@type": "HowToStep",
         "position": 2,
-        "name": "Describe Your Image Idea",
-        "text": "Use the chat interface to describe the image you want to create. Nano banana AI Image Editor understands natural language and will generate your image with perfect element consistency.",
-        "image": "https://bananaeditor.net/images/editor-chat.jpg"
+        "name": "Choose Model Variant",
+        "text": "Select the appropriate Z-Image variant: Z-Image-Turbo for fastest inference (8 NFEs), Z-Image-Base for general use, or Z-Image-Edit for specialized editing tasks.",
+        "image": "https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/model-comparison.png"
       },
       {
         "@type": "HowToStep",
         "position": 3,
-        "name": "Generate Image with Consistency",
-        "text": "Nano banana AI Image Editor generates 1024×1024 high-quality images in just 2.3 seconds. The AI ensures perfect consistency of characters, objects, and styles.",
-        "image": "https://bananaeditor.net/images/editor-result.jpg"
+        "name": "Prepare Your Prompt",
+        "text": "Craft your image generation prompt. Z-Image supports both English and Chinese text with excellent instruction following capabilities.",
+        "image": "https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/examples/prompt-example.png"
       },
       {
         "@type": "HowToStep",
         "position": 4,
-        "name": "Edit or Refine Images",
-        "text": "Select any image from your gallery and use smart iterative editing to refine it. Nano banana AI Image Editor maintains consistency while applying your modifications.",
-        "image": "https://bananaeditor.net/images/editor-gallery.jpg"
+        "name": "Generate Images",
+        "text": "Run inference with your chosen parameters. Z-Image-Turbo can generate high-quality 1024×1024 images in sub-second time.",
+        "image": "https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/examples/generation-example.png"
       },
       {
         "@type": "HowToStep",
         "position": 5,
-        "name": "Generate Variations with Consistency",
-        "text": "Create multiple scene variations (spring, summer, fall, winter) while maintaining 100% consistency of core elements using nano banana AI Image Editor's consistency technology.",
-        "image": "https://bananaeditor.net/images/editor-variations.jpg"
+        "name": "Fine-tune and Customize",
+        "text": "Use Z-Image-Base as a foundation for fine-tuning on custom datasets or leverage community models for specialized applications.",
+        "image": "https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/examples/fine-tuning.png"
       },
       {
         "@type": "HowToStep",
         "position": 6,
-        "name": "Download Your Images",
-        "text": "Download your professional-quality images generated with nano banana AI Image Editor. All images are commercial-ready and watermark-free.",
-        "image": "https://bananaeditor.net/images/editor-download.jpg"
+        "name": "Deploy in Production",
+        "text": "Deploy Z-Image models on various platforms including cloud services, local infrastructure, or edge devices for production use.",
+        "image": "https://github.com/Tongyi-MAI/Z-Image/raw/main/assets/deployment-options.png"
       }
     ]
   }
@@ -222,18 +230,18 @@ const seoConfig = {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What is Nano Banana AI Image Editor?",
+        "name": "What is Z-Image?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nano Banana AI Image Editor is powered by Google's Gemini 2.5 Flash Image model - a lightweight, ultra-fast AI image generation technology that creates high-quality 1024×1024 images in just 2.3 seconds while maintaining perfect element consistency across multiple scenes."
+          "text": "Z-Image is an advanced AI image generation foundation model with 6B parameters, featuring revolutionary single-stream diffusion transformer technology. It offers multiple variants including Z-Image-Turbo for ultra-fast inference and Z-Image-Edit for specialized image editing tasks."
         }
       },
       {
         "@type": "Question",
-        "name": "What makes nano banana AI Image Editor's consistency special?",
+        "name": "What makes Z-Image special?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nano banana AI Image Editor maintains 100% element consistency - unlike other AI models that struggle with character consistency, nano banana AI acts like your personal AI designer, preserving characters, objects, and styles across different scenes, poses, and environments. Generate seasonal variations with perfect visual coherence."
+          "text": "Z-Image features single-stream diffusion transformer architecture, achieving state-of-the-art performance on major leaderboards. The Z-Image-Turbo variant delivers sub-second inference with only 8 NFEs, while maintaining excellent instruction following and bilingual text rendering capabilities."
         }
       },
       {
@@ -246,10 +254,10 @@ const seoConfig = {
       },
       {
         "@type": "Question",
-        "name": "How fast is nano banana AI Image Editor compared to other editors?",
+        "name": "How fast is Z-Image compared to other models?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nano banana AI Image Editor generates images in 2.3 seconds, making it approximately 10x faster than traditional AI image generation models, while maintaining comparable or superior quality. This speed advantage makes it ideal for time-sensitive projects and high-volume content creation."
+          "text": "Z-Image-Turbo achieves sub-second inference latency with only 8 function evaluations (NFEs), making it significantly faster than traditional diffusion models while maintaining high quality. This speed advantage enables real-time applications and rapid iteration."
         }
       },
       {
@@ -302,10 +310,10 @@ const seoConfig = {
       },
       {
         "@type": "Question",
-        "name": "What makes nano banana AI Image Editor different from other AI image tools?",
+        "name": "What makes Z-Image different from other AI image models?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Nano banana AI Image Editor combines three key advantages: ultra-fast 2.3-second generation, perfect element consistency across scenes, and smart iterative editing capabilities. This unique combination makes it ideal for professional content creation where consistency and speed are crucial."
+          "text": "Z-Image combines revolutionary single-stream diffusion transformer architecture with outstanding performance on leaderboards, achieving 8th place overall and #1 among open-source models. Its multiple variants cater to different needs while maintaining excellent quality and instruction following."
         }
       }
     ]
@@ -554,7 +562,9 @@ const seoConfig = {
     }
 
     private optimizeCTAButtons(): void {
-      const ctaButtons = document.querySelectorAll('a[href="/editor"]');
+      const ctaButtons = document.querySelectorAll(
+        'a[href="/#hero"], a[href="#hero"]'
+      );
 
       ctaButtons.forEach((button) => {
         const btn = button as HTMLElement;

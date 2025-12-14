@@ -63,9 +63,9 @@ export default function GlobalAuthModal({ isOpen, onClose }: GlobalAuthModalProp
         if (signUpError) {
           setError(signUpError.message);
         } else {
-          setSuccess('Sign up successful! Redirecting to editor...');
+          setSuccess('Sign up successful! Redirecting...');
           setTimeout(() => {
-            window.location.href = '/editor';
+            window.location.href = '/#hero';
           }, 1500);
         }
       } else {
@@ -78,9 +78,9 @@ export default function GlobalAuthModal({ isOpen, onClose }: GlobalAuthModalProp
         if (signInError) {
           setError(signInError.message);
         } else {
-          setSuccess('Sign in successful! Redirecting to editor...');
+          setSuccess('Sign in successful! Redirecting...');
           setTimeout(() => {
-            window.location.href = '/editor';
+            window.location.href = '/#hero';
           }, 1500);
         }
       }
@@ -140,7 +140,7 @@ export default function GlobalAuthModal({ isOpen, onClose }: GlobalAuthModalProp
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="modal-header">
-          <h2>{mode === 'login' ? 'Sign In' : 'Sign Up'} to BananaEditor</h2>
+          <h2>{mode === 'login' ? 'Sign In' : 'Sign Up'} to Z-Image Studio</h2>
           <p className="modal-subtitle">
             {mode === 'login' 
               ? 'Get 10 free credits after signing in' 

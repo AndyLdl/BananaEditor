@@ -74,13 +74,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- 主题色彩 -->
-    <meta name="theme-color" content="#FFD700" />
-    <meta name="msapplication-TileColor" content="#FFD700" />
+    <meta name="theme-color" content="#050505" />
+    <meta name="msapplication-TileColor" content="#050505" />
 
     <!-- 性能优化 -->
     <meta name="format-detection" content="telephone=no" />
   </head>
-  <body class="bg-white text-gray-900 antialiased">
+  <body class="bg-z-bg text-z-text antialiased selection:bg-banana-primary selection:text-black">
     <!-- 导航栏 -->
     <Navbar />
 
@@ -103,14 +103,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
         content-visibility: auto;
       }
 
-      /* BananaEditor主题CSS变量 */
+      /* BananaEditor/Z-Image Theme CSS Variables */
       :root {
         --banana-primary: #ffd700;
         --banana-secondary: #ffa500;
         --banana-accent: #ff6b35;
-        --banana-dark: #2d1810;
-        --banana-light: #fff8dc;
+        --banana-dark: #050505;
+        --banana-light: #121212;
         --banana-gradient: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+      }
+
+      body {
+        background-color: var(--banana-dark);
+        color: white;
       }
 
       /* 滚动条样式 */

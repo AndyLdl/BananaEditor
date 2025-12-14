@@ -1,6 +1,6 @@
 ---
 /**
- * BananaEditor FAQ组件
+ * Z-Image Studio FAQ组件
  * 展示关于nano banana AI的常见问题
  * 美化版本：现代化卡片设计 + 增强动画效果
  */
@@ -17,55 +17,63 @@ const homeTranslations = await loadTranslations(currentLang, "home");
 const t = createTranslator(currentLang, homeTranslations);
 ---
 
-<section class="py-20 sm:py-32 bg-gradient-to-br from-white via-gray-50 to-banana-light/20 relative overflow-hidden">
+<section class="py-20 sm:py-32 bg-z-bg relative overflow-hidden">
   <!-- 背景装饰 -->
-  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
+  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-[0.03] pointer-events-none"></div>
   <div class="absolute top-0 left-1/4 w-96 h-96 bg-banana-primary/5 rounded-full blur-3xl"></div>
   <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-banana-secondary/5 rounded-full blur-3xl"></div>
   
   <div class="mx-auto max-w-4xl px-6 lg:px-8 relative z-10">
     <!-- 标题区域 -->
-    <div class="text-center mb-20">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-banana-primary/10">
-        <Icon name="heroicons:question-mark-circle" class="w-4 h-4 text-orange-500" />
+    <div class="text-center mb-16 md:mb-24">
+      <div class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-banana-primary/10 via-banana-secondary/10 to-banana-primary/10 rounded-full text-banana-primary font-semibold text-sm mb-6 shadow-lg border border-banana-primary/20 backdrop-blur-sm">
+        <Icon name="heroicons:question-mark-circle" class="w-4 h-4 animate-pulse" />
         <span>FAQ</span>
       </div>
 
-      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+      <h2 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 bg-gradient-to-r from-white via-gray-100 to-white bg-clip-text">
         {t("faq.title")}
       </h2>
-      <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+      <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
         {t("faq.subtitle")}
       </p>
     </div>
 
     <!-- FAQ列表 -->
-    <div class="space-y-3">
+    <div class="space-y-4">
       {
         (t("faq.items") || []).map((item: any, index: number) => (
           <div class="faq-item group relative" data-index={index}>
             <button
-              class="faq-question w-full text-left bg-white/90 backdrop-blur-sm rounded-2xl px-6 py-5 lg:px-8 lg:py-6 border border-gray-200/60 hover:border-banana-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-banana-primary/5 group-hover:bg-white relative overflow-hidden"
+              class="faq-question w-full text-left bg-gradient-to-br from-z-surface via-z-surface to-z-surface_hover backdrop-blur-sm rounded-2xl px-6 py-5 lg:px-8 lg:py-6 border border-white/10 hover:border-banana-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-banana-primary/10 group-hover:bg-z-surface_hover relative overflow-hidden"
               aria-expanded="false">
               
+              <!-- 背景光效 -->
+              <div class="absolute inset-0 bg-gradient-to-r from-banana-primary/5 via-transparent to-banana-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
               <!-- 左侧装饰条 -->
-              <div class="absolute left-0 top-0 bottom-0 w-1 bg-banana-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-banana-gradient opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-l-2xl"></div>
               
               <div class="relative flex items-center justify-between gap-4">
-                <h3 class="text-base lg:text-lg font-semibold text-gray-900 group-hover:text-gray-950 transition-colors flex-1 pr-4 leading-snug">
+                <!-- 问题编号 -->
+                <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-banana-gradient/20 flex items-center justify-center text-banana-primary font-bold text-sm border border-banana-primary/30">
+                  {String(index + 1).padStart(2, '0')}
+                </div>
+                
+                <h3 class="text-base lg:text-lg font-semibold text-white group-hover:text-banana-primary transition-colors flex-1 pr-4 leading-snug">
                   {item.question}
                 </h3>
                 
-                <!-- 展开图标 - 更简洁的设计 -->
+                <!-- 展开图标 -->
                 <div class="flex-shrink-0">
-                  <div class="w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-banana-primary/10 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                  <div class="w-10 h-10 rounded-xl bg-white/10 group-hover:bg-banana-primary/20 flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-white/20 group-hover:border-banana-primary/30">
                     <Icon
                       name="heroicons:plus"
-                      class="w-4 h-4 text-gray-600 group-hover:text-banana-primary transition-all duration-300 faq-icon faq-icon-plus"
+                      class="w-5 h-5 text-gray-300 group-hover:text-banana-primary transition-all duration-300 faq-icon faq-icon-plus transform group-hover:rotate-90"
                     />
                     <Icon
                       name="heroicons:minus"
-                      class="w-4 h-4 text-gray-600 group-hover:text-banana-primary transition-all duration-300 faq-icon faq-icon-minus hidden"
+                      class="w-5 h-5 text-gray-300 group-hover:text-banana-primary transition-all duration-300 faq-icon faq-icon-minus hidden"
                     />
                   </div>
                 </div>
@@ -76,15 +84,21 @@ const t = createTranslator(currentLang, homeTranslations);
             <div
               class="faq-answer overflow-hidden transition-all duration-500 ease-in-out"
               style="max-height: 0;">
-              <div class="px-6 py-5 lg:px-8 lg:py-6 bg-gradient-to-br from-gray-50/50 via-white to-banana-light/10 border-x border-b border-gray-200/60 rounded-b-2xl ml-0 relative">
+              <div class="px-6 py-5 lg:px-8 lg:py-6 bg-gradient-to-br from-z-surface_hover to-z-surface border-x border-b border-white/10 rounded-b-2xl ml-0 relative">
                 
                 <!-- 左侧装饰条 -->
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-banana-primary to-banana-secondary"></div>
+                <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-banana-primary via-banana-secondary to-banana-primary rounded-bl-2xl"></div>
                 
-                <div class="relative pl-6">
-                  <p class="text-gray-700 leading-relaxed text-sm lg:text-base">
-                    {item.answer}
-                  </p>
+                <!-- 背景光效 -->
+                <div class="absolute inset-0 bg-gradient-to-r from-banana-primary/5 via-transparent to-banana-secondary/5 opacity-50"></div>
+                
+                <div class="relative pl-8">
+                  <div class="flex items-start gap-3">
+                    <Icon name="heroicons:information-circle" class="w-5 h-5 text-banana-primary flex-shrink-0 mt-0.5" />
+                    <p class="text-gray-300 leading-relaxed text-sm lg:text-base">
+                      {item.answer}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -94,25 +108,25 @@ const t = createTranslator(currentLang, homeTranslations);
     </div>
 
     <!-- 底部帮助 -->
-    <div class="text-center mt-16 pt-12 border-t border-gray-200/50">
-      <div class="inline-flex flex-col items-center gap-6 px-8 py-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg">
-        <div class="w-16 h-16 bg-banana-gradient rounded-2xl flex items-center justify-center shadow-xl">
-          <Icon name="heroicons:chat-bubble-left-right" class="w-8 h-8 text-white" />
+    <div class="text-center mt-20 md:mt-28 pt-12 border-t border-white/10">
+      <div class="inline-flex flex-col items-center gap-6 px-8 py-8 bg-gradient-to-br from-z-surface via-z-surface to-z-surface_hover backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl max-w-md">
+        <div class="w-20 h-20 bg-banana-gradient rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-110 transition-transform">
+          <Icon name="heroicons:chat-bubble-left-right" class="w-10 h-10 text-white" />
         </div>
-        <div>
-          <p class="text-gray-900 font-semibold text-lg mb-2">
-            Still have questions about nano banana AI?
+        <div class="text-center">
+          <p class="text-white font-bold text-xl mb-2">
+            Still have questions about Z-Image?
           </p>
-          <p class="text-gray-600 text-sm mb-4">
-            Our support team is here to help you
+          <p class="text-gray-400 text-sm mb-6">
+            Our support team is here to help you get the most out of Z-Image Studio
           </p>
         </div>
         <a
           href="/contact"
-          class="group/cta inline-flex items-center gap-2 px-6 py-3 bg-banana-gradient text-white font-semibold rounded-xl hover:shadow-xl transition-all duration-300 hover:scale-105">
+          class="group/cta inline-flex items-center gap-2 px-8 py-4 bg-banana-gradient text-white font-semibold rounded-xl hover:shadow-xl hover:shadow-banana-primary/50 transition-all duration-300 hover:scale-105">
           <Icon name="heroicons:envelope" class="w-5 h-5 group-hover/cta:animate-bounce" />
           <span>Contact Support</span>
-          <Icon name="heroicons:arrow-right" class="w-5 h-5 group-hover/cta:translate-x-1 transition-transform" />
+          <Icon name="heroicons:arrow-right" class="w-5 h-5 group-hover/cta:translate-x-2 transition-transform" />
         </a>
       </div>
     </div>
@@ -208,7 +222,7 @@ const t = createTranslator(currentLang, homeTranslations);
   /* 卡片进入动画 */
   @media (prefers-reduced-motion: no-preference) {
     .faq-item {
-      animation: fadeInUp 0.5s ease-out backwards;
+      animation: fadeInUp 0.6s ease-out backwards;
     }
     
     .faq-item[data-index="0"] { animation-delay: 0.05s; }
@@ -219,28 +233,37 @@ const t = createTranslator(currentLang, homeTranslations);
     .faq-item[data-index="5"] { animation-delay: 0.3s; }
     .faq-item[data-index="6"] { animation-delay: 0.35s; }
     .faq-item[data-index="7"] { animation-delay: 0.4s; }
+    .faq-item[data-index="8"] { animation-delay: 0.45s; }
+    .faq-item[data-index="9"] { animation-delay: 0.5s; }
+    .faq-item[data-index="10"] { animation-delay: 0.55s; }
+    .faq-item[data-index="11"] { animation-delay: 0.6s; }
     
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(15px);
+        transform: translateY(20px) scale(0.98);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
   }
 
   /* 展开状态的样式 */
   .faq-expanded .faq-question {
-    border-color: rgb(251 146 60 / 0.5);
-    background: white;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    border-color: rgb(251 146 60 / 0.6);
+    background: linear-gradient(to bottom right, #1E1E1E, #252525);
+    box-shadow: 0 8px 16px -4px rgb(251 146 60 / 0.2), 0 4px 8px -2px rgb(0 0 0 / 0.3);
   }
 
   .faq-expanded .faq-question .faq-icon {
-    background: rgb(251 146 60 / 0.15);
+    background: rgb(251 146 60 / 0.25);
+    border-color: rgb(251 146 60 / 0.4);
+  }
+
+  .faq-expanded .faq-question .faq-icon-plus {
+    transform: rotate(90deg);
   }
 
   /* 移动端优化 */
@@ -258,5 +281,10 @@ const t = createTranslator(currentLang, homeTranslations);
       padding-top: 1rem !important;
       padding-bottom: 1rem !important;
     }
+  }
+
+  /* 悬停效果增强 */
+  .faq-item:hover {
+    z-index: 10;
   }
 </style>

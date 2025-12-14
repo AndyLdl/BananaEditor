@@ -484,7 +484,7 @@
 
       this.nextButton.addEventListener("click", () => {
         const totalPages = Math.ceil(
-          this.filteredPrompts.length / this.itemsPerPage,
+          this.filteredPrompts.length / this.itemsPerPage
         );
         if (this.currentPage < totalPages) {
           this.currentPage++;
@@ -530,14 +530,14 @@
           (prompt) =>
             prompt.title.toLowerCase().includes(query) ||
             prompt.content.toLowerCase().includes(query) ||
-            prompt.tags.some((tag) => tag.toLowerCase().includes(query)),
+            prompt.tags.some((tag) => tag.toLowerCase().includes(query))
         );
       }
 
       // 分类筛选
       if (this.currentFilters.category !== "all") {
         filtered = filtered.filter(
-          (prompt) => prompt.category === this.currentFilters.category,
+          (prompt) => prompt.category === this.currentFilters.category
         );
       }
 
@@ -585,7 +585,7 @@
 
       categories.forEach((category) => {
         counts[category] = this.prompts.filter(
-          (p) => p.category === category,
+          (p) => p.category === category
         ).length;
       });
 
@@ -620,7 +620,7 @@
       const stars = Array.from(
         { length: 5 },
         (_, i) =>
-          `<span class="star ${i < prompt.rating ? "" : "empty"}">★</span>`,
+          `<span class="star ${i < prompt.rating ? "" : "empty"}">★</span>`
       ).join("");
 
       const tags = prompt.tags
@@ -713,9 +713,18 @@
     }
 
     useInEditor(prompt) {
-      // 跳转到编辑器并传递提示词
-      const editorUrl = `/editor?prompt=${encodeURIComponent(prompt.content)}`;
-      window.open(editorUrl, "_blank");
+      // 跳转到首页 hero 区域并传递提示词
+      const heroUrl = `/#hero?prompt=${encodeURIComponent(prompt.content)}`;
+      if (window.location.pathname === "/") {
+        // 如果已经在首页，直接滚动到 hero 并设置 prompt
+        window.location.hash = `hero?prompt=${encodeURIComponent(prompt.content)}`;
+        const heroElement = document.getElementById("hero");
+        if (heroElement) {
+          heroElement.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        window.location.href = heroUrl;
+      }
 
       // 增加使用次数
       prompt.usageCount++;
@@ -756,7 +765,7 @@
 
     updatePagination() {
       const totalPages = Math.ceil(
-        this.filteredPrompts.length / this.itemsPerPage,
+        this.filteredPrompts.length / this.itemsPerPage
       );
 
       if (totalPages <= 1) {

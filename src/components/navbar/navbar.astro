@@ -24,16 +24,17 @@ const menuitems = [
     title: t.navigation.home,
     path: "/",
   },
-  {
-    title: t.navigation.editor,
-    path: "/editor",
-    badge: true,
-  },
-  {
-    title: t.navigation.prompts,
-    path: "/prompts",
-    badge: "Coming Soon",
-  },
+  // 隐藏 Editor 和 Prompt Library 链接
+  // {
+  //   title: t.navigation.editor,
+  //   path: "/editor",
+  //   badge: true,
+  // },
+  // {
+  //   title: t.navigation.prompts,
+  //   path: "/prompts",
+  //   badge: "Coming Soon",
+  // },
   {
     title: t.navigation.about,
     path: "/about",
@@ -50,7 +51,7 @@ const menuitems = [
     <div class="navbar-content">
       <Astronav>
         <div class="navbar-brand">
-          <a href="/" class="brand-logo"> BananaEditor </a>
+          <a href="/" class="brand-logo"> Z-Image Studio </a>
           <div class="block lg:hidden">
             <MenuIcon class="w-4 h-4 text-gray-800">
               <!-- 菜单关闭时显示三横线 ≡ -->
@@ -104,14 +105,15 @@ const menuitems = [
               <div class="mobile-auth-wrapper">
                 <NavbarAuthWrapper />
               </div>
-              <div class="mobile-lang-switcher">
+              <!-- 语言切换器 - 已隐藏 -->
+              <!-- <div class="mobile-lang-switcher">
                 <LanguageSwitcher />
-              </div>
+              </div> -->
             </div>
-            <!-- Start Editing按钮（移动端） -->
-            <Link href="/editor" size="md" class="start-editing-btn mobile-cta">
+            <!-- Start Editing按钮（移动端） - 已隐藏 -->
+            <!-- <Link href="/editor" size="md" class="start-editing-btn mobile-cta">
               {t.buttons.startEditing}
-            </Link>
+            </Link> -->
           </div>
         </MenuItems>
       </Astronav>
@@ -119,12 +121,12 @@ const menuitems = [
         <div class="hidden lg:flex items-center gap-3">
           <!-- 用户信息：积分显示 + 头像 -->
           <NavbarAuthWrapper />
-          <!-- 主要操作按钮 -->
-          <Link href="/editor" size="md" class="start-editing-btn">
+          <!-- 主要操作按钮 - 已隐藏 -->
+          <!-- <Link href="/editor" size="md" class="start-editing-btn">
             {t.buttons.startEditing}
-          </Link>
-          <!-- 语言切换（次要功能） -->
-          <LanguageSwitcher />
+          </Link> -->
+          <!-- 语言切换（次要功能） - 已隐藏 -->
+          <!-- <LanguageSwitcher /> -->
         </div>
       </div>
     </div>
@@ -134,10 +136,10 @@ const menuitems = [
 <style>
   /* 现代化导航栏 */
   .navbar-modern {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: transparent;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: none;
     position: sticky;
     top: 0;
     z-index: 50;
@@ -250,7 +252,7 @@ const menuitems = [
     display: flex;
     align-items: center;
     padding: 0.625rem 1rem;
-    color: #6b7280;
+    color: #e5e7eb; /* gray-200 */
     font-weight: 500;
     font-size: 0.9375rem;
     text-decoration: none;
@@ -260,8 +262,8 @@ const menuitems = [
   }
 
   .menu-item:hover {
-    color: #ffb800;
-    background: rgba(255, 184, 0, 0.08);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .menu-item span {
@@ -302,20 +304,21 @@ const menuitems = [
 
   /* Start Editing 按钮优化 */
   .navbar-actions :global(.start-editing-btn) {
-    background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%) !important;
+    background: #333 !important; /* Dark background */
     color: #fff !important;
     font-weight: 600 !important;
     padding: 0.5rem 1.25rem !important;
     border-radius: 8px !important;
     transition: all 0.2s ease !important;
-    box-shadow: 0 2px 8px rgba(255, 184, 0, 0.3) !important;
-    border: none !important;
+    box-shadow: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
   }
 
   .navbar-actions :global(.start-editing-btn:hover) {
-    background: linear-gradient(135deg, #ff8800 0%, #ff7700 100%) !important;
+    background: #444 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(255, 184, 0, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
   }
 
   .navbar-actions :global(.start-editing-btn:active) {
@@ -349,29 +352,21 @@ const menuitems = [
       padding: 0.625rem;
       border-radius: 12px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      background: linear-gradient(
-        135deg,
-        rgba(255, 184, 0, 0.1) 0%,
-        rgba(255, 136, 0, 0.08) 100%
-      );
-      border: 2px solid rgba(255, 184, 0, 0.25);
-      box-shadow: 0 2px 8px rgba(255, 184, 0, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: none;
     }
 
     .navbar-brand :global(button:hover),
     .navbar-brand :global(button:active) {
-      background: linear-gradient(
-        135deg,
-        rgba(255, 184, 0, 0.2) 0%,
-        rgba(255, 136, 0, 0.15) 100%
-      );
-      border-color: rgba(255, 184, 0, 0.4);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(255, 184, 0, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .navbar-brand :global(button svg) {
-      color: #ffb800;
+      color: #fff;
       width: 1.5rem;
       height: 1.5rem;
     }
@@ -381,7 +376,7 @@ const menuitems = [
     :global(.menu-icon-close) {
       width: 1.5rem;
       height: 1.5rem;
-      color: #ffb800;
+      color: #fff;
       transition: transform 0.3s ease;
     }
 
@@ -392,13 +387,13 @@ const menuitems = [
       left: 0.5rem;
       right: 0.5rem;
       margin-top: 0.5rem;
-      background: linear-gradient(to bottom, #ffffff 0%, #fffbf5 100%);
+      background: linear-gradient(to bottom, #121212 0%, #000000 100%);
       border-radius: 20px;
       box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.12),
-        0 2px 8px rgba(255, 184, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(255, 184, 0, 0.15);
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 1rem;
       max-height: calc(100vh - 100px);
       overflow-y: auto;
@@ -513,12 +508,12 @@ const menuitems = [
       padding: 0.75rem 0.75rem 0.625rem;
       border-top: 2px solid transparent;
       background:
-        linear-gradient(#fffbf5, #fffbf5) padding-box,
+        linear-gradient(#121212, #121212) padding-box,
         linear-gradient(
             90deg,
-            rgba(255, 184, 0, 0.2) 0%,
-            rgba(255, 136, 0, 0.3) 50%,
-            rgba(255, 184, 0, 0.2) 100%
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.1) 100%
           )
           border-box;
       margin-top: 0.625rem !important;
@@ -813,15 +808,13 @@ const menuitems = [
       font-size: 1rem !important;
       font-weight: 700 !important;
       border-radius: 14px !important;
-      background: linear-gradient(135deg, #ffb800 0%, #ff8800 100%) !important;
-      box-shadow:
-        0 8px 24px rgba(255, 184, 0, 0.35),
-        0 2px 8px rgba(255, 136, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-      border: none !important;
+      background: #333 !important;
+      box-shadow: none;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
       position: relative;
       overflow: hidden;
+      color: #fff !important;
     }
 
     .navbar-menu :global(.start-editing-btn::before),
@@ -835,7 +828,7 @@ const menuitems = [
       background: linear-gradient(
         90deg,
         transparent,
-        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.1),
         transparent
       );
       transition: left 0.5s ease;
@@ -848,12 +841,10 @@ const menuitems = [
 
     .navbar-menu :global(.start-editing-btn:hover),
     .navbar-menu :global(.mobile-cta:hover) {
-      background: linear-gradient(135deg, #ff8800 0%, #ff7700 100%) !important;
+      background: #444 !important;
       transform: translateY(-3px) scale(1.02);
-      box-shadow:
-        0 12px 32px rgba(255, 184, 0, 0.45),
-        0 4px 12px rgba(255, 136, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.4) !important;
     }
 
     .navbar-menu :global(.start-editing-btn:active),

@@ -8,7 +8,7 @@
 import { Icon } from "astro-icon/components";
 ---
 
-<section class="py-16 sm:py-24 bg-gradient-to-br from-white via-gray-50 to-banana-light/20 relative overflow-hidden">
+<section class="py-16 sm:py-24 bg-z-bg relative overflow-hidden">
   <!-- 背景装饰 -->
   <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
   <div class="absolute top-0 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl"></div>
@@ -17,15 +17,15 @@ import { Icon } from "astro-icon/components";
   <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
     <!-- 标题区域 -->
     <div class="text-center mb-12">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-banana-primary/10">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-white/10">
         <Icon name="heroicons:sparkles" class="w-4 h-4 text-orange-500" />
         <span>Community Recognition</span>
       </div>
       
-      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-4">
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
         Trusted & Featured by Leading Platforms
       </h2>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">
         Recognized by top AI tool directories and product launch platforms
       </p>
     </div>
@@ -37,7 +37,7 @@ import { Icon } from "astro-icon/components";
         href="https://fazier.com/launches/bananaeditor.net"
         target="_blank"
         rel="noopener noreferrer"
-        class="group/badge relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/60 hover:border-orange-300 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
+        class="group/badge relative bg-z-surface backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-orange-300 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1 flex items-center justify-center min-h-[100px]"
         aria-label="Fazier Launch Badge"
         data-badge="fazier">
         <img
@@ -121,9 +121,9 @@ import { Icon } from "astro-icon/components";
 
     <!-- 底部信息 -->
     <div class="text-center mt-12">
-      <div class="inline-flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full border border-gray-200/50 shadow-md">
+      <div class="inline-flex items-center gap-2 px-6 py-3 bg-z-surface backdrop-blur-sm rounded-full border border-white/10 shadow-md">
         <Icon name="heroicons:star" class="w-5 h-5 text-yellow-500" />
-        <p class="text-sm text-gray-700">
+        <p class="text-sm text-gray-300">
           Featured on{" "}
           <a href="https://fazier.com/launches/bananaeditor.net" target="_blank" rel="noopener noreferrer" class="text-orange-600 hover:text-orange-700 font-semibold transition-colors">Fazier</a>
           {", "}

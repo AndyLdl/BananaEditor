@@ -202,7 +202,7 @@ export default function NavbarAuthButton() {
   };
 
   const goToEditor = () => {
-    window.location.href = '/editor';
+    window.location.href = '/#hero';
   };
 
   if (loading) {

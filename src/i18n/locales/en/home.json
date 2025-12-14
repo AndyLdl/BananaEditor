@@ -1,88 +1,88 @@
 {
     "hero": {
-        "title": "Nano Banana AI Image Editor",
-        "subtitle": "Perfect Element Consistency Powered by Nano Banana Technology",
-        "description": "Nano banana AI Image Editor delivers perfect element consistency across all scenes. Create stunning 1024×1024 images in just 2.3 seconds with Google Gemini 2.5 Flash Image. Maintain 100% consistency of characters, objects, and styles - your personal AI designer for professional content creation.",
+        "title": "Z-Image AI Image Generation",
+        "subtitle": "Advanced Foundation Model with Single-Stream Diffusion Transformer",
+        "description": "Z-Image is a powerful 6B-parameter AI image generation foundation model featuring revolutionary single-stream diffusion transformer technology. Achieve ultra-fast inference with Z-Image-Turbo variant and excellent bilingual text rendering capabilities.",
         "cta": {
             "primary": "Start Editing Now",
             "secondary": "View Prompt Library"
         },
         "features": [
-            "⚡ Ultra-Fast Generation (2.3s)",
-            "🎯 Perfect Element Consistency",
-            "✨ Smart Image Fusion",
-            "🎨 Professional Quality Output"
+            "🚀 Ultra-Fast Inference (8 NFEs)",
+            "🧠 6B Parameters Foundation Model",
+            "🌍 Bilingual Text Rendering",
+            "🏆 #1 Open-Source Performance"
         ],
         "stats": {
-            "speed": "2.3s",
+            "speed": "8 NFEs",
             "quality": "1024×1024",
-            "consistency": "100%",
+            "consistency": "State-of-the-art",
             "users": "10,000+"
         }
     },
     "advantages": {
         "badge": "Core Advantages",
-        "title": "Why Choose Nano Banana AI Image Editor?",
-        "subtitle": "Powerful advantages that set nano banana AI apart from other image editors",
+        "title": "Why Choose Z-Image?",
+        "subtitle": "Powerful advantages that make Z-Image the leading AI image generation foundation model",
         "consistency": {
-            "title": "Perfect Element Consistency",
-            "description": "Like having your personal AI designer - nano banana ensures 100% consistency of characters, objects, and styles across all scenes.",
-            "highlight": "vs <50% with other AI"
+            "title": "Single-Stream Architecture",
+            "description": "Revolutionary single-stream diffusion transformer enabling more efficient processing and superior performance. The 6B-parameter foundation model provides exceptional capabilities across all image generation tasks.",
+            "highlight": "6B Parameters"
         },
         "speed": {
-            "title": "Ultra-Fast Generation",
-            "description": "Generate high-quality 1024×1024 images in just 2.3 seconds. Lightning-fast results for time-sensitive projects.",
-            "highlight": "Lightning Fast"
+            "title": "8 NFEs Ultra-Fast",
+            "description": "Z-Image-Turbo achieves sub-second inference latency on H800 GPUs with only 8 NFEs, fitting comfortably within 16G VRAM consumer devices.",
+            "highlight": "Sub-Second Latency"
         },
         "faster": {
-            "title": "10x Faster",
-            "description": "Approximately 10 times faster than traditional AI image generation models while maintaining superior quality.",
-            "highlight": "vs Traditional AI"
+            "title": "6B Parameters",
+            "description": "Powerful 6B-parameter foundation model with Single-Stream Diffusion Transformer architecture, providing superior capabilities and robust instruction following.",
+            "highlight": "Foundation Model"
         },
         "quality": {
-            "title": "Commercial-Ready Quality",
-            "description": "Professional-grade, watermark-free images optimized for e-commerce, advertising, and marketing materials.",
-            "highlight": "Ready to Use"
+            "title": "#1 Open-Source",
+            "description": "Ranked 8th overall on Artificial Analysis Text-to-Image Leaderboard, making Z-Image-Turbo the #1 open-source model with state-of-the-art performance.",
+            "highlight": "Top Performance"
         }
     },
     "features": {
-        "title": "Why Choose BananaEditor?",
-        "subtitle": "Powered by Google's Gemini 2.5 Flash Image - The fastest nano banana AI model",
+        "title": "Why Choose Z-Image?",
+        "subtitle": "Advanced foundation model with single-stream diffusion transformer technology",
         "items": [
             {
-                "title": "Lightning-Fast Generation",
-                "description": "Generate 1024×1024 high-quality images in just 2.3 seconds with nano banana AI technology. 10x faster than traditional AI models, perfect for time-sensitive projects and high-volume content creation.",
-                "icon": "magic",
-                "specs": "2.3s generation time | 1024×1024 resolution | High FID score"
+                "title": "Z-Image-Turbo: Ultra-Fast Inference",
+                "description": "Distilled version with only 8 NFEs achieving sub-second inference latency on enterprise-grade H800 GPUs. Fits comfortably within 16G VRAM consumer devices. Excels in photorealistic image generation, bilingual text rendering (English & Chinese), and robust instruction adherence.",
+                "icon": "bolt",
+                "specs": "8 NFEs | Sub-second latency | 16G VRAM | Photorealistic"
             },
             {
-                "title": "Perfect Element Consistency",
-                "description": "Like having your personal AI designer - nano banana ensures 100% consistency of characters, objects, and styles across multiple scenes. Generate seasonal variations, different poses, or scene changes while maintaining perfect visual coherence.",
+                "title": "Single-Stream Diffusion Transformer",
+                "description": "Revolutionary architecture enabling more efficient processing and superior performance. The single-stream design provides better efficiency compared to multi-stream models while maintaining state-of-the-art quality.",
                 "icon": "layers",
-                "specs": "100% consistency | Multi-scene support | Character preservation"
+                "specs": "6B Parameters | Efficient Architecture | Superior Performance"
             },
             {
-                "title": "Smart Image Fusion",
-                "description": "Seamlessly blend two images with intelligent nano banana AI fusion technology. Create unique compositions with precise control over style transfer, object placement, and artistic effects.",
+                "title": "Bilingual Text Rendering",
+                "description": "Perfect text rendering in both English and Chinese, making Z-Image ideal for global applications. Advanced instruction following capabilities ensure accurate text generation in multiple languages.",
                 "icon": "sparkles",
-                "specs": "Intelligent blending | Style transfer | Precision control"
+                "specs": "English & Chinese | Accurate Rendering | Global Ready"
             },
             {
-                "title": "Commercial-Ready Quality",
-                "description": "Professional-grade output optimized for e-commerce, advertising, and social media. Accurate text rendering, high visual fidelity, and nano banana AI's advanced understanding of commercial requirements.",
-                "icon": "tools",
-                "specs": "Commercial license | Text rendering | Marketing-optimized"
+                "title": "#1 Open-Source Model",
+                "description": "Ranked 8th overall on Artificial Analysis Text-to-Image Leaderboard, making Z-Image-Turbo the #1 open-source model. Achieves state-of-the-art results among open-source models with highly competitive performance against leading proprietary models.",
+                "icon": "trophy",
+                "specs": "Top Ranking | Open-Source | State-of-the-Art"
             },
             {
-                "title": "Smart Iterative Editing",
-                "description": "Seamlessly refine your previously generated images. Simply select any image from your gallery and describe your desired changes in the chat interface. Nano banana AI understands the context and modifies your image precisely—no need to start from scratch.",
-                "icon": "sparkles",
-                "specs": "Gallery selection | Context-aware | Iterative refinement"
+                "title": "High-Resolution Generation",
+                "description": "Generate professional-quality images at 1024×1024 resolution. Z-Image supports high-resolution generation with excellent visual fidelity, perfect for commercial and professional use cases.",
+                "icon": "photo",
+                "specs": "1024×1024 | High Quality | Commercial Ready"
             }
         ]
     },
     "demo": {
-        "title": "See BananaEditor in Action",
+        "title": "See Z-Image Studio in Action",
         "subtitle": "Experience the power of nano banana AI technology",
         "tabs": [
             {
@@ -105,7 +105,7 @@
     "cta": {
         "title": "Ready to Create Amazing Images?",
         "subtitle": "Join thousands of creators using nano banana AI technology",
-        "description": "Start creating professional-quality images today with BananaEditor's powerful nano banana AI tools.",
+        "description": "Start creating professional-quality images today with Z-Image Studio's powerful Z-Image AI models.",
         "button": "Get Started Free",
         "note": "No registration required • Instant access"
     },
@@ -137,47 +137,47 @@
     },
     "detailedFeatures": {
         "badge": "Complete Feature Suite",
-        "title": "Complete Product Features of Nano Banana AI Image Editor",
-        "subtitle": "Discover all the powerful capabilities that make nano banana AI Image Editor the best choice for professional image creation with perfect consistency",
-        "cta": "Try Nano Banana AI Image Editor Now",
+        "title": "Complete Product Features of Z-Image",
+        "subtitle": "Discover all the powerful capabilities that make Z-Image the leading AI image generation foundation model with Single-Stream Diffusion Transformer",
+        "cta": "Try Z-Image Studio Now",
         "ctaNote": "No registration required • Start creating in seconds",
         "consistency": {
-            "title": "Perfect Element Consistency with Nano Banana",
-            "description": "Nano banana AI Image Editor delivers 100% element consistency across all scenes and variations. Unlike other AI image tools that struggle with character consistency, nano banana AI acts like your personal AI designer—maintaining perfect visual coherence of characters, objects, backgrounds, and styles across multiple scenes, poses, and environments. Generate spring, summer, fall, and winter versions while preserving 100% consistency of core elements.",
+            "title": "Single-Stream Diffusion Transformer Architecture",
+            "description": "Z-Image features a revolutionary single-stream diffusion transformer architecture with 6B parameters. This efficient design enables superior performance across all image generation tasks, providing better processing efficiency compared to multi-stream models while maintaining state-of-the-art quality. The foundation model architecture unlocks the full potential for community-driven fine-tuning and custom development.",
             "highlights": [
-                "100% character consistency across scenes",
-                "Perfect object preservation in all variations",
-                "Maintains style coherence across generations",
-                "Multi-scene support with visual coherence"
+                "6B-parameter foundation model",
+                "Single-stream architecture efficiency",
+                "Superior performance across tasks",
+                "Community-driven fine-tuning support"
             ]
         },
         "speed": {
-            "title": "Ultra-Fast 2.3 Second Generation",
-            "description": "Nano banana AI Image Editor generates high-quality 1024×1024 images in just 2.3 seconds—approximately 10x faster than traditional AI image generation models. Powered by Google's Gemini 2.5 Flash Image technology, nano banana delivers instant results without compromising quality, making it ideal for time-sensitive projects and high-volume content creation workflows.",
+            "title": "Z-Image-Turbo: 8 NFEs Ultra-Fast Inference",
+            "description": "Z-Image-Turbo is a distilled version that matches or exceeds leading competitors with only 8 NFEs (Number of Function Evaluations). It offers sub-second inference latency on enterprise-grade H800 GPUs and fits comfortably within 16G VRAM consumer devices. Z-Image-Turbo excels in photorealistic image generation, bilingual text rendering (English & Chinese), and robust instruction adherence.",
             "highlights": [
-                "2.3 seconds generation time",
-                "10x faster than traditional models",
-                "1024×1024 high-resolution output",
-                "Real-time generation feedback"
+                "8 NFEs for ultra-fast generation",
+                "Sub-second latency on H800 GPUs",
+                "16G VRAM consumer device support",
+                "Photorealistic image quality"
             ]
         },
         "conversational": {
-            "title": "Conversational Image Editing Interface",
-            "description": "Edit images through natural chat-based interactions with nano banana AI Image Editor. Simply describe what you want in plain language, and the AI understands your intent. No complex prompts or technical expertise required—just chat naturally about your vision, and nano banana AI Image Editor brings it to life in seconds.",
+            "title": "Bilingual Text Rendering (English & Chinese)",
+            "description": "Z-Image-Turbo excels in bilingual text rendering, supporting both English and Chinese text generation with perfect accuracy. This makes Z-Image ideal for global applications, enabling users worldwide to generate images with accurate text in their preferred language. The robust instruction adherence ensures precise text rendering in complex scenes.",
             "highlights": [
-                "Natural language chat interface",
-                "No complex prompts needed",
-                "Understands conversational context",
-                "Intelligent intent recognition"
+                "Perfect English text rendering",
+                "Accurate Chinese text generation",
+                "Global application support",
+                "Robust instruction following"
             ]
         },
         "iterative": {
-            "title": "Smart Iterative Editing",
-            "description": "Seamlessly refine your previously generated images with nano banana AI Image Editor's smart iterative editing. Simply select any image from your gallery and describe your desired changes in the chat interface. Nano banana AI understands the context and modifies your image precisely, maintaining consistency while applying targeted refinements—no need to start from scratch.",
+            "title": "Z-Image-Edit: Advanced Image Editing",
+            "description": "Z-Image-Edit is a variant fine-tuned on Z-Image specifically for image editing tasks. It supports creative image-to-image generation with impressive instruction-following capabilities, allowing for precise edits based on natural language prompts. Perfect for refining existing images and applying targeted modifications while maintaining visual coherence.",
             "highlights": [
-                "Select from gallery history",
-                "Context-aware image refinement",
-                "Maintains consistency during edits",
+                "Specialized image editing variant",
+                "Image-to-image generation",
+                "Natural language instruction following",
                 "Precise targeted modifications"
             ]
         },
@@ -192,13 +192,13 @@
             ]
         },
         "quality": {
-            "title": "Commercial-Ready Quality Output",
-            "description": "Nano banana AI Image Editor delivers professional-grade output optimized for e-commerce, advertising, social media, and marketing materials. All images are commercial-ready with accurate text rendering, high visual fidelity, and nano banana AI's advanced understanding of commercial visual requirements. Perfect for professional marketing and business use.",
+            "title": "#1 Open-Source Model Performance",
+            "description": "Z-Image-Turbo ranked 8th overall on the Artificial Analysis Text-to-Image Leaderboard, making it the #1 open-source model! It achieves state-of-the-art results among open-source models and shows highly competitive performance against leading proprietary models. According to Elo-based Human Preference Evaluation on Alibaba AI Arena, Z-Image-Turbo also achieves state-of-the-art results among open-source models.",
             "highlights": [
-                "Commercial license included",
-                "Accurate text rendering",
-                "High visual fidelity",
-                "Marketing-optimized output"
+                "#1 open-source model ranking",
+                "8th overall on leaderboard",
+                "State-of-the-art open-source performance",
+                "Competitive with proprietary models"
             ]
         },
         "interactive": {
@@ -224,55 +224,47 @@
     },
     "faq": {
         "title": "Frequently Asked Questions",
-        "subtitle": "Everything you need to know about nano banana AI Image Editor",
+        "subtitle": "Everything you need to know about Z-Image and Z-Image Studio",
         "items": [
             {
-                "question": "What is Nano Banana AI Image Editor?",
-                "answer": "Nano Banana AI Image Editor is powered by Google's Gemini 2.5 Flash Image model - a lightweight, ultra-fast AI image generation technology that creates high-quality 1024×1024 images in just 2.3 seconds while maintaining perfect element consistency across multiple scenes."
+                "question": "What is Z-Image?",
+                "answer": "Z-Image is a powerful 6B-parameter AI image generation foundation model with Single-Stream Diffusion Transformer architecture. It features three variants: Z-Image-Turbo (8 NFEs, sub-second inference), Z-Image-Base (foundation model), and Z-Image-Edit (image editing variant). Z-Image-Turbo ranked 8th overall on Artificial Analysis Text-to-Image Leaderboard, making it the #1 open-source model."
             },
             {
-                "question": "What makes nano banana AI Image Editor's consistency special?",
-                "answer": "Nano banana AI Image Editor maintains 100% element consistency - unlike other AI models that struggle with character consistency, nano banana AI acts like your personal AI designer, preserving characters, objects, and styles across different scenes, poses, and environments. Generate seasonal variations with perfect visual coherence."
+                "question": "How fast is Z-Image-Turbo?",
+                "answer": "Z-Image-Turbo achieves sub-second inference latency on enterprise-grade H800 GPUs with only 8 NFEs (Number of Function Evaluations). It fits comfortably within 16G VRAM consumer devices, making it one of the fastest open-source image generation models available."
             },
             {
-                "question": "How does nano banana maintain element consistency in AI image editing?",
-                "answer": "Nano banana AI Image Editor uses advanced context-aware technology to understand and preserve all visual elements. When you generate variations or edit existing images, the AI maintains consistent characters, objects, backgrounds, and styles across all outputs, ensuring perfect visual coherence."
+                "question": "What makes Z-Image different from other AI image models?",
+                "answer": "Z-Image features a revolutionary Single-Stream Diffusion Transformer architecture with 6B parameters. Z-Image-Turbo excels in photorealistic image generation, bilingual text rendering (English & Chinese), and robust instruction adherence. It's the #1 open-source model on the Artificial Analysis Leaderboard."
             },
             {
-                "question": "How fast is nano banana AI Image Editor compared to other editors?",
-                "answer": "Nano banana AI Image Editor generates images in 2.3 seconds, making it approximately 10x faster than traditional AI image generation models, while maintaining comparable or superior quality. This speed advantage makes it ideal for time-sensitive projects and high-volume content creation."
+                "question": "What is Z-Image Studio?",
+                "answer": "Z-Image Studio is a web-based platform that provides easy access to Z-Image models. It offers a user-friendly interface for generating high-quality images using Z-Image-Turbo, Z-Image-Base, and Z-Image-Edit variants, optimized and deployed by z-image.ai."
             },
             {
-                "question": "Can nano banana AI Image Editor preserve consistency across different scenes?",
-                "answer": "Yes! Nano banana AI Image Editor excels at maintaining perfect consistency across multiple scenes. You can generate the same character or object in different environments (spring, summer, fall, winter, day, night) while preserving 100% visual consistency of the core elements."
+                "question": "Can Z-Image generate images with text?",
+                "answer": "Yes! Z-Image-Turbo excels in bilingual text rendering, supporting both English and Chinese text generation with perfect accuracy. This makes Z-Image ideal for global applications requiring accurate text rendering in images."
             },
             {
-                "question": "Why choose nano banana for consistent AI image generation?",
-                "answer": "Nano banana AI Image Editor is specifically designed for perfect element consistency - the core strength that sets it apart from other AI image editors. Whether you need consistent product photos, character variations, or branded content, nano banana delivers 100% visual coherence every time."
+                "question": "What image resolution does Z-Image support?",
+                "answer": "Z-Image supports high-resolution image generation at 1024×1024 pixels. The models are optimized for professional-quality output suitable for commercial use, e-commerce, advertising, and social media applications."
             },
             {
-                "question": "Can I edit previously generated images with nano banana AI Image Editor?",
-                "answer": "Absolutely! Nano banana AI Image Editor features smart iterative editing. Simply select any image from your gallery and describe your desired changes in the chat interface. The AI understands context and modifies your image precisely, maintaining consistency while applying targeted refinements."
+                "question": "Can I use Z-Image for commercial purposes?",
+                "answer": "Yes! Z-Image is released under Apache-2.0 license, which allows commercial use. Images generated with Z-Image are commercial-ready and optimized for professional applications including e-commerce, advertising, and marketing materials."
             },
             {
-                "question": "Can I use nano banana AI Image Editor images for commercial purposes?",
-                "answer": "Yes! Images generated with nano banana AI Image Editor are commercial-ready and optimized for e-commerce, advertising, social media, and marketing materials. The technology includes accurate text rendering and understands commercial visual requirements."
+                "question": "What is the difference between Z-Image-Turbo, Z-Image-Base, and Z-Image-Edit?",
+                "answer": "Z-Image-Turbo is a distilled version with 8 NFEs for ultra-fast inference. Z-Image-Base is the non-distilled foundation model for fine-tuning. Z-Image-Edit is fine-tuned specifically for image editing tasks with impressive instruction-following capabilities."
             },
             {
-                "question": "Is nano banana AI Image Editor suitable for professional work?",
-                "answer": "Absolutely. Nano banana AI Image Editor (Gemini 2.5 Flash Image) delivers professional-grade quality with high FID scores, accurate text rendering, and exceptional visual fidelity. It's trusted by businesses for e-commerce, advertising agencies, and content creators worldwide."
+                "question": "How does Z-Image achieve such fast inference?",
+                "answer": "Z-Image-Turbo uses advanced distillation techniques (Decoupled-DMD and DMDR) to reduce inference steps to just 8 NFEs while maintaining state-of-the-art quality. The Single-Stream Diffusion Transformer architecture also contributes to efficient processing."
             },
             {
-                "question": "What image formats does nano banana AI Image Editor support?",
-                "answer": "Nano banana AI Image Editor generates high-quality 1024×1024 PNG images without watermarks. The output is optimized for web, print, and professional use. You can download images in standard formats suitable for e-commerce, social media, and marketing materials."
-            },
-            {
-                "question": "How does nano banana AI Image Editor ensure element consistency?",
-                "answer": "Nano banana AI Image Editor uses advanced context understanding to track and maintain visual elements across generations. The AI remembers characters, objects, colors, and styles, ensuring that every variation maintains 100% consistency with the original elements while allowing creative scene and pose changes."
-            },
-            {
-                "question": "What makes nano banana AI Image Editor different from other AI image tools?",
-                "answer": "Nano banana AI Image Editor combines three key advantages: ultra-fast 2.3-second generation, perfect element consistency across scenes, and smart iterative editing capabilities. This unique combination makes it ideal for professional content creation where consistency and speed are crucial."
+                "question": "Where can I find Z-Image models and documentation?",
+                "answer": "Z-Image is available on GitHub (github.com/Tongyi-MAI/Z-Image), Hugging Face, and ModelScope. The official repository includes technical reports, inference examples, and comprehensive documentation for getting started with Z-Image models."
             }
         ]
     }

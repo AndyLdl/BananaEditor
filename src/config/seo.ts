@@ -20,29 +20,29 @@ export interface SEOConfig {
 
 // 主关键词和相关关键词
 export const primaryKeywords = [
-    'nano banana',
-    'nano banana ai',
-    'banana ai',
-    'nano banana image editor',
-    'banana ai photo generator'
+    'Z-Image Studio',
+    'Z-Image',
+    'Z-Image-Turbo',
+    'AI image generation',
+    'diffusion transformer'
 ];
 
 export const secondaryKeywords = [
-    'ai image editor',
-    'ai photo generator',
-    'image fusion ai',
+    'image editing',
     'prompt optimization',
-    'professional image editor',
-    'ai art generator'
+    'bilingual text rendering',
+    'instruction following',
+    'high resolution',
+    'open-source model'
 ];
 
 // 基础SEO配置
 export const baseSEOConfig = {
-    siteName: 'BananaEditor',
-    siteUrl: process.env.SITE_URL || 'https://bananaeditor.net',
+    siteName: 'Z-Image Studio',
+    siteUrl: process.env.SITE_URL || 'https://zimagestudio.com',
     defaultLanguage: 'en',
     defaultImage: '/opengraph.jpg',
-    twitterHandle: '@bananaeditor'
+    twitterHandle: '@zimagestudio'
 };
 
 // 页面特定的SEO配置
@@ -50,27 +50,27 @@ export const pageSEOConfigs: Record<string, Record<string, SEOConfig>> = {
     // 首页SEO配置
     home: {
         en: {
-            title: 'Nano Banana - Professional AI Image Editor | BananaEditor',
-            description: 'Create stunning images with nano banana AI technology. Professional image generation and fusion tools powered by advanced AI. Try our banana ai editor now!',
+            title: 'Z-Image Studio - Advanced AI Image Generation Platform',
+            description: 'Experience Z-Image Studio, powered by Z-Image foundation models with single-stream diffusion transformer technology. Ultra-fast inference with Z-Image-Turbo.',
             keywords: [
                 ...primaryKeywords,
-                'professional image editor',
-                'ai art generator',
-                'image creation tool'
+                'AI image generation platform',
+                'single-stream diffusion transformer',
+                'sub-second inference'
             ],
             ogType: 'website',
             twitterCard: 'summary_large_image'
         },
         zh: {
-            title: 'Nano Banana - 专业AI图片编辑器 | BananaEditor',
-            description: '使用nano banana AI技术创建令人惊艳的图片。专业的AI图片生成和融合工具，由先进的banana ai技术驱动。立即试用我们的编辑器！',
+            title: 'Z-Image Studio - 高级AI图像生成平台',
+            description: 'Z-Image Studio 基于 Z-Image 基座模型与单流扩散 Transformer 技术，提供 Z-Image-Turbo 的超快推理能力与高质量生图体验。',
             keywords: [
-                'nano banana',
-                'nano banana ai',
-                'banana ai',
-                '专业图片编辑器',
-                'AI图片生成器',
-                '图片创作工具'
+                'Z-Image Studio',
+                'Z-Image',
+                'Z-Image-Turbo',
+                'AI图片生成',
+                '扩散Transformer',
+                '单流架构'
             ],
             ogType: 'website',
             twitterCard: 'summary_large_image'
@@ -80,8 +80,8 @@ export const pageSEOConfigs: Record<string, Record<string, SEOConfig>> = {
     // 编辑器页面SEO配置
     editor: {
         en: {
-            title: 'AI Image Editor - Nano Banana Professional Tools | BananaEditor',
-            description: 'Professional nano banana ai image editing suite with generation and fusion capabilities. Create, edit, and enhance images with our advanced banana ai technology.',
+            title: 'AI Image Editor - Z-Image Studio',
+            description: 'Create, edit, and enhance images with Z-Image Studio. Powered by Z-Image models for fast, high-quality generation and editing workflows.',
             keywords: [
                 ...primaryKeywords,
                 'image editing suite',
@@ -92,12 +92,12 @@ export const pageSEOConfigs: Record<string, Record<string, SEOConfig>> = {
             twitterCard: 'summary'
         },
         zh: {
-            title: 'AI图片编辑器 - Nano Banana专业工具 | BananaEditor',
-            description: '专业的nano banana ai图片编辑套件，具备生成和融合功能。使用我们先进的banana ai技术创建、编辑和增强图片。',
+            title: 'AI图片编辑器 - Z-Image Studio',
+            description: '使用 Z-Image Studio 创建、编辑与增强图片：快速推理、高质量输出，适用于专业创作与商业场景。',
             keywords: [
-                'nano banana',
-                'nano banana ai',
-                'banana ai',
+                'Z-Image Studio',
+                'Z-Image',
+                'Z-Image-Edit',
                 '图片编辑套件',
                 'AI图片工具',
                 '专业编辑器'
@@ -110,8 +110,8 @@ export const pageSEOConfigs: Record<string, Record<string, SEOConfig>> = {
     // 提示词库页面SEO配置
     prompts: {
         en: {
-            title: 'AI Prompt Library - Nano Banana Collections | BananaEditor',
-            description: 'Discover curated nano banana ai prompts for stunning image generation. Browse our extensive banana ai prompt library and enhance your creative workflow.',
+            title: 'AI Prompt Library - Z-Image Studio',
+            description: 'Discover curated prompts for Z-Image models. Browse our prompt library and enhance your creative workflow with Z-Image Studio.',
             keywords: [
                 ...primaryKeywords,
                 'ai prompts',
@@ -122,14 +122,13 @@ export const pageSEOConfigs: Record<string, Record<string, SEOConfig>> = {
             twitterCard: 'summary'
         },
         zh: {
-            title: 'AI提示词库 - Nano Banana精选集 | BananaEditor',
-            description: '发现精选的nano banana ai提示词，用于生成令人惊艳的图片。浏览我们丰富的banana ai提示词库，提升您的创作工作流程。',
+            title: 'AI提示词库 - Z-Image Studio',
+            description: '发现适用于 Z-Image 模型的精选提示词。浏览我们的提示词库，提升你的生图与创作效率。',
             keywords: [
-                'nano banana',
-                'nano banana ai',
-                'banana ai',
-                'AI提示词',
+                'Z-Image Studio',
+                'Z-Image',
                 '提示词库',
+                'AI提示词',
                 '图片生成提示词'
             ],
             ogType: 'website',
@@ -161,7 +160,7 @@ export function generateStructuredData(page: string, language: string = 'en') {
     const baseStructuredData = {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
-        name: 'BananaEditor',
+        name: 'Z-Image Studio',
         description: config.description,
         applicationCategory: 'DesignApplication',
         operatingSystem: 'Web Browser',
@@ -175,7 +174,7 @@ export function generateStructuredData(page: string, language: string = 'en') {
         keywords: config.keywords.join(', '),
         creator: {
             '@type': 'Organization',
-            name: 'BananaEditor Team'
+            name: 'Z-Image Studio Team'
         }
     };
 

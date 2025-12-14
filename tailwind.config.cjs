@@ -25,6 +25,15 @@ module.exports = {
           dark: '#2D1810',         // 深棕色
           light: '#FFF8DC',        // 浅黄背景
         },
+        // Z-Image Dark Theme
+        z: {
+          bg: '#050505',
+          surface: '#121212',
+          surface_hover: '#1E1E1E',
+          text: '#FFFFFF',
+          text_muted: '#A1A1A1',
+          border: '#333333',
+        },
         orange: {
           50: '#FFF7ED',
           100: '#FFEDD5',

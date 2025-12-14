@@ -1,8 +1,8 @@
 ---
 /**
- * BananaEditor核心优势展示组件
+ * Z-Image Studio核心优势展示组件
  * 数据驱动的优势展示 + 情感化表达
- * 展示为什么选择BananaEditor的核心卖点
+ * 展示为什么选择Z-Image Studio的核心卖点
  */
 
 import { Icon } from "astro-icon/components";
@@ -30,8 +30,8 @@ const advantages = [
   },
   {
     id: "speed",
-    number: "2.3",
-    unit: "s",
+    number: "8",
+    unit: "NFEs",
     icon: "heroicons:bolt",
     title: t('advantages.speed.title'),
     description: t('advantages.speed.description'),
@@ -43,7 +43,7 @@ const advantages = [
   },
   {
     id: "faster",
-    number: "10x",
+    number: "6B",
     unit: "",
     icon: "heroicons:rocket-launch",
     title: t('advantages.faster.title'),
@@ -56,9 +56,9 @@ const advantages = [
   },
   {
     id: "quality",
-    number: "∞",
+    number: "#1",
     unit: "",
-    icon: "heroicons:sparkles",
+    icon: "heroicons:trophy",
     title: t('advantages.quality.title'),
     description: t('advantages.quality.description'),
     gradient: "from-blue-500 via-cyan-500 to-teal-500",
@@ -70,7 +70,7 @@ const advantages = [
 ];
 ---
 
-<section class="py-20 sm:py-32 bg-gradient-to-br from-white via-gray-50 to-banana-light/30 relative overflow-hidden">
+<section class="py-20 sm:py-32 bg-z-bg relative overflow-hidden">
   <!-- 背景装饰 -->
   <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-5 pointer-events-none"></div>
   <div class="absolute top-0 left-1/4 w-96 h-96 bg-banana-primary/5 rounded-full blur-3xl"></div>
@@ -80,15 +80,15 @@ const advantages = [
     
     <!-- 标题区域 -->
     <div class="text-center mb-20">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-banana-primary font-medium text-sm mb-6 shadow-lg border border-banana-primary/10">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white font-medium text-sm mb-6 shadow-lg border border-white/10">
         <Icon name="heroicons:star" class="w-4 h-4 text-yellow-500" />
         <span>{t('advantages.badge')}</span>
       </div>
       
-      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-6">
+      <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-6">
         {t('advantages.title')}
       </h2>
-      <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+      <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
         {t('advantages.subtitle')}
       </p>
     </div>
@@ -101,7 +101,7 @@ const advantages = [
           data-advantage={advantage.id}>
           
           <!-- 主卡片 -->
-          <div class={`relative h-full bg-gradient-to-br ${advantage.bgGradient} rounded-3xl p-8 border-2 border-white/50 hover:border-white transition-all duration-500 hover:shadow-2xl hover:shadow-${advantage.numberColor.split('-')[1]}-500/20 transform hover:-translate-y-2 overflow-hidden`}>
+          <div class={`relative h-full bg-z-surface rounded-3xl p-8 border border-white/10 hover:border-white/30 transition-all duration-500 hover:shadow-2xl hover:shadow-${advantage.numberColor.split('-')[1]}-500/20 transform hover:-translate-y-2 overflow-hidden`}>
             
             <!-- 背景装饰 -->
             <div class={`absolute inset-0 bg-gradient-to-br ${advantage.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
@@ -140,12 +140,12 @@ const advantages = [
             </div>
 
             <!-- 标题 -->
-            <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-gray-800 transition-colors">
+            <h3 class="text-xl font-bold text-white mb-3 group-hover:text-gray-200 transition-colors">
               {advantage.title}
             </h3>
             
             <!-- 描述 -->
-            <p class="text-gray-600 leading-relaxed text-sm mb-4">
+            <p class="text-gray-400 leading-relaxed text-sm mb-4">
               {advantage.description}
             </p>
 
@@ -162,20 +162,6 @@ const advantages = [
     </div>
   </div>
 </section>
-
-<!-- 分隔线装饰 -->
-<div class="relative">
-  <div class="absolute inset-0 flex items-center">
-    <div class="w-full border-t border-gray-200"></div>
-  </div>
-  <div class="relative flex justify-center">
-    <div class="bg-gradient-to-br from-white via-gray-50 to-banana-light/30 px-6">
-      <div class="w-12 h-12 bg-banana-gradient rounded-full flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform duration-300">
-        <span class="text-white text-xl">🍌</span>
-      </div>
-    </div>
-  </div>
-</div>
 
 <style>
   /* 数字动画 */

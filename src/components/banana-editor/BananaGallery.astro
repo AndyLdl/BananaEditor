@@ -1,0 +1,193 @@
+---
+/**
+ * Z-Image Studio Gallery Component
+ * Inspiration wall with image grid
+ */
+
+// Sample images - you can replace these with actual generated images
+const galleryImages = [
+  "/images/gallery-images/image1.jpeg",
+  "/images/gallery-images/image2.jpeg",
+  "/images/gallery-images/image3.jpeg",
+  "/images/gallery-images/image4.jpeg",
+  "/images/gallery-images/image5.jpeg",
+    "/images/gallery-images/image6.jpeg",
+   "/images/gallery-images/image7.jpeg",
+  "/images/gallery-images/image8.jpeg",
+   "/images/gallery-images/image9.jpeg",
+   "/images/gallery-images/image10.jpeg",
+   "/images/gallery-images/image11.jpeg",
+  "/images/gallery-images/image12.jpeg",
+  "/images/gallery-images/image13.jpeg",
+   "/images/gallery-images/image15.jpeg",
+   "/images/gallery-images/image16.jpeg",
+   "/images/gallery-images/image17.jpeg",
+  "/images/gallery-images/image18.jpeg",
+   "/images/gallery-images/image19.jpeg",
+   "/images/gallery-images/image20.jpeg",
+   "/images/gallery-images/image21.jpeg",
+  "/images/gallery-images/image22.jpeg",
+   "/images/gallery-images/image23.jpeg",
+  "/images/gallery-images/image24.jpeg",
+   "/images/gallery-images/image25.jpeg",
+   "/images/gallery-images/image26.jpeg",
+];
+
+const totalImages = galleryImages.length;
+---
+
+<section class="relative bg-z-bg text-z-text py-20 md:py-32">
+  <div class="container mx-auto px-4">
+    <!-- Header -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-banana-primary font-semibold text-sm uppercase tracking-wider">CURATED GALLERY</span>
+      </div>
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between">
+        <div class="mb-6 md:mb-0">
+          <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">
+            Z-image Inspiration wall, generated in seconds
+          </h2>
+          <p class="text-gray-400 text-lg">
+            {totalImages} recent outputs, lazy loaded. Tap any tile to zoom to full detail.
+          </p>
+        </div>
+        <div class="text-right">
+          <p class="text-gray-500 text-sm uppercase tracking-wider">CLICK TO ENLARGE</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Grid -->
+    <div class="gallery-grid">
+      {galleryImages.map((src, index) => (
+        <div 
+          class="gallery-item group relative rounded-lg overflow-hidden bg-z-surface border border-white/10 cursor-pointer transition-all duration-300 hover:scale-105 hover:border-white/20 hover:shadow-2xl"
+          data-image-index={index}
+        >
+          <img 
+            src={src} 
+            alt={`Gallery image ${index + 1}`}
+            class="gallery-image"
+            loading={index < 8 ? "eager" : "lazy"}
+          />
+          
+          <!-- Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <button class="w-full py-2 px-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-lg text-white text-sm font-medium transition-all duration-300 border border-white/20">
+                VIEW
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 瀑布流布局 - 使用 CSS Columns */
+  .gallery-grid {
+    /* 使用列布局实现瀑布流效果 */
+    column-count: 2;
+    column-gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .gallery-grid {
+      column-count: 4;
+      column-gap: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-grid {
+      column-count: 5;
+    }
+  }
+
+  .gallery-item {
+    will-change: transform;
+    /* 防止图片被列分割 */
+    break-inside: avoid;
+    page-break-inside: avoid;
+    /* 宽度自动填满列宽 */
+    width: 100%;
+    /* 高度由内容决定 */
+    height: fit-content;
+    /* 底部间距，模拟 gap 效果 */
+    margin-bottom: 1rem;
+    display: inline-block;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .gallery-item {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .gallery-image {
+    display: block;
+    /* 宽度固定为容器宽度（100%） */
+    width: 100%;
+    /* 高度自动，根据图片原始宽高比计算 */
+    height: auto;
+    /* 保持图片原始宽高比，完整显示不裁剪 */
+    object-fit: contain;
+    /* 确保图片自然渲染 */
+    vertical-align: top;
+    /* 移除所有可能影响高度的限制 */
+    max-height: none;
+    min-height: 0;
+    /* 过渡效果 */
+    transition: transform 0.5s ease;
+  }
+
+  .gallery-item:hover .gallery-image {
+    transform: scale(1.1);
+  }
+</style>
+
+<script>
+  // Image zoom functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    galleryItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const img = item.querySelector('img');
+        const src = img?.src;
+        if (!src) return;
+        
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer';
+        modal.style.backdropFilter = 'blur(10px)';
+        
+        const modalImg = document.createElement('img');
+        modalImg.src = src;
+        modalImg.className = 'max-w-full max-h-full object-contain rounded-lg';
+        modalImg.alt = 'Enlarged gallery image';
+        
+        modal.appendChild(modalImg);
+        document.body.appendChild(modal);
+        
+        // Close on click
+        modal.addEventListener('click', () => {
+          document.body.removeChild(modal);
+        });
+        
+        // Close on Escape key
+        const handleEscape = (e) => {
+          if (e.key === 'Escape') {
+            document.body.removeChild(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        };
+        document.addEventListener('keydown', handleEscape);
+      });
+    });
+  });
+</script>

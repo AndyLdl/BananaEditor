@@ -1,5 +1,5 @@
 {
-  "name": "astroship",
+  "name": "z-image-studio",
   "type": "module",
   "version": "2.2.0",
   "private": true,
@@ -58,6 +58,7 @@
     "web-vitals": "^5.1.0"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.28.5",
     "@types/multer": "^1.4.12",
     "@types/node": "^24.5.2",
     "@types/uuid": "^10.0.0",

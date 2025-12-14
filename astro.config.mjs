@@ -9,7 +9,7 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://bananaeditor.net",
+  site: "https://zimagestudio.com",
   output: 'static', // 使用静态输出，API 路由在客户端调用云函数
   integrations: [
     react(),
@@ -63,8 +63,31 @@ export default defineConfig({
       }
     },
     optimizeDeps: {
-      include: ['@astrojs/tailwind', 'react', 'react-dom', 'tslib'],
-      exclude: ['debug'] // 排除 debug 包，避免 ESM/CommonJS 兼容性问题
+      include: [
+        '@astrojs/tailwind',
+        '@astrojs/react',
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'tslib'
+      ],
+      exclude: [
+        'debug', // 排除 debug 包，避免 ESM/CommonJS 兼容性问题
+        'fsevents' // 排除原生模块，避免 esbuild 处理 .node 文件
+      ],
+      force: false, // 设置为 true 可以强制重新预构建，但通常不需要
+      esbuildOptions: {
+        // 配置 esbuild 以排除原生模块
+        plugins: [],
+        external: ['fsevents'],
+        platform: 'node',
+        target: 'node18'
+      }
+    },
+    ssr: {
+      // SSR 模式下排除原生模块
+      noExternal: [],
+      external: ['fsevents']
     },
     // 构建配置
     build: {
@@ -77,20 +100,23 @@ export default defineConfig({
         }
       },
       rollupOptions: {
-        external: [],
+        external: ['fsevents'], // 排除原生模块
         output: {
           manualChunks: undefined
         }
       },
       commonjsOptions: {
         include: [/node_modules/],
-        transformMixedEsModules: true
+        transformMixedEsModules: true,
+        exclude: ['fsevents'] // 排除原生模块
       }
     },
     resolve: {
       alias: {
         tslib: 'tslib'
-      }
-    }
+      },
+      // 排除原生模块
+      conditions: ['import', 'module', 'browser', 'default']
+    },
   }
 });

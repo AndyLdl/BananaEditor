@@ -1,6 +1,6 @@
 ---
 /**
- * BananaEditor CTA组件
+ * Z-Image Studio CTA组件
  * 引导用户开始使用编辑器
  */
 
@@ -17,103 +17,126 @@ const homeTranslations = await loadTranslations(currentLang, "home");
 const t = createTranslator(currentLang, homeTranslations);
 ---
 
-<section class="relative py-20 sm:py-32 overflow-hidden">
-  <!-- 背景渐变 -->
-  <div class="absolute inset-0 bg-gradient-to-br from-banana-primary via-banana-secondary to-banana-accent"></div>
-
+<section class="relative py-16 sm:py-20 md:py-24 overflow-hidden bg-z-bg">
   <!-- 网格背景 -->
-  <div class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-10 pointer-events-none"></div>
-
-  <!-- 背景装饰圆形 -->
-  <div class="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-  <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-400/10 rounded-full blur-3xl"></div>
-
-  <!-- 浮动装饰元素 -->
-  <div class="absolute top-20 left-10 w-16 h-16 bg-white/10 rounded-full animate-float blur-sm"></div>
-  <div class="absolute top-40 right-20 w-12 h-12 bg-white/10 rounded-full animate-float-delayed blur-sm"></div>
-  <div class="absolute bottom-32 left-1/4 w-8 h-8 bg-white/10 rounded-full animate-float-slow blur-sm"></div>
-  <div class="absolute top-1/2 right-1/4 w-10 h-10 bg-yellow-400/20 rounded-full animate-float blur-sm"></div>
+  <div
+    class="absolute inset-0 bg-[url('/images/grid-pattern.svg')] opacity-[0.03] pointer-events-none">
+  </div>
 
   <div class="relative mx-auto max-w-5xl px-6 lg:px-8 text-center z-10">
+    <!-- 徽章 -->
+    <div
+      class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full text-white font-medium text-sm mb-6 shadow-sm border border-white/10">
+      <Icon name="heroicons:sparkles" class="w-4 h-4 text-gray-400" />
+      <span>Start Creating Today</span>
+    </div>
+
     <!-- 主标题 -->
     <h2
-      class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+      class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
       {t("cta.title")}
     </h2>
 
     <!-- 副标题 -->
-    <p class="text-xl sm:text-2xl text-white/90 mb-4 font-medium">
+    <p class="text-lg sm:text-xl text-white/90 mb-4 font-medium">
       {t("cta.subtitle")}
     </p>
 
     <!-- 描述 -->
-    <p class="text-lg text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
+    <p
+      class="text-base sm:text-lg text-gray-400 mb-8 max-w-2xl mx-auto leading-relaxed">
       {t("cta.description")}
     </p>
 
     <!-- CTA按钮 -->
     <div class="mb-8">
-      <BananaButton
-        href="/editor"
-        size="xl"
-        variant="white"
-        class="group shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-300">
+      <a
+        href="/#hero"
+        class="group/cta relative inline-flex items-center gap-3 px-8 py-4 bg-banana-gradient text-white font-bold text-base rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden">
+        <!-- 背景光效 -->
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-banana-primary via-banana-secondary to-banana-primary bg-[length:200%_auto] animate-gradient-flow opacity-0 group-hover/cta:opacity-100 transition-opacity duration-300">
+        </div>
+
+        <!-- 内容 -->
         <Icon
           name="heroicons:rocket-launch"
-          class="w-6 h-6 mr-3 group-hover:animate-bounce"
+          class="w-5 h-5 relative z-10 group-hover/cta:animate-bounce"
         />
-        {t("cta.button")}
+        <span class="relative z-10">{t("cta.button")}</span>
         <Icon
           name="heroicons:arrow-right"
-          class="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform"
+          class="w-5 h-5 relative z-10 group-hover/cta:translate-x-1 transition-transform"
         />
-      </BananaButton>
+      </a>
     </div>
 
     <!-- 注释信息 -->
-    <p class="text-white/70 text-sm font-medium">
+    <p class="text-gray-400 text-sm font-medium mb-12">
       {t("cta.note")}
     </p>
 
     <!-- 统计信息 - 卡片化设计 -->
-    <div class="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <div class="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:shadow-xl hover:shadow-white/10 hover:-translate-y-1">
-        <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-        <div class="relative">
-          <div class="text-4xl sm:text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform duration-300">10K+</div>
-          <div class="text-white/90 text-sm font-semibold">Active Users</div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-12">
+      <div
+        class="group relative bg-z-surface backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden">
+        <div class="relative z-10">
+          <div
+            class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 group-hover:scale-105 transition-transform duration-300">
+            10K+
+          </div>
+          <div class="text-gray-400 text-sm font-semibold">Active Users</div>
         </div>
       </div>
-      <div class="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:shadow-xl hover:shadow-white/10 hover:-translate-y-1">
-        <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-        <div class="relative">
-          <div class="text-4xl sm:text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform duration-300">1M+</div>
-          <div class="text-white/90 text-sm font-semibold">Images Generated</div>
+      <div
+        class="group relative bg-z-surface backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden">
+        <div class="relative z-10">
+          <div
+            class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 group-hover:scale-105 transition-transform duration-300">
+            1M+
+          </div>
+          <div class="text-gray-400 text-sm font-semibold">
+            Images Generated
+          </div>
         </div>
       </div>
-      <div class="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:shadow-xl hover:shadow-white/10 hover:-translate-y-1">
-        <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-        <div class="relative">
-          <div class="text-4xl sm:text-5xl font-black text-white mb-2 group-hover:scale-110 transition-transform duration-300">99.9%</div>
-          <div class="text-white/90 text-sm font-semibold">Uptime</div>
+      <div
+        class="group relative bg-z-surface backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden">
+        <div class="relative z-10">
+          <div
+            class="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 group-hover:scale-105 transition-transform duration-300">
+            99.9%
+          </div>
+          <div class="text-gray-400 text-sm font-semibold">Uptime</div>
         </div>
       </div>
     </div>
 
     <!-- 特性徽章 - 增强设计 -->
-    <div class="mt-12 flex flex-wrap gap-4 justify-center">
-      <div class="group/badge inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 backdrop-blur-md rounded-xl text-white text-sm font-semibold border border-white/25 hover:bg-white/25 hover:border-white/40 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-        <Icon name="heroicons:shield-check" class="w-5 h-5 group-hover/badge:scale-110 transition-transform" />
-        <span>Secure & Private</span>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <div
+        class="group/badge relative inline-flex items-center gap-2 px-4 py-2.5 bg-z-surface backdrop-blur-sm rounded-lg text-white text-sm font-medium border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden">
+        <Icon
+          name="heroicons:shield-check"
+          class="w-4 h-4 relative z-10 group-hover/badge:scale-110 transition-transform text-gray-400"
+        />
+        <span class="relative z-10">Secure & Private</span>
       </div>
-      <div class="group/badge inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 backdrop-blur-md rounded-xl text-white text-sm font-semibold border border-white/25 hover:bg-white/25 hover:border-white/40 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-        <Icon name="heroicons:bolt" class="w-5 h-5 group-hover/badge:scale-110 transition-transform" />
-        <span>Lightning Fast</span>
+      <div
+        class="group/badge relative inline-flex items-center gap-2 px-4 py-2.5 bg-z-surface backdrop-blur-sm rounded-lg text-white text-sm font-medium border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden">
+        <Icon
+          name="heroicons:bolt"
+          class="w-4 h-4 relative z-10 group-hover/badge:scale-110 transition-transform text-gray-400"
+        />
+        <span class="relative z-10">Lightning Fast</span>
       </div>
-      <div class="group/badge inline-flex items-center gap-2 px-5 py-2.5 bg-white/15 backdrop-blur-md rounded-xl text-white text-sm font-semibold border border-white/25 hover:bg-white/25 hover:border-white/40 transition-all duration-300 hover:scale-105 hover:shadow-lg">
-        <Icon name="heroicons:globe-alt" class="w-5 h-5 group-hover/badge:scale-110 transition-transform" />
-        <span>Multi-language</span>
+      <div
+        class="group/badge relative inline-flex items-center gap-2 px-4 py-2.5 bg-z-surface backdrop-blur-sm rounded-lg text-white text-sm font-medium border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden">
+        <Icon
+          name="heroicons:globe-alt"
+          class="w-4 h-4 relative z-10 group-hover/badge:scale-110 transition-transform text-gray-400"
+        />
+        <span class="relative z-10">Multi-language</span>
       </div>
     </div>
   </div>
@@ -150,6 +173,16 @@ const t = createTranslator(currentLang, homeTranslations);
     }
   }
 
+  @keyframes gradient-flow {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
   .animate-float {
     animation: float 4s ease-in-out infinite;
   }
@@ -160,5 +193,9 @@ const t = createTranslator(currentLang, homeTranslations);
 
   .animate-float-slow {
     animation: float-slow 6s ease-in-out infinite 3s;
+  }
+
+  .animate-gradient-flow {
+    animation: gradient-flow 3s ease infinite;
   }
 </style>
